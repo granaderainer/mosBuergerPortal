@@ -4,6 +4,7 @@
 
 - Visual Studio 2017
 - Git Extension
+- ReSharper
 
 ## Programmiersprache
 
