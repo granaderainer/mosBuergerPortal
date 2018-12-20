@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.106
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mosPortal", "mosPortal\mosPortal.csproj", "{94610BEB-E507-461F-AC11-E30D1E0F94A0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mosPortal", "mosPortal\mosPortal.csproj", "{9E5685E8-A336-4F37-88A9-C3D392111497}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{94610BEB-E507-461F-AC11-E30D1E0F94A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{94610BEB-E507-461F-AC11-E30D1E0F94A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{94610BEB-E507-461F-AC11-E30D1E0F94A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{94610BEB-E507-461F-AC11-E30D1E0F94A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E5685E8-A336-4F37-88A9-C3D392111497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E5685E8-A336-4F37-88A9-C3D392111497}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E5685E8-A336-4F37-88A9-C3D392111497}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E5685E8-A336-4F37-88A9-C3D392111497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {FB9FE50C-04C5-48F3-85BB-CF99B7BAA32A}
+		SolutionGuid = {B2F254B0-77B5-4C1A-92FF-238D3C019A40}
 	EndGlobalSection
 EndGlobal
