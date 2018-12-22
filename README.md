@@ -1,4 +1,4 @@
-# mosBuergerPortal
+# Bürgerbeteiligungsportal Stadt Mosbach
 
 ## Entwicklungsumgebung
 
