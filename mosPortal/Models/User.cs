@@ -1,52 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace mosPortal.Models
 {
-    public class User
+    public partial class User
     {
-        private int id;
-        private String name;
-        private String firstName;
-        private String email;
-        private String userName;
-        private String birthplace;
-        private DateTime birthday;
-        private int addressID;
-        private int userroleID; //noch nicht sicher wie wir das mit der Rollenzuweisung machen sollen... Evtl Vererbung
-
-        public int Id { get => id; set => id = value; }
-        public string Name { get => name; set => name = value; }
-        public string FirstName { get => firstName; set => firstName = value; }
-        public string Email { get => email; set => email = value; }
-        public string UserName { get => userName; set => userName = value; }
-        public string Birthplace { get => birthplace; set => birthplace = value; }
-        public DateTime Birthday { get => birthday; set => birthday = value; }
-        public int AddressID { get => addressID; set => addressID = value; }
-        public int UserroleID { get => userroleID; set => userroleID = value; }
-
-        // Constructors
-        public User (String name, String firstName, String email, String userName, String birthplace, DateTime birthday, int addressID, int userroleID )
+        public User()
         {
-            this.id = 0; //Get Id from DB after Creation
-            this.name = name;
-            this.firstName = firstName;
-            this.email = email;
-            this.userName = userName;
-            this.birthplace = birthplace;
-            this.birthday = birthday;
-            this.addressID = addressID;
-            this.userroleID = userroleID;
-        }
-        public User (int id)
-        {
-            this.id = id;
-            // DB Abfrage für User!
+            Comment = new HashSet<Comment>();
+            Concern = new HashSet<Concern>();
+            Poll = new HashSet<Poll>();
+            UserAnswerOptionsPoll = new HashSet<UserAnswerOptionsPoll>();
+            UserConcern = new HashSet<UserConcern>();
         }
 
+        public int Id { get; set; }
+        public string Firstname { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Username { get; set; }
+        public string Birthplace { get; set; }
+        public string Birthday { get; set; }
+        public int AdressId { get; set; }
+        public int UserroleId1 { get; set; }
 
-        //end Constructors
+        public Address Adress { get; set; }
+        public Userrole UserroleId1Navigation { get; set; }
+        public ICollection<Comment> Comment { get; set; }
+        public ICollection<Concern> Concern { get; set; }
+        public ICollection<Poll> Poll { get; set; }
+        public ICollection<UserAnswerOptionsPoll> UserAnswerOptionsPoll { get; set; }
+        public ICollection<UserConcern> UserConcern { get; set; }
     }
 }

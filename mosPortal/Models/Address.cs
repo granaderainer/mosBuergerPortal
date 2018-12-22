@@ -1,39 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using MySql.Data.EntityFrameworkCore;
 
 namespace mosPortal.Models
 {
-    public class Address : DbContext
+    public partial class Address
     {
-        private int id;
-        private String country;
-        private String city;
-        private int zipCode;
-        private String street;
-        private int number;
-
-        public Address (int id)
+        public Address()
         {
-            this.id = id;
-
-            // DB Abfrage für User!
+            User = new HashSet<User>();
         }
 
-        public Address(string country, string city, int zipCode, string street, int number)
-        {
-            this.country = country;
-            this.city = city;
-            this.zipCode = zipCode;
-            this.street = street;
-            this.number = number;
-        }
-        public Address(DbContextOptions<Address> options) : base (options)
-        {
+        public int Id { get; set; }
+        public string Country { get; set; }
+        public string City { get; set; }
+        public int? ZipCode { get; set; }
+        public string Street { get; set; }
+        public string Number { get; set; }
 
+        public ICollection<User> User { get; set; }
+        public Address(string country, string city, int zipCode, string street, string number)
+        {
+            this.Country = country;
+            this.City = city;
+            this.ZipCode = zipCode;
+            this.Street = street;
+            this.Number = number;
+            
         }
     }
 }
