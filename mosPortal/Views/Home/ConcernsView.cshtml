@@ -26,11 +26,10 @@
     <div class="row">
         <!-- Blog Entries Column -->
         <div class="col-md-8">
+            @foreach(var item in Model) { 
             <!-- First Blog Post -->
-
-
             <h2>
-                <a href="#">Blog Post Title</a>
+                <a href="#">Blog Post Title von @item.UserId</a>
             </h2>
             <p class="lead">
                 Kategorie: <a href="index.php">Kategorie</a>
@@ -41,9 +40,11 @@
                 <img class="img-responsive img-hover" src="http://placehold.it/900x300" alt="">
             </a>
             <hr>
-            <p>Test post</p>
+            <p>@item.Text</p>
             <a class="btn btn-primary" href="#">Like <i class="fa fa-thumbs-up"></i></a>
             <hr>
+
+            }
             <!-- Pager -->
             <ul class="pager">
                 <li class="previous">

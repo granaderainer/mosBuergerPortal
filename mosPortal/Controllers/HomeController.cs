@@ -17,7 +17,14 @@ namespace mosPortal.Controllers
         public IActionResult ConcernsView()
         {
             //@model IEnumerable<mosPortal.Models.Concern>
-            return View();
+            IEnumerable<Concern> concerns = new List<Concern>();
+            concerns.Append(new Concern {
+                Id = 1,
+                Text = "Hallo Das ist ein Test",
+                UserId = 1
+            });
+
+            return View(concerns);
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
