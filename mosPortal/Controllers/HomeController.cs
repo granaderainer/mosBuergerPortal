@@ -14,26 +14,11 @@ namespace mosPortal.Controllers
         {
             return View();
         }
-
-        public IActionResult About()
+        public IActionResult ConcernsView()
         {
-            ViewData["Message"] = "Your application description page.";
-
+            //@model IEnumerable<mosPortal.Models.Concern>
             return View();
         }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
