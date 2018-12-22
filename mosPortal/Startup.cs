@@ -12,6 +12,8 @@ using Microsoft.Extensions.DependencyInjection;
 using mosPortal.Models;
 using mosPortal.Data;
 using MySql.Data.EntityFrameworkCore;
+using MySql.Data.EntityFrameworkCore.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace mosPortal
 {
@@ -33,11 +35,10 @@ namespace mosPortal
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-            /*services.AddDbContext<DatabaseContext>(options =>
-                .UseMySql("server=v22018127362578408.supersrv.de;port=3306;database=dbbuerger;uid=buerger;password=Buerger#2018");
-            */
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            
+            //Configure DB Service (MySQL)
+            services.AddDbContext<dbbuergerContext>(options =>
+                options.UseMySQL(Configuration.GetConnectionString("DBConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

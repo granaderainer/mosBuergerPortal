@@ -29,11 +29,11 @@ namespace mosPortal.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+            /*if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL("server=v22018127362578408.supersrv.de;port=3306;database=dbbuerger;uid=jonas;password=Jonas#1995");
-            }
+                optionsBuilder.UseMySQL(Configuration.GetConnectionString);
+            }*/
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

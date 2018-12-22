@@ -13,6 +13,13 @@ namespace mosPortal.Models
             UserAnswerOptionsPoll = new HashSet<UserAnswerOptionsPoll>();
             UserConcern = new HashSet<UserConcern>();
         }
+        public User(int id)
+        {
+            this.Id = id;
+
+            // User aus DB!
+        }
+
 
         public int Id { get; set; }
         public string Firstname { get; set; }

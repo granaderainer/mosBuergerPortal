@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Folder Include="test\" />
+    <Folder Include="Views\Testing\" />
   </ItemGroup>
 
 </Project>

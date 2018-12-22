@@ -17,6 +17,10 @@ namespace mosPortal
     {
         public static void Main(string[] args)
         {
+            CreateWebHostBuilder(args).Build().Run();
+
+            // Testing Classes:
+            /*
             using (var context = new dbbuergerContext())
             {
                 var address = new Address("Deutschland", "Weinsberg", 74189, "KWBStr", "4");
@@ -24,7 +28,7 @@ namespace mosPortal
                 context.Address.Add(address);
                 context.SaveChanges();
             }
-            //CreateWebHostBuilder(args).Build().Run();
+            
             using (var context = new dbbuergerContext())
             {
                 var addresses = context.Address;
@@ -32,7 +36,7 @@ namespace mosPortal
                 {
                     Console.WriteLine(address.Street);
                 }
-            }
+            }*/
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
