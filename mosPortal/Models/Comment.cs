@@ -9,7 +9,9 @@ namespace mosPortal.Models
         public string Text { get; set; }
         public DateTime? Date { get; set; }
         public int UserId { get; set; }
+        public int ConcernId { get; set; }
 
+        public Concern Concern { get; set; }
         public User User { get; set; }
     }
 }

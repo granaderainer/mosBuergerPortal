@@ -19,6 +19,7 @@ namespace mosPortal.Data
         public virtual DbSet<Address> Address { get; set; }
         public virtual DbSet<AnswerOptions> AnswerOptions { get; set; }
         public virtual DbSet<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
+        public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Concern> Concern { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
@@ -29,11 +30,11 @@ namespace mosPortal.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            /*if (!optionsBuilder.IsConfigured)
+           if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySQL(Configuration.GetConnectionString);
-            }*/
+                optionsBuilder.UseMySQL("server=v22018127362578408.supersrv.de;port=3306;database=dbbuerger;uid=jonas;password=Jonas#1995");
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,11 +43,9 @@ namespace mosPortal.Data
             {
                 entity.ToTable("Address", "dbbuerger");
 
-                entity.HasKey(e => e.Id);
-               /* entity.Property(e => e.Id)
+                entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();*/
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.City)
                     .HasColumnName("city")
@@ -99,7 +98,7 @@ namespace mosPortal.Data
                     .HasName("fk_answerOptions_has_poll_poll1_idx");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("ID")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)")
                     .ValueGeneratedNever();
 
@@ -124,17 +123,38 @@ namespace mosPortal.Data
                     .HasConstraintName("fk_answerOptions_has_poll_poll1");
             });
 
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.ToTable("category", "dbbuerger");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Description)
+                    .HasColumnName("description")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+            });
+
             modelBuilder.Entity<Comment>(entity =>
             {
                 entity.ToTable("comment", "dbbuerger");
+
+                entity.HasIndex(e => e.ConcernId)
+                    .HasName("fk_comment_concern1_idx");
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_comment_User1_idx");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("ID")
+                    .HasColumnName("id")
                     .HasColumnType("int(11)")
                     .ValueGeneratedNever();
+
+                entity.Property(e => e.ConcernId)
+                    .HasColumnName("concern_ID")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Date).HasColumnName("date");
 
@@ -147,6 +167,12 @@ namespace mosPortal.Data
                     .HasColumnName("User_ID")
                     .HasColumnType("int(11)");
 
+                entity.HasOne(d => d.Concern)
+                    .WithMany(p => p.Comment)
+                    .HasForeignKey(d => d.ConcernId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_comment_concern1");
+
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Comment)
                     .HasForeignKey(d => d.UserId)
@@ -158,22 +184,41 @@ namespace mosPortal.Data
             {
                 entity.ToTable("concern", "dbbuerger");
 
+                entity.HasIndex(e => e.CategoryId)
+                    .HasName("fk_concern_category1_idx");
+
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_concern_User1_idx");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("category_id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Date).HasColumnName("date");
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
                     .HasMaxLength(5000)
                     .IsUnicode(false);
 
+                entity.Property(e => e.Title)
+                    .HasColumnName("title")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
                     .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Categorie)
+                    .WithMany(p => p.Concern)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_concern_category1");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Concern)
@@ -232,8 +277,7 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.AdressId)
                     .HasColumnName("adress_ID")
@@ -261,6 +305,12 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasColumnName("password")
                     .HasMaxLength(45)
                     .IsUnicode(false);
 
@@ -358,9 +408,8 @@ namespace mosPortal.Data
                 entity.ToTable("userrole", "dbbuerger");
 
                 entity.Property(e => e.Id)
-                    .HasColumnName("ID")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")

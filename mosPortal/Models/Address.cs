@@ -18,14 +18,5 @@ namespace mosPortal.Models
         public string Number { get; set; }
 
         public ICollection<User> User { get; set; }
-        public Address(string country, string city, int zipCode, string street, string number)
-        {
-            this.Country = country;
-            this.City = city;
-            this.ZipCode = zipCode;
-            this.Street = street;
-            this.Number = number;
-            
-        }
     }
 }

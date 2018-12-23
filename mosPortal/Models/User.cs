@@ -13,13 +13,10 @@ namespace mosPortal.Models
             UserAnswerOptionsPoll = new HashSet<UserAnswerOptionsPoll>();
             UserConcern = new HashSet<UserConcern>();
         }
-        public User(int id)
+        public User (int id)
         {
             this.Id = id;
-
-            // User aus DB!
         }
-
 
         public int Id { get; set; }
         public string Firstname { get; set; }
@@ -30,6 +27,7 @@ namespace mosPortal.Models
         public string Birthday { get; set; }
         public int AdressId { get; set; }
         public int UserroleId1 { get; set; }
+        public string Password { get; set; }
 
         public Address Adress { get; set; }
         public Userrole UserroleId1Navigation { get; set; }

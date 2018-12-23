@@ -14,6 +14,7 @@ using mosPortal.Data;
 using MySql.Data.EntityFrameworkCore;
 using MySql.Data.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace mosPortal
 {
@@ -37,8 +38,23 @@ namespace mosPortal
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //Configure DB Service (MySQL)
+            // Funktioniert noch nicht!
             services.AddDbContext<dbbuergerContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("DBConnection")));
+
+            //Add Authentication and Authorization
+            services.AddAuthentication(options =>
+            {
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options => { options.LoginPath = "/Login"; });
+            services.AddMvc().AddRazorPagesOptions(options =>
+            {
+                options.Conventions.AuthorizeFolder("/");
+                options.Conventions.AllowAnonymousToPage("/Login");
+            });
+            // End Add Authentication and Authorization
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +73,7 @@ namespace mosPortal
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
+            app.UseAuthentication();
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
