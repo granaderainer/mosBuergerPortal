@@ -18,9 +18,20 @@ namespace mosPortal.Models
         public string Title { get; set; }
         public int CategoryId { get; set; }
 
-        public Category Categorie { get; set; }
+        public Category Category { get; set; }
         public User User { get; set; }
         public ICollection<Comment> Comment { get; set; }
         public ICollection<UserConcern> UserConcern { get; set; }
+
+        public int vote(int userID)
+        {
+            UserConcern.Add(new Models.UserConcern
+            {
+                UserId = userID,
+                ConcernId = this.Id
+            });
+            int votes = UserConcern.Count;
+            return votes;
+        }
     }
 }

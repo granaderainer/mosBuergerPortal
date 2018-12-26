@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 
 namespace mosPortal.Models
@@ -22,19 +23,32 @@ namespace mosPortal.Models
         public string Firstname { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Birthplace { get; set; }
         public string Birthday { get; set; }
-        public int AdressId { get; set; }
+        public int AddressId { get; set; }
         public int UserroleId1 { get; set; }
         public string Password { get; set; }
 
-        public Address Adress { get; set; }
-        public Userrole UserroleId1Navigation { get; set; }
+        public Address Address { get; set; }
         public ICollection<Comment> Comment { get; set; }
         public ICollection<Concern> Concern { get; set; }
         public ICollection<Poll> Poll { get; set; }
         public ICollection<UserAnswerOptionsPoll> UserAnswerOptionsPoll { get; set; }
         public ICollection<UserConcern> UserConcern { get; set; }
+
+        public ICollection<UserRole> UserRole { get; set; }
+
+        public Boolean allowToVote(int concernId)
+        {
+            foreach (var uc in UserConcern)
+            {
+                if (uc.ConcernId == concernId)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

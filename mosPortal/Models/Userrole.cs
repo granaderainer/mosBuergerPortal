@@ -3,17 +3,13 @@ using System.Collections.Generic;
 
 namespace mosPortal.Models
 {
-    public partial class Userrole
+    public partial class UserRole
     {
-        public Userrole()
-        {
-            User = new HashSet<User>();
-        }
-
+        public int UserId { get; set; }
+        public int RoleId { get; set; }
         public int Id { get; set; }
-        public string Description { get; set; }
-        public string Role { get; set; }
 
-        public ICollection<User> User { get; set; }
+        public Role Role { get; set; }
+        public User User { get; set; }
     }
 }

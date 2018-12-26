@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using mosPortal.Data;
 using Microsoft.EntityFrameworkCore;
 using mosPortal.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace mosPortal
 {

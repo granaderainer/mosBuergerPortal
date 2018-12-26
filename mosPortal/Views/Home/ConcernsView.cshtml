@@ -34,7 +34,7 @@
                     <a href="#">@item.Title</a>
                 </h2>
                 <p class="lead">
-                    Kategorie: <a href="index.php">@item.Categorie.Description</a>
+                    Kategorie: <a href="index.php">@item.Category.Description</a>
                 </p>
                 <p><i class="fa fa-clock-o"></i> Erstellt am @item.Date</p>
                 <hr>
@@ -43,10 +43,19 @@
                 </a>
                 <hr>
                 <p>@item.Text</p>
-                <a class="btn btn-primary" href="#">Like <i class="fa fa-thumbs-up"></i></a>
-                <a class="btn btn-primary" href="#">Read More <i class="fa fa-angle-right"></i></a>
-                <hr>
+                <p id="likesConecern @item.Id">0 Likes</p>
+                <a class="btn btn-primary" href="#" id="likeConcern @item.Id">Like <i class="fa fa-thumbs-up"></i></a>
+                <a class="btn btn-primary" href="#" id="readMoreConcern @item.Id">Read More <i class="fa fa-angle-right"></i></a>
 
+                <hr>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        $("#likeConcern @item.Id").click(function () {
+                            document.getElementById("likeConcern @item.Id").disabled = true;
+
+                        });
+                    });
+                </script>
             }
             <!-- Pager -->
             <ul class="pager">
@@ -78,10 +87,10 @@
                     <div class="col-lg-6">
                         <ul class="list-unstyled">
                             @foreach (var category in categories)
-                            { 
-                            <li>
-                                <a href="#">@category.Description</a>
-                            </li>
+                            {
+                                <li>
+                                    <a href="#">@category.Description</a>
+                                </li>
                             }
                         </ul>
                     </div>

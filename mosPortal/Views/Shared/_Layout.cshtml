@@ -1,7 +1,5 @@
-﻿@model mosPortal.Views.Shared._LayoutModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Security.Claims
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,12 +15,12 @@
     <link href="~/css/modern-business.css" rel="stylesheet">
     <!-- Custom Fonts -->
     <link href="~/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!-- jQuery -->
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <!-- Script to Activate the Carousel -->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
 
 </head>
 <body>
@@ -55,7 +53,7 @@
                         <a class="profile-pic" href="#"> <img src="~/images/users/user.png" alt="user-img" width="22" class="img-circle"><b class="hidden-xs">    Jens</b></a>
                     </li>
                     <li>
-                        <a href="#" id="btnShowModal">Login</a>
+                        <a id="btnShowModalLogin" asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-target="#modal" data-toggle="modal">Login</a>
                     </li>
 
 
@@ -103,45 +101,7 @@
     </header>
     <!-- Page Content -->
     <div class="container body-content">
-        <!--Login Popup-->
-        <div class="modal fade" tabindex="-1" id="loginModal"
-             data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">
-                            ×
-                        </button>
-                        <h4 class="modal-title">Jetzt Anmelden!</h4>
-                    </div>
-                    <div class="modal-body">
-                        <form method="post">
-                            <div class="form-group">
-                                <input type="text" name="username" id="username" class="form-control input-lg" placeholder="Benutzername">
-                            </div>
-                            <div class="form-group">
-                                <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Passwort">
-                            </div>
-                            <span class="button-checkbox">
-                                <button type="button" class="btn" data-color="info">Remember Me</button>
-                                <input type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
-                                <a href="" class="btn btn-link pull-right">Forgot Password?</a>
-                            </span>
-                            <hr class="colorgraph">
-                            <div class="row">
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <input type="submit" class="btn btn-lg btn-success btn-block" value="Sign In">
-                                </div>
-                                <div class="col-xs-6 col-sm-6 col-md-6">
-                                    <a href="" class="btn btn-lg btn-primary btn-block">Register</a>
-                                </div>
-                            </div>
-                            @Html.AntiForgeryToken()
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <!--End Login Popup-->
         @RenderBody()
 
@@ -156,84 +116,14 @@
     </div>
 
     <!-- /.container -->
-    <!-- jQuery -->
-    <script src="~/js/jquery.js"></script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
-    <!-- Script to Activate the Carousel -->
+    <!--Load Modal-->
+    @await Html.PartialAsync("_Modal")
+
+
     <script>
         $('.carousel').carousel({
             interval: 5000 //changes the speed
         })</script>
-    <!--Show/Handle Login-->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#btnShowModal").click(function () {
-                $("#loginModal").modal('show');
-            });
-
-            $("#btnHideModal").click(function () {
-                $("#loginModal").modal('hide');
-            });
-        });
-        $(function () {
-            $('.button-checkbox').each(function () {
-                var $widget = $(this),
-                    $button = $widget.find('button'),
-                    $checkbox = $widget.find('input:checkbox'),
-                    color = $button.data('color'),
-                    settings = {
-                        on: {
-                            icon: 'glyphicon glyphicon-check'
-                        },
-                        off: {
-                            icon: 'glyphicon glyphicon-unchecked'
-                        }
-                    };
-
-                $button.on('click', function () {
-                    $checkbox.prop('checked', !$checkbox.is(':checked'));
-                    $checkbox.triggerHandler('change');
-                    updateDisplay();
-                });
-
-                $checkbox.on('change', function () {
-                    updateDisplay();
-                });
-
-                function updateDisplay() {
-                    var isChecked = $checkbox.is(':checked');
-                    // Set the button's state
-                    $button.data('state', (isChecked) ? "on" : "off");
-
-                    // Set the button's icon
-                    $button.find('.state-icon')
-                        .removeClass()
-                        .addClass('state-icon ' + settings[$button.data('state')].icon);
-
-                    // Update the button's color
-                    if (isChecked) {
-                        $button
-                            .removeClass('btn-default')
-                            .addClass('btn-' + color + ' active');
-                    }
-                    else {
-                        $button
-                            .removeClass('btn-' + color + ' active')
-                            .addClass('btn-default');
-                    }
-                }
-                function init() {
-                    updateDisplay();
-                    // Inject the icon if applicable
-                    if ($button.find('.state-icon').length == 0) {
-                        $button.prepend('<i class="state-icon ' + settings[$button.data('state')].icon + '"></i> ');
-                    }
-                }
-                init();
-            });
-        });
-    </script>
 
 </body>
 </html>

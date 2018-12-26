@@ -24,23 +24,36 @@ namespace mosPortal.Controllers
             ViewData["Categories"] = db.Category;
             var concerns = db.Concern
                             .Include("Category")
-                            .Where(x=>x.CategoryId == x.Categorie.Id)
+                            .Where(x=>x.CategoryId == x.Category.Id)
                             .Select (x => new Concern
                                       {
                                           Id =x.Id,
                                           Text= x.Text,
                                           Title = x.Title,
                                           Date = x.Date,
-                                          Categorie = x.Categorie,
+                                          Category = x.Category,
                                           UserId= x.UserId
                                       });
+            
 
             return View(concerns);
         }
-        public IActionResult Login()
-        {
 
-            return View();
+        public JsonResult VoteForConcern(int concernId, int userId)
+        {
+            User user = db.User.Where(u => u.Id == userId).SingleOrDefault();
+            ICollection < UserConcern > userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.UserId == user.Id);
+            user.UserConcern = userConcerns;
+            if (user.allowToVote(concernId))
+            {
+            Concern concern = db.Concern
+                .Where(c => c.Id == concernId).SingleOrDefault();
+            userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.ConcernId == concernId);
+            concern.UserConcern = userConcerns;
+                return Json(new { id = concern.Id, user = userId, votes = concern.vote(userId) });
+
+            }
+            return Json(new { });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

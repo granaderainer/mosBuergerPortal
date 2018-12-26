@@ -15,6 +15,8 @@ using MySql.Data.EntityFrameworkCore;
 using MySql.Data.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using mosPortal.Identity;
 
 namespace mosPortal
 {
@@ -41,9 +43,27 @@ namespace mosPortal
             // Funktioniert noch nicht!
             services.AddDbContext<dbbuergerContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("DBConnection")));
-
+            /*
             //Add Authentication and Authorization
-            services.AddAuthentication(options =>
+
+            //Tell identity to use our custom classes for users and roles
+            services.AddIdentity<User, UserRole>()
+                .AddDefaultTokenProviders();
+
+            //Tell identity to use our custom storage provider for users
+            services.AddTransient<IUserStore<User>, UserStore>();
+
+            //Tell identity to use our custom storage provider for roles
+            services.AddTransient<IRoleStore<UserRole>, RoleStore>();
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.Cookie.HttpOnly = true;
+                options.LoginPath = "/Login";
+                options.LogoutPath = "/Logout";
+            });
+            */
+            /*services.AddAuthentication(options =>
             {
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -54,6 +74,7 @@ namespace mosPortal
                 options.Conventions.AuthorizeFolder("/");
                 options.Conventions.AllowAnonymousToPage("/Login");
             });
+            */
             // End Add Authentication and Authorization
         }
 

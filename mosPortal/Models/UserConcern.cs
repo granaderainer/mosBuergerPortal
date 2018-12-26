@@ -10,5 +10,9 @@ namespace mosPortal.Models
 
         public Concern Concern { get; set; }
         public User User { get; set; }
+
+
+
+
     }
 }

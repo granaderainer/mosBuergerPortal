@@ -1,0 +1,30 @@
+﻿
+
+<div aria-hidden="true" ´role="dialog" tabindex="-1" id="modal" class="modal fade">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+        $(document).ready(function () {
+            (function ($) {
+                function ModalInit() {
+                    var $this = this;
+                    function initilizeModel() {
+                        $("#loginModalTest").on('loaded.bs.modal', function (e) {
+                        }).on('hidden.bs.modal', function (e) {
+                            $(this).removeData('bs.modal');
+                        });
+                    }
+                    $this.init = function () {
+                        initilizeModel();
+                    }
+                }
+                $(function () {
+                    var self = new ModalInit();
+                    self.init();
+                })
+            }(jQuery))
+        });
+</script>
