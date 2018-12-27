@@ -2,17 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using mosPortal.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace mosPortal.Data
 {
-    public partial class dbbuergerContext : DbContext
+    public partial class dbbuergerContextOld : DbContext
     {
-        public dbbuergerContext()
+        public dbbuergerContextOld()
         {
         }
 
-        public dbbuergerContext(DbContextOptions<dbbuergerContext> options)
+        public dbbuergerContextOld(DbContextOptions<dbbuergerContext> options)
             : base(options)
         {
         }
@@ -24,23 +23,18 @@ namespace mosPortal.Data
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Concern> Concern { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
-        public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserAnswerOptionsPoll> UserAnswerOptionsPoll { get; set; }
         public virtual DbSet<UserConcern> UserConcern { get; set; }
-        public virtual DbSet<UserRole> UserRole { get; set; }
+        public virtual DbSet<UserRole> Userrole { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+           if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;");
-                optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;",
-                mySqlOptions =>
-                {
-                    mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql); // replace with your Server Version and Type
-                }
-                );
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                //optionsBuilder.UseMySQL("server=v22018127362578408.supersrv.de;port=3306;database=dbbuerger;uid=jonas;password=Jonas#1995");
+                //optionsBuilder.UseMySQL("server=localhost;port=3306;database=dbbuerger;uid=root;password=geheim1!");
             }
         }
 
@@ -48,25 +42,31 @@ namespace mosPortal.Data
         {
             modelBuilder.Entity<Address>(entity =>
             {
+                entity.ToTable("Address", "dbbuerger");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.City)
                     .HasColumnName("city")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Country)
                     .HasColumnName("country")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Number)
                     .HasColumnName("number")
-                    .HasColumnType("varchar(10)");
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Street)
                     .HasColumnName("street")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.ZipCode)
                     .HasColumnName("zipCode")
@@ -75,18 +75,22 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<AnswerOptions>(entity =>
             {
+                entity.ToTable("AnswerOptions", "dbbuerger");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<AnswerOptionsPoll>(entity =>
             {
-                entity.ToTable("AnswerOptions_Poll");
+                entity.ToTable("AnswerOptions_Poll", "dbbuerger");
 
                 entity.HasIndex(e => e.AnswerOptionsId)
                     .HasName("fk_answerOptions_has_poll_answerOptions1_idx");
@@ -96,7 +100,8 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.AnswerOptionsId)
                     .HasColumnName("answerOptions_ID")
@@ -121,17 +126,22 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<Category>(entity =>
             {
+                entity.ToTable("Category", "dbbuerger");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Comment>(entity =>
             {
+                entity.ToTable("Comment", "dbbuerger");
+
                 entity.HasIndex(e => e.ConcernId)
                     .HasName("fk_Comment_Concern1_idx");
 
@@ -140,19 +150,19 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.ConcernId)
                     .HasColumnName("Concern_id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.Date)
-                    .HasColumnName("date")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.Date).HasColumnName("date");
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
-                    .HasColumnType("varchar(5000)");
+                    .HasMaxLength(5000)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
@@ -173,6 +183,8 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<Concern>(entity =>
             {
+                entity.ToTable("Concern", "dbbuerger");
+
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("fk_Concern_Category1_idx");
 
@@ -187,17 +199,17 @@ namespace mosPortal.Data
                     .HasColumnName("Category_id")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.Date)
-                    .HasColumnName("date")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.Date).HasColumnName("date");
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
-                    .HasColumnType("varchar(5000)");
+                    .HasMaxLength(5000)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Title)
                     .HasColumnName("title")
-                    .HasColumnType("varchar(100)");
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
@@ -218,20 +230,21 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<Poll>(entity =>
             {
+                entity.ToTable("Poll", "dbbuerger");
+
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_poll_User1_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
-                    .HasColumnType("int(11)");
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedNever();
 
                 entity.Property(e => e.Approved)
                     .HasColumnName("approved")
                     .HasColumnType("tinyint(4)");
 
-                entity.Property(e => e.End)
-                    .HasColumnName("end")
-                    .HasColumnType("datetime");
+                entity.Property(e => e.End).HasColumnName("end");
 
                 entity.Property(e => e.NeedsLocalCouncil)
                     .HasColumnName("needsLocalCouncil")
@@ -239,7 +252,8 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
-                    .HasColumnType("varchar(5000)");
+                    .HasMaxLength(5000)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
@@ -254,21 +268,27 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<Role>(entity =>
             {
+                entity.ToTable("Role", "dbbuerger");
+
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.Description)
                     .HasColumnName("description")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<User>(entity =>
             {
+                entity.ToTable("User", "dbbuerger");
+
                 entity.HasIndex(e => e.AddressId)
                     .HasName("fk_User_adress1_idx");
 
@@ -282,33 +302,40 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Birthday)
                     .HasColumnName("birthday")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Birthplace)
                     .HasColumnName("birthplace")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Email)
                     .HasColumnName("email")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Firstname)
                     .HasColumnName("firstname")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Name)
                     .HasColumnName("name")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasColumnName("password")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasColumnName("username")
-                    .HasColumnType("varchar(45)");
+                    .HasMaxLength(45)
+                    .IsUnicode(false);
 
                 entity.HasOne(d => d.Address)
                     .WithMany(p => p.User)
@@ -321,7 +348,7 @@ namespace mosPortal.Data
             {
                 entity.HasKey(e => new { e.UserId, e.AnswerOptionsPollId });
 
-                entity.ToTable("User_AnswerOptions_Poll");
+                entity.ToTable("User_AnswerOptions_Poll", "dbbuerger");
 
                 entity.HasIndex(e => e.AnswerOptionsPollId)
                     .HasName("fk_User_has_answerOptions_poll_answerOptions_poll1_idx");
@@ -354,7 +381,7 @@ namespace mosPortal.Data
             {
                 entity.HasKey(e => new { e.UserId, e.ConcernId });
 
-                entity.ToTable("User_Concern");
+                entity.ToTable("User_Concern", "dbbuerger");
 
                 entity.HasIndex(e => e.ConcernId)
                     .HasName("fk_User_Concern_Concern1_idx");
@@ -385,7 +412,7 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<UserRole>(entity =>
             {
-                entity.ToTable("User_Role");
+                entity.ToTable("User_Role", "dbbuerger");
 
                 entity.HasIndex(e => e.RoleId)
                     .HasName("fk_User_has_Role_Role1_idx");

@@ -15,8 +15,16 @@ namespace mosPortal.Controllers
 {
     public class AccountController : Controller
     {
-        private SignInManager<User> signInManager;
+        
         private dbbuergerContext db = new dbbuergerContext();
+        private SignInManager<User> signInManager;
+        private UserManager<User> userManager;
+
+        public AccountController(UserManager<User> userManager, SignInManager<User> signManager)
+        {
+            this.userManager = userManager;
+            this.signInManager = signManager;
+        }
 
         [HttpGet]
         public IActionResult Login(string returnUrl)
@@ -35,7 +43,8 @@ namespace mosPortal.Controllers
         [HttpPost]
         public async Task<IActionResult> Register (RegisterViewModel model, string returnUrl = "")
         {
-            var userCheck = (User)db.User.Where(u => u.UserName == model.Username);
+            //TODo: Beide PW gleich --> Check
+            var userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
             var addressCheck = db.Address.Where(a => a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode && a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
             if (addressCheck == null)
             {
@@ -64,12 +73,13 @@ namespace mosPortal.Controllers
                     Birthplace = model.Birthplace,
                     AddressId = addressCheck.Id
                 };
-                IdentityResult identityResult = await signInManager.UserManager.CreateAsync(newUser);
+                IdentityResult identityResult = await signInManager.UserManager.CreateAsync(newUser,model.Password);
                 if (identityResult.Succeeded)
                 {
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
-                        return Redirect(returnUrl);
+                        //return Redirect(returnUrl);
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {

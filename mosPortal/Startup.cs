@@ -11,12 +11,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using mosPortal.Models;
 using mosPortal.Data;
-using MySql.Data.EntityFrameworkCore;
-using MySql.Data.EntityFrameworkCore.Extensions;
+using Pomelo.EntityFrameworkCore;
+//using MySql.Data.EntityFrameworkCore;
+//using MySql.Data.EntityFrameworkCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using mosPortal.Identity;
+using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace mosPortal
 {
@@ -41,9 +43,17 @@ namespace mosPortal
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //Configure DB Service (MySQL)
             // Funktioniert noch nicht!
-            services.AddDbContext<dbbuergerContext>(options =>
-                options.UseMySQL(Configuration.GetConnectionString("DBConnection")));
-            /*
+            /*services.AddDbContextPool<dbbuergerContext>(
+                options => options.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;",
+                mySqlOptions =>
+                {
+                    mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql); // replace with your Server Version and Type
+                    }
+                ));*/
+
+            //services.AddDbContext<dbbuergerContext>(options =>
+            //   options.UseMySQL(Configuration.GetConnectionString("DBConnection")));
+
             //Add Authentication and Authorization
 
             //Tell identity to use our custom classes for users and roles
@@ -62,7 +72,7 @@ namespace mosPortal
                 options.LoginPath = "/Login";
                 options.LogoutPath = "/Logout";
             });
-            */
+            
             /*services.AddAuthentication(options =>
             {
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;

@@ -9,8 +9,9 @@ namespace mosPortal.Identity
     using System.Threading.Tasks;
     using Data;
     using Microsoft.AspNetCore.Identity;
+    using mosPortal.Models;
 
-    /*public class RoleStore : IRoleStore<UserRole>
+    public class RoleStore : IRoleStore<UserRole>
     {
         private readonly dbbuergerContext db;
         public RoleStore(dbbuergerContext db)
@@ -69,5 +70,5 @@ namespace mosPortal.Identity
         {
             throw new System.NotImplementedException();
         }
-    }*/
+    }
 }

@@ -27,7 +27,6 @@ namespace mosPortal.Models
         public string Birthplace { get; set; }
         public string Birthday { get; set; }
         public int AddressId { get; set; }
-        public int UserroleId1 { get; set; }
         public string Password { get; set; }
 
         public Address Address { get; set; }
