@@ -38,7 +38,7 @@ namespace mosPortal.Data
                 optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;",
                 mySqlOptions =>
                 {
-                    mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql); // replace with your Server Version and Type
+                    mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql);
                 }
                 );
             }

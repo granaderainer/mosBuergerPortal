@@ -22,6 +22,20 @@ namespace mosPortal
 
             // Testing Classes:
             /*
+            dbbuergerContext db = new dbbuergerContext();
+            db.Add(new User
+            {
+                Name = "Jens",
+                Firstname = "Olaf",
+                Email="Jensolaf",
+                UserName="gustav",
+                Birthday = "okj",
+                Birthplace = "Öhringen",
+                AddressId = 1,
+                Password = "geheim1!"
+            });
+            db.SaveChanges();
+            /*
             using (var context = new dbbuergerContext())
             {
                 var address = new Address("Deutschland", "Weinsberg", 74189, "KWBStr", "4");

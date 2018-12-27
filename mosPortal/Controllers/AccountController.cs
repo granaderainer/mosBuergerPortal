@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using mosPortal.Models.ViewModels;
-
-
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using mosPortal.Models;
@@ -20,13 +18,14 @@ namespace mosPortal.Controllers
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
 
+
         public AccountController(UserManager<User> userManager, SignInManager<User> signManager)
         {
             this.userManager = userManager;
             this.signInManager = signManager;
         }
 
-        [HttpGet]
+        [HttpGet] 
         public IActionResult Login(string returnUrl)
         {
             var model = new LoginViewModel { ReturnUrl = returnUrl };
@@ -78,8 +77,8 @@ namespace mosPortal.Controllers
                 {
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
-                        //return Redirect(returnUrl);
                         return RedirectToAction("Index", "Home");
+                        //return Redirect(returnUrl);
                     }
                     else
                     {
@@ -112,6 +111,13 @@ namespace mosPortal.Controllers
             }
             ModelState.AddModelError("", "Invalid login attempt");
             return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Logout()
+        {
+            await signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

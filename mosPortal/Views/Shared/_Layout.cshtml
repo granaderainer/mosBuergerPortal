@@ -39,26 +39,7 @@
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a asp-area="" asp-controller="Home" asp-action="ConcernsView">Anliegen</a>
-                    </li>
-                    <li>
-                        <a href="services.html">Umfragen</a>
-                    </li>
-                    <li>
-                        <a href="contact.html">Kontakt</a>
-                    </li>
-                    
-                    <!--<li>
-        <a class="profile-pic" href="#"> <img src="~/images/users/user.png" alt="user-img" width="22" class="img-circle"><b class="hidden-xs">    Jens</b></a>
-    </li>-->
-                    <li>
-                        <a id="btnShowModalLogin" asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-target="#modal" data-toggle="modal">Login</a>
-                    </li>
-
-
-                </ul>
+                @await Html.PartialAsync("_NavBarView")
             </div>
             <!-- /.navbar-collapse -->
         </div>
