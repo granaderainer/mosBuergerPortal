@@ -45,7 +45,7 @@
                 <p>@item.Text</p>
                 <p id="likesConecern @item.Id">0 Likes</p>
                 <a class="btn btn-primary" href="#" id="likeConcern @item.Id">Like <i class="fa fa-thumbs-up"></i></a>
-                <a class="btn btn-primary" href="#" id="readMoreConcern @item.Id">Read More <i class="fa fa-angle-right"></i></a>
+                <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId ="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
 
                 <hr>
                 <script type="text/javascript">

@@ -21,18 +21,32 @@ namespace mosPortal
             CreateWebHostBuilder(args).Build().Run();
 
             // Testing Classes:
-            /*
-            dbbuergerContext db = new dbbuergerContext();
+            
+
+            
+
+           /* dbbuergerContext db = new dbbuergerContext();
+            var concern = db.Concern.Where(c => c.Id == 1);
+
+            /*Address address = new Address
+                { Country = "DE",
+            City = "Eberstadt",
+            ZipCode =  74189,
+            Number = "4",
+            Street  = "Weinsberger Straße"
+            };
             db.Add(new User
             {
                 Name = "Jens",
                 Firstname = "Olaf",
-                Email="Jensolaf",
-                UserName="gustav",
+                Email = "Jensolaf",
+                UserName = "gustav",
                 Birthday = "okj",
                 Birthplace = "Öhringen",
                 AddressId = 1,
-                Password = "geheim1!"
+                Password = "geheim1!",
+                Address = address
+                
             });
             db.SaveChanges();
             /*

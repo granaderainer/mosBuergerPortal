@@ -19,7 +19,7 @@ namespace mosPortal.Controllers
             return View();
         }
 
-        public IActionResult ConcernsView()
+        public IActionResult ShowConcerns()
         {
             ViewData["Categories"] = db.Category;
             var concerns = db.Concern
@@ -36,7 +36,14 @@ namespace mosPortal.Controllers
                                       });
             
 
-            return View(concerns);
+            return View("ConcernsView",concerns);
+        }
+        public IActionResult ShowConcern(int concernId)
+        {
+            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            List<Comment> comments = db.Comment.Where(c => c.ConcernId == concernId).ToList();
+            concern.Comment = comments;
+            return View("ConcernView", concern);
         }
 
         public JsonResult VoteForConcern(int concernId, int userId)
