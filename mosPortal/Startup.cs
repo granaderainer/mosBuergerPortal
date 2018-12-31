@@ -52,14 +52,16 @@ namespace mosPortal
             //Add Authentication and Authorization
 
             //Tell identity to use our custom classes for users and roles
-            services.AddIdentity<User, UserRole>()
+            services.AddIdentity<User, Role>()
                 .AddDefaultTokenProviders();
 
             //Tell identity to use our custom storage provider for users
             services.AddTransient<IUserStore<User>, UserStore>();
 
             //Tell identity to use our custom storage provider for roles
-            services.AddTransient<IRoleStore<UserRole>, RoleStore>();
+            services.AddTransient<IRoleStore<Role>, RoleStore>();
+
+            //services.AddTransient<IUserRoleStore<UserRole>, UserRoleStore>();
 
             services.ConfigureApplicationCookie(options =>
             {

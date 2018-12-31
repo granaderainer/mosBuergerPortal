@@ -8,17 +8,31 @@ using mosPortal.Models;
 using mosPortal.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Http;
+using mosPortal.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace mosPortal.Controllers
 {
     public class HomeController : Controller
     {
         private dbbuergerContext db = new dbbuergerContext();
+        private SignInManager<User> signInManager;
+        private UserManager<User> userManager;
+
+
+        public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
+        {
+            this.userManager = userManager;
+            this.signInManager = signManager;
+        }
+        [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
         }
-
+        [AllowAnonymous]
         public IActionResult ShowConcerns()
         {
             ViewData["Categories"] = db.Category;
@@ -38,6 +52,7 @@ namespace mosPortal.Controllers
 
             return View("ConcernsView",concerns);
         }
+        [Authorize(Roles = "User,Administrator")]
         public IActionResult ShowConcern(int concernId)
         {
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
@@ -61,6 +76,24 @@ namespace mosPortal.Controllers
 
             }
             return Json(new { });
+        }
+        
+        [HttpPost]
+        public async Task<IActionResult> PostCommentAsync(int concernId, string commentText)
+        {
+            //string commentText = model.Text;
+            DateTime time = DateTime.UtcNow;
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            Comment comment = new Comment
+            {
+                Text = commentText,
+                Date = time,
+                ConcernId = concernId,
+                UserId = user.Id
+            };
+            db.Comment.Add(comment);
+            db.SaveChanges();
+            return this.ShowConcern(concernId);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

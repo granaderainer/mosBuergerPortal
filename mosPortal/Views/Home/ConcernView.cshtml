@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "ConcernView";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["ConcernId"] = Model.Id;
 }
 
 <!--<h2>ConcernView</h2>
@@ -83,9 +84,9 @@
             <!-- Comments Form -->
             <div class="well">
                 <h4>Jetzt kommentieren:</h4>
-                <form role="form" method="post" asp-all-route-id="@Model.Id" asp-action="NewComment" asp-controller="Home">
+                <form role="form" method="post" asp-route-concernId="@Model.Id" asp-action="PostCommentAsync" asp-controller="Home">
                     <div class="form-group">
-                        <textarea class="form-control" rows="3"></textarea>
+                        <textarea class="form-control" rows="3" name="commentText" id="commentText"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Posten</button>
                 </form>
@@ -94,19 +95,16 @@
             <!-- Posted Comments -->
             @foreach (var comment in Model.Comment)
             {
-            <!-- Comment -->
-            <div class="media">
-                <a class="pull-left" href="#">
-                    <img class="media-object" src="http://placehold.it/64x64" alt="">
-                </a>
-                <div class="media-body">
-                    <h4 class="media-heading">
-                        @comment.UserId
-                        <small>Erstellt am @comment.Date</small>
-                    </h4>
-                    @comment.Text
+                <!-- Comment -->
+                <div class="media">
+                    <div class="media-body">
+                        <h4 class="media-heading">
+                            Von Einwohner @comment.UserId
+                            <small>Erstellt am @comment.Date</small>
+                        </h4>
+                        @comment.Text
+                    </div>
                 </div>
-            </div>
             }
         </div>
         <!-- Blog Sidebar Widgets Column -->

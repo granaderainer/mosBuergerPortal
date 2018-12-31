@@ -14,7 +14,7 @@ namespace mosPortal.Identity
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore.Extensions.Internal;
 
-    public class UserStore : IUserStore<User>, IUserPasswordStore<User>
+    public class UserStore : IUserStore<User>, IUserPasswordStore<User>, IUserRoleStore<User>
     {
         private readonly dbbuergerContext db;
 
@@ -120,5 +120,83 @@ namespace mosPortal.Identity
         {
             return Task.FromResult(!string.IsNullOrWhiteSpace(user.Password));
         }
+
+
+
+        //UserRoleStore
+        public async Task AddToRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        {
+            Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
+            UserRole userRole = new UserRole
+            {
+                UserId = user.Id,
+                RoleId = role.Id
+            };
+            db.Add(userRole);
+            await db.SaveChangesAsync(cancellationToken);
+            return;
+            //return Task.FromResult((object)null);
+            //throw new NotImplementedException();
+        }
+
+        public async Task<IList<string>> GetRolesAsync(User user, CancellationToken cancellationToken)
+        {
+            List<UserRole> userRoles = db.UserRole.Where(ur => ur.UserId == user.Id).ToList();
+            List<string> roleNames = new List<string>();
+            foreach (UserRole userRole in userRoles)
+            {
+                Role role = db.Role.Where(r => r.Id == userRole.RoleId).SingleOrDefault();
+                roleNames.Add(role.Name);
+            }
+            return await Task.FromResult(roleNames);
+
+            //throw new NotImplementedException();
+        }
+
+        public async Task<IList<User>> GetUsersInRoleAsync(string roleName, CancellationToken cancellationToken)
+        {
+            Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
+            List<UserRole> userRoles = db.UserRole.Where(ur => ur.RoleId == role.Id).ToList();
+            List<User> users = new List<User>();
+            foreach (UserRole userRole in userRoles)
+            {
+                users.Add(db.User.Where(u => u.Id == userRole.UserId).SingleOrDefault());
+            }
+
+            return await Task.FromResult(users);
+        }
+
+        public Task<bool> IsInRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        {
+            Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
+            UserRole userRole = null;
+            userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
+            if (userRole != null)
+            {
+                return Task.FromResult(true);
+            }
+            else
+            {
+                return Task.FromResult(false);
+            }
+        }
+
+        public async Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
+        {
+            Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
+            UserRole userRole = null;
+            userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
+            if (userRole != null)
+            {
+                db.Remove(userRole);
+                int i = await db.SaveChangesAsync(cancellationToken);
+                return;
+            }
+            else
+            {
+                return;
+            }
+        }
     }
 }
+
