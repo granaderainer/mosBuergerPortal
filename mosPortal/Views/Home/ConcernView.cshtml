@@ -1,5 +1,8 @@
 ﻿@model mosPortal.Models.Concern
-
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "ConcernView";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -79,6 +82,22 @@
             <hr>
             <!-- Post Content -->
             <p>@Model.Text</p>
+            @if (Model.UserConcern.Count() == 1)
+            {
+                <p id="likesConcern @Model.Id">@Model.UserConcern.Count() Like</p>
+            }
+            else
+            {
+                <p id="likesConcern @Model.Id">@Model.UserConcern.Count() Likes</p>
+            }
+            @if (Model.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
+            {
+                <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+            }
+            else
+            {
+                <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
+            }
             <hr>
             <!-- Blog Comments -->
             <!-- Comments Form -->
@@ -104,6 +123,7 @@
                         </h4>
                         @comment.Text
                     </div>
+
                 </div>
             }
         </div>
@@ -170,3 +190,17 @@
     <hr>
 </div>
 <!-- /.container -->
+<script type="text/javascript">
+    function disableButton(btn, concernId) {
+        if (!document.getElementById(btn.id).disabled) {
+            document.getElementById(btn.id).disabled = true;
+            document.getElementById(btn.id).setAttribute('disabled', 'disabled');
+
+            $.get("/Home/VoteForConcernAsync", { concernId: concernId }, function (data) {
+                document.getElementById("likesConcern " + concernId).textContent = (data.votes) + " Likes"; // display id value which is returned from the action method
+            });
+        }
+
+    }
+
+</script>

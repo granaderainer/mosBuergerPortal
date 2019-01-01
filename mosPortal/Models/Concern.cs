@@ -33,5 +33,16 @@ namespace mosPortal.Models
             int votes = UserConcern.Count;
             return votes;
         }
+        public Boolean allowToVote(User user)
+        {
+            foreach (var uc in UserConcern)
+            {
+                if (uc.UserId == user.Id)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }

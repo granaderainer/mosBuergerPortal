@@ -36,9 +36,9 @@ namespace mosPortal.Controllers
         public IActionResult ShowConcerns()
         {
             ViewData["Categories"] = db.Category;
-            var concerns = db.Concern
+            List<Concern> concerns = db.Concern
                             .Include("Category")
-                            .Where(x=>x.CategoryId == x.Category.Id)
+                            .Where(c=>c.CategoryId == c.Category.Id)
                             .Select (x => new Concern
                                       {
                                           Id =x.Id,
@@ -47,35 +47,49 @@ namespace mosPortal.Controllers
                                           Date = x.Date,
                                           Category = x.Category,
                                           UserId= x.UserId
-                                      });
-            
-
+                                      }).ToList();
+            foreach (Concern concern in concerns)
+            {
+                List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
+                concern.UserConcern = userConcerns;
+            }
             return View("ConcernsView",concerns);
         }
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "AllRoles")]
         public IActionResult ShowConcern(int concernId)
         {
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             List<Comment> comments = db.Comment.Where(c => c.ConcernId == concernId).ToList();
+            List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
+            concern.UserConcern = userConcerns;
             concern.Comment = comments;
             return View("ConcernView", concern);
         }
 
-        public JsonResult VoteForConcern(int concernId, int userId)
+        public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
-            User user = db.User.Where(u => u.Id == userId).SingleOrDefault();
-            ICollection < UserConcern > userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.UserId == user.Id);
-            user.UserConcern = userConcerns;
+            User user = await userManager.GetUserAsync(HttpContext.User);
+            //UserConcern userConcern = db.UserConcern.Where(uc=> uc.ConcernId == concernId).SingleOrDefault();
+            //ICollection < UserConcern > userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.UserId == user.Id);
+
+            /*user.UserConcern = userConcerns;
             if (user.allowToVote(concernId))
             {
             Concern concern = db.Concern
                 .Where(c => c.Id == concernId).SingleOrDefault();
             userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.ConcernId == concernId);
             concern.UserConcern = userConcerns;
-                return Json(new { id = concern.Id, user = userId, votes = concern.vote(userId) });
+                return Json(new { id = concern.Id, user = user.Id, votes = concern.vote(user.Id) });
 
-            }
-            return Json(new { });
+            }*/
+            db.Add(new UserConcern
+            {
+                UserId = user.Id,
+                ConcernId = concernId
+            });
+            await db.SaveChangesAsync();
+            int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
+            return Json(new { votes = votes});
         }
         
         [HttpPost]

@@ -25,9 +25,11 @@ namespace mosPortal
 
         
 
+            /*
+           dbbuergerContext db = new dbbuergerContext();
+            //var concern = db.Concern.Where(c => c.Id == 1);
 
-           /* dbbuergerContext db = new dbbuergerContext();
-            var concern = db.Concern.Where(c => c.Id == 1);
+            User user = db.User.Where(u => u.Id == 3).SingleOrDefault();
 
             /*Address address = new Address
                 { Country = "DE",
