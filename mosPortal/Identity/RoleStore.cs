@@ -14,13 +14,12 @@ namespace mosPortal.Identity
 
     public class RoleStore : IRoleStore<Role>
     {
-        private readonly dbbuergerContext db;
+        private dbbuergerContext db;
+        private Role roles;
         public RoleStore(dbbuergerContext db)
         {
             this.db = db;
         }
-        public void Dispose()
-        {        }
 
         public async Task<IdentityResult> CreateAsync(Role role, CancellationToken cancellationToken)
         {
@@ -85,6 +84,15 @@ namespace mosPortal.Identity
         {
             return await db.Role.AsAsyncEnumerable().SingleOrDefault(r => r.Name.Equals(normalizedRoleName, StringComparison.OrdinalIgnoreCase), cancellationToken);
             //throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            if (db != null)
+            {
+                db.Dispose();
+                db = null;
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using mosPortal.Models;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace mosPortal
 {
     public class Program
@@ -21,9 +22,9 @@ namespace mosPortal
             CreateWebHostBuilder(args).Build().Run();
 
             // Testing Classes:
-            
-            
-            
+
+        
+
 
            /* dbbuergerContext db = new dbbuergerContext();
             var concern = db.Concern.Where(c => c.Id == 1);

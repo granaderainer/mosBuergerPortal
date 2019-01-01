@@ -1,4 +1,6 @@
 ﻿@using mosPortal.Models
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @if (SignInManager.IsSignedIn(User))
@@ -13,6 +15,14 @@
             </li>
         </ul>
     </form>
+    @if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
+    {
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <a asp-area="" asp-action="Index" asp-controller="Administration">Verwaltung</a>
+            </li>
+        </ul>
+    }
 }
 else
 {

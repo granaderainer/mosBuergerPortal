@@ -52,7 +52,7 @@ namespace mosPortal.Controllers
 
             return View("ConcernsView",concerns);
         }
-        [Authorize(Roles = "User,Administrator")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ShowConcern(int concernId)
         {
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();

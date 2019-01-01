@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using mosPortal.Identity;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace mosPortal
 {
@@ -61,27 +62,16 @@ namespace mosPortal
             //Tell identity to use our custom storage provider for roles
             services.AddTransient<IRoleStore<Role>, RoleStore>();
 
-            //services.AddTransient<IUserRoleStore<UserRole>, UserRoleStore>();
-
             services.ConfigureApplicationCookie(options =>
             {
                 options.Cookie.HttpOnly = true;
                 options.LoginPath = "/Login";
                 options.LogoutPath = "/Logout";
             });
-            
-            /*services.AddAuthentication(options =>
+            services.AddAuthorization(options =>
             {
-                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }).AddCookie(options => { options.LoginPath = "/Login"; });
-            services.AddMvc().AddRazorPagesOptions(options =>
-            {
-                options.Conventions.AuthorizeFolder("/");
-                options.Conventions.AllowAnonymousToPage("/Login");
+                options.AddPolicy("AllAdministrationRoles", policy => policy.RequireRole("Admin"));
             });
-            */
             // End Add Authentication and Authorization
         }
 

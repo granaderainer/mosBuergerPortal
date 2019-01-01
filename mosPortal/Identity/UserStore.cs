@@ -33,7 +33,7 @@ namespace mosPortal.Identity
         {
             if (disposing)
             {
-                db?.Dispose();
+                db.Dispose();
             }
         }
 
