@@ -1,0 +1,13 @@
+﻿@model mosPortal.Models.Poll
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@{
+    ViewData["Title"] = "ShowPolls";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <h2>Show Polls</h2>
+</div>

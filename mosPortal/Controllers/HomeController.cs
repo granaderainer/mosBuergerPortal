@@ -115,5 +115,18 @@ namespace mosPortal.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [Authorize(Policy = "AllRoles")]
+        public IActionResult ShowPolls()
+        {
+            //IActionResult
+            //DB Abfrage für Polls
+            //Einstellen von Polls (Verwaltung)
+            Poll poll = new Poll();
+
+            return View("PollsView", poll);
+
+        }
+
     }
 }
