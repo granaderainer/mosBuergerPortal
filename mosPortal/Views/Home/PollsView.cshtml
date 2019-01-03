@@ -1,4 +1,4 @@
-﻿@model mosPortal.Models.Poll
+﻿@model List<Poll>
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
@@ -6,8 +6,37 @@
 @{
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var polls = ViewData["Polls"] as IEnumerable<Category>;
 }
 
 <div class="container">
     <h2>Show Polls</h2>
+    @*Each Poll*@
+    @foreach (var item in Model)
+    {
+        <div class="panel panel-default container-fluid">
+            <div class="panel-heading row">
+                <h4 class="col-md-4">@item.Text</h4>
+            </div>
+            <div class="panel-body">
+                @foreach (var answer in item.AnswerOptionsPoll)
+                {
+                    //Radiobuttons
+                    <div class="custom-control custom-radio">
+                        <input type="radio" class="custom-control-input" id="defaultUnchecked" name="defaultExampleRadios">
+                        <label class="custom-control-label" for="defaultUnchecked">@answer.Id</label>
+                    </div>
+                }
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </div>
+            <div class="panel-footer row">
+                <div class="col-xs-3">
+                    <small>Gültig bis: @item.End</small>
+                </div>
+                <div class="col-2-xs pull-right">
+                    <small>Von User @item.UserId</small>
+                </div>
+            </div>
+        </div>
+    }
 </div>

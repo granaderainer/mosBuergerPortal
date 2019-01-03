@@ -122,9 +122,22 @@ namespace mosPortal.Controllers
             //IActionResult
             //DB Abfrage für Polls
             //Einstellen von Polls (Verwaltung)
-            Poll poll = new Poll();
+           
+            List<Poll> polls = db.Poll.Select(p => new Poll
+            {
+                Id = p.Id,
+                Text = p.Text,
+                End = p.End,
+                UserId = p.UserId,
+                NeedsLocalCouncil = p.NeedsLocalCouncil,
+                Approved = p.Approved,
+                AnswerOptionsPoll = db.AnswerOptionsPoll.Where(c => c.PollId == p.Id).ToList()
+                
 
-            return View("PollsView", poll);
+            }).ToList();
+            //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
+            return View("PollsView",polls);
 
         }
 
