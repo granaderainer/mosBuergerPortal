@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http;
 using mosPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace mosPortal.Controllers
 {
@@ -20,7 +21,6 @@ namespace mosPortal.Controllers
         private dbbuergerContext db = new dbbuergerContext();
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
-
 
         public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
         {
@@ -32,6 +32,7 @@ namespace mosPortal.Controllers
         {
             return View();
         }
+        //bei Schow Concern Prüfen ob man nicht den einen Concern übergeben kann => keine Weitere DB Abfrage nötig
         [AllowAnonymous]
         public IActionResult ShowConcerns()
         {
@@ -69,19 +70,6 @@ namespace mosPortal.Controllers
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
             User user = await userManager.GetUserAsync(HttpContext.User);
-            //UserConcern userConcern = db.UserConcern.Where(uc=> uc.ConcernId == concernId).SingleOrDefault();
-            //ICollection < UserConcern > userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.UserId == user.Id);
-
-            /*user.UserConcern = userConcerns;
-            if (user.allowToVote(concernId))
-            {
-            Concern concern = db.Concern
-                .Where(c => c.Id == concernId).SingleOrDefault();
-            userConcerns = (ICollection<UserConcern>)db.UserConcern.Where(uc => uc.ConcernId == concernId);
-            concern.UserConcern = userConcerns;
-                return Json(new { id = concern.Id, user = user.Id, votes = concern.vote(user.Id) });
-
-            }*/
             db.Add(new UserConcern
             {
                 UserId = user.Id,
@@ -91,7 +79,38 @@ namespace mosPortal.Controllers
             int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
             return Json(new { votes = votes});
         }
-        
+
+        [Authorize(Policy = "AllRoles")]
+        [HttpGet]
+        public IActionResult CreateConcern()
+        {
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+            return View("CreateConcernView");
+        }
+        [Authorize(Policy = "AllRoles")]
+        [HttpPost]
+        public async Task<IActionResult> CreateConcernAsync(Concern concern)
+        {
+
+            if (ModelState.IsValid)
+            {
+                concern.UserId = (await userManager.GetUserAsync(HttpContext.User)).Id;
+                concern.Date = DateTime.UtcNow;
+                db.Add(concern);
+                await db.SaveChangesAsync();
+                return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
+            }
+            else {
+                return View("CreateConcernView");
+            }
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostCommentAsync(int concernId, string commentText)
         {
