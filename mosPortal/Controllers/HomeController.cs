@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using mosPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace mosPortal.Controllers
 {
@@ -141,7 +142,7 @@ namespace mosPortal.Controllers
             //IActionResult
             //DB Abfrage für Polls
             //Einstellen von Polls (Verwaltung)
-           
+
             List<Poll> polls = db.Poll.Select(p => new Poll
             {
                 Id = p.Id,
@@ -151,14 +152,53 @@ namespace mosPortal.Controllers
                 NeedsLocalCouncil = p.NeedsLocalCouncil,
                 Approved = p.Approved,
                 AnswerOptionsPoll = db.AnswerOptionsPoll.Where(c => c.PollId == p.Id).ToList()
-                
+
 
             }).ToList();
-            //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
+            int pollId = 1;
+
+            var answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId).Include("AnswerOptions")
+                .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
+                );
+            foreach (var poll in polls)
+            {
+               
+            }
+        //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
             List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
             return View("PollsView",polls);
 
         }
+
+        //public Task<IActionResult> submitPollAnswer(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")])
+        public Task<IActionResult> submitPollAnswer(Poll poll)
+        {
+
+            if (ModelState.IsValid)
+            {
+                //gehtcurrentUser for Poll
+                //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
+                //getcurrentDate for Database
+                DateTime date = DateTime.UtcNow;
+                //Anwort in DB (User_Concern)
+                //await db.SaveChangesAsync();
+                //return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
+            }
+            else
+            {
+                //return View("CreateConcernView");
+            }
+
+            //return View("PollsView", polls);
+            return null;
+        }
+
 
     }
 }

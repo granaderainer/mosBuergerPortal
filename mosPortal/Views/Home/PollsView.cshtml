@@ -23,11 +23,16 @@
                 {
                     //Radiobuttons
                     <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="defaultUnchecked" name="defaultExampleRadios">
+                        <input type="radio" class="custom-control-input" id="radio@answer.Id" name="defaultExampleRadios">
                         <label class="custom-control-label" for="defaultUnchecked">@answer.Id</label>
                     </div>
                 }
-                <input class="btn btn-primary" type="submit" value="Submit">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div>
+                            <a class="btn btn-primary" id="submitPollAnswer" asp-action="submitPollAnswer" asp-controller="Home"><i class="fa fa-check"></i> Abstimmen</a>
+                    </div>
+                }
             </div>
             <div class="panel-footer row">
                 <div class="col-xs-3">
