@@ -119,11 +119,5 @@ namespace mosPortal.Controllers
             await signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
-        public async Task<IActionResult> TestAsync()
-        {
-            var user = await userManager.FindByIdAsync("3");
-            var Roles = userManager.GetRolesAsync(user);
-            return View();
-        }
     }
 }
