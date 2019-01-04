@@ -24,11 +24,13 @@ namespace mosPortal.Models
         [Required]
         [Display(Name = "Kategorie")]
         public int CategoryId { get; set; }
+        public int StatusId { get; set; }
 
         public Category Category { get; set; }
         public User User { get; set; }
         public ICollection<Comment> Comment { get; set; }
         public ICollection<UserConcern> UserConcern { get; set; }
+        public Status Status { get; set; }
 
         public int vote(int userID)
         {

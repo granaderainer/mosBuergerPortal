@@ -103,6 +103,7 @@ namespace mosPortal.Controllers
             {
                 concern.UserId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 concern.Date = DateTime.UtcNow;
+                concern.StatusId = 1;
                 db.Add(concern);
                 await db.SaveChangesAsync();
                 return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });

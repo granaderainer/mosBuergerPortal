@@ -7,24 +7,19 @@
 {
     <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="navbar-right">
     <ul class="nav navbar-nav navbar-right">
-        <!--<li>
-            <a asp-area="" asp-controller="Home" asp-action="Index" title="Profil anzeigen">Willkommen, @UserManager.GetUserName(User)</a>
-        </li>
-        <li>
-            <button type="submit" class="btn btn-link navbar-btn navbar-link">Log out</button>
-        </li>-->
+
         <li class="dropdown">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> @UserManager.GetUserName(User) <b class="caret"></b></a>
             <ul class="dropdown-menu">
                 <li>
                     <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
                 </li>
-                <li>
-                    <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                </li>
-                <li>
-                    <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                </li>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
+                {
+                    <li>
+                        <a asp-area="" asp-action="Index" asp-controller="Administration"><i class="fa fa-fw fa-cogs"></i>Verwaltung</a>
+                    </li>
+                }
                 <li class="divider"></li>
                 <li>
                     <a href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
@@ -33,14 +28,6 @@
         </li>
     </ul>
     </form>
-    @if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
-    {
-        <ul class="nav navbar-nav navbar-right">
-            <li>
-                <a asp-area="" asp-action="Index" asp-controller="Administration">Verwaltung</a>
-            </li>
-        </ul>
-    }
 }
 else
 {
