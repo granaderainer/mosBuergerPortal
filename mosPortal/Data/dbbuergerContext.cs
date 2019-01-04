@@ -326,7 +326,7 @@ namespace mosPortal.Data
                     .HasColumnName("password")
                     .HasColumnType("varchar(200)");
 
-                entity.Property(e => e.Username)
+                entity.Property(e => e.UserName)
                     .IsRequired()
                     .HasColumnName("username")
                     .HasColumnType("varchar(45)");
