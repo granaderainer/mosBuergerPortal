@@ -48,5 +48,33 @@ namespace mosPortal.Controllers
             }
             return View("ConcernsAdministrationView", concerns);
         }
+        public JsonResult GetConcernJson(int concernId)
+        {
+            //Concern concern = db.Concern.Where(c => c.Id == concernId).Include("Status").Where(c=>c.StatusId == c.Status.Id).SingleOrDefault();
+            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            Status[] statuses = db.Status.ToArray();
+            /*User user = await userManager.GetUserAsync(HttpContext.User);
+            db.Add(new UserConcern
+            {
+                UserId = user.Id,
+                ConcernId = concernId
+            });
+            await db.SaveChangesAsync();
+            int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
+            return Json(new { votes = votes });*/
+            string statusesJson = Newtonsoft.Json.JsonConvert.SerializeObject(statuses);
+            return Json(new { concernId, title = concern.Title, text= concern.Text,statusId = concern.StatusId ,date = concern.Date, statuses});
+        }
+        [HttpPost]
+        public IActionResult ChangeConcernStatus(string concernModalStatus, string concernModalId)
+        {
+            int concernId = Convert.ToInt32(concernModalId);
+            int statusId = Convert.ToInt32(concernModalStatus);
+            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            concern.StatusId = statusId;
+            db.Concern.Update(concern);
+            db.SaveChanges();
+            return this.ShowConcerns(statusId);
+        }
     }
 }
