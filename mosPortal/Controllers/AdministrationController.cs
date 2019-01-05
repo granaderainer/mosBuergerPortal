@@ -71,10 +71,11 @@ namespace mosPortal.Controllers
             int concernId = Convert.ToInt32(concernModalId);
             int statusId = Convert.ToInt32(concernModalStatus);
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            int oldStatus = concern.StatusId;
             concern.StatusId = statusId;
             db.Concern.Update(concern);
             db.SaveChanges();
-            return this.ShowConcerns(statusId);
+            return this.ShowConcerns(oldStatus);
         }
     }
 }
