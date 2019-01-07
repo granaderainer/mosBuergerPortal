@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using mosPortal.Models;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
 namespace mosPortal.Data
 {
@@ -227,6 +226,9 @@ namespace mosPortal.Data
 
             modelBuilder.Entity<Poll>(entity =>
             {
+                entity.HasIndex(e => e.CategoryId)
+                    .HasName("fk_Poll_Category1_idx");
+
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_poll_User1_idx");
 
@@ -236,7 +238,11 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.Approved)
                     .HasColumnName("approved")
-                    .HasColumnType("tinyint(4)");
+                    .HasColumnType("bit(1)");
+
+                entity.Property(e => e.CategoryId)
+                    .HasColumnName("Category_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.End)
                     .HasColumnName("end")
@@ -244,15 +250,25 @@ namespace mosPortal.Data
 
                 entity.Property(e => e.NeedsLocalCouncil)
                     .HasColumnName("needsLocalCouncil")
-                    .HasColumnType("tinyint(4)");
+                    .HasColumnType("bit(1)");
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
                     .HasColumnType("varchar(5000)");
 
+                entity.Property(e => e.Title)
+                    .HasColumnName("title")
+                    .HasColumnType("varchar(100)");
+
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
                     .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Category)
+                    .WithMany(p => p.Poll)
+                    .HasForeignKey(d => d.CategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Poll_Category1");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Poll)

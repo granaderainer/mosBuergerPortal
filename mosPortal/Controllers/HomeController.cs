@@ -86,14 +86,15 @@ namespace mosPortal.Controllers
         [HttpGet]
         public IActionResult CreateConcern()
         {
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
-            }
-            ViewData["CategoriesList"] = categoriesList;
-            return View("CreateConcernView");
+                List<SelectListItem> categoriesList = new List<SelectListItem>();
+                List<Category> categories = db.Category.ToList();
+                foreach (Category category in categories)
+                {
+                    categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+                }
+                ViewData["CategoriesList"] = categoriesList;
+                return View("CreateConcernView");
+
         }
         [Authorize(Policy = "AllRoles")]
         [HttpPost]

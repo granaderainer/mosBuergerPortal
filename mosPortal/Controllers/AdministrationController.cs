@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mosPortal.Data;
 using mosPortal.Models;
@@ -15,7 +16,7 @@ namespace mosPortal.Controllers
         public IActionResult Index()
         {
             ViewData["ConcernStatusOneCount"] = db.Concern.Where(c=> c.StatusId == 1).Count();
-            ViewData["ConcernStatusTwoCount"] = db.Concern.Where(c => c.StatusId == 2).Count();
+            ViewData["ConcernStatusTwoCount"] = db.Concern.Where(c => c.StatusId == 2).Include("UserConcern").Where(c=> c.UserConcern.Count >=1).Count();
             ViewData["ConcernStatusThreeCount"] = db.Concern.Where(c => c.StatusId == 3).Count();
             //Ablauf Datum!!!
             ViewData["PollCount"] = db.Poll.Count();
@@ -23,45 +24,68 @@ namespace mosPortal.Controllers
         }
         public IActionResult ShowConcerns(int statusId)
         {
+            
             ViewData["Status"] = db.Status.Where(s => s.Id == statusId).SingleOrDefault().Description;
-            List<Concern> concerns = db.Concern
-                .Where(c=> c.StatusId == statusId)
-                .Include("Category")
-                .Where(c => c.CategoryId == c.Category.Id)
-                .Include("Status")
-                .Where(c=> c.StatusId == c.Status.Id)
-                .Select(x => new Concern
-                {
-                    Id = x.Id,
-                    Text = x.Text,
-                    Title = x.Title,
-                    Date = x.Date,
-                    StatusId = x.StatusId,
-                    Category = x.Category,
-                    UserId = x.UserId,
-                    Status = x.Status
-                }).ToList();
-            foreach (Concern concern in concerns)
+            if (statusId != 2)
             {
-                List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
-                concern.UserConcern = userConcerns;
+                List<Concern> concerns = db.Concern
+                    .Where(c => c.StatusId == statusId)
+                    .Include("Category")
+                    .Where(c => c.CategoryId == c.Category.Id)
+                    .Include("Status")
+                    .Where(c => c.StatusId == c.Status.Id)
+                    .Select(x => new Concern
+                    {
+                        Id = x.Id,
+                        Text = x.Text,
+                        Title = x.Title,
+                        Date = x.Date,
+                        StatusId = x.StatusId,
+                        Category = x.Category,
+                        UserId = x.UserId,
+                        Status = x.Status
+                    }).ToList();
+                foreach (Concern concern in concerns)
+                {
+                    List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
+                    concern.UserConcern = userConcerns;
+                }
+                return View("ConcernsAdministrationView", concerns);
             }
+            else
+            {
+                List<Concern> concerns = db.Concern.Where(c => c.StatusId == statusId).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
+                return View("ConcernsAdministrationView", concerns);
+            }
+        }
+        public IActionResult CreatePoll()
+        {
+            Poll poll = new Poll();
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<SelectListItem> answerOptionList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            foreach(AnswerOptions anserOption in answerOptions)
+            {
+                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+            ViewData["AnswerOptionsList"] = answerOptionList;
+            return View("CreatePollAdministrationView", poll);
+        }
+        public IActionResult ShowConcernsLocalCouncil()
+        {
+            List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
             return View("ConcernsAdministrationView", concerns);
         }
         public JsonResult GetConcernJson(int concernId)
         {
-            //Concern concern = db.Concern.Where(c => c.Id == concernId).Include("Status").Where(c=>c.StatusId == c.Status.Id).SingleOrDefault();
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
-            Status[] statuses = db.Status.ToArray();
-            /*User user = await userManager.GetUserAsync(HttpContext.User);
-            db.Add(new UserConcern
-            {
-                UserId = user.Id,
-                ConcernId = concernId
-            });
-            await db.SaveChangesAsync();
-            int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
-            return Json(new { votes = votes });*/
+            Status[] statuses = db.Status.Where(s=> s.Id >= concern.StatusId).ToArray();
             string statusesJson = Newtonsoft.Json.JsonConvert.SerializeObject(statuses);
             return Json(new { concernId, title = concern.Title, text= concern.Text,statusId = concern.StatusId ,date = concern.Date, statuses});
         }
