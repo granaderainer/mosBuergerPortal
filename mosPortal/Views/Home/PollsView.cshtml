@@ -1,4 +1,4 @@
-﻿@model List<Poll>
+﻿@model ICollection<PollViewModel>
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
@@ -7,7 +7,7 @@
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
     //var polls = ViewData["Polls"] as IEnumerable<Category>;
-    var polls = ViewData["Polls"] as IEnumerable<Poll>;
+    
 }
 
 <div class="container">
@@ -23,17 +23,20 @@
 
                 @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
                 <div class="custom-control custom-radio">
+                    <form asp-action="submitPollAnswer" asp-controller="Home" >
                     @foreach (var answer in item.AnswerOptionsPoll)
                     {
                         //Radiobuttons IDs vergeben
                         //Submitbuttons Auswahl des Radiobuttons zum Controller geben
                         //value ist ID aus der Description in AnswerOptions
-                        <input  type="radio" class="custom-control-input" id="@answer.AnswerOptions.Id" name="radio" value="@answer.AnswerOptions.Id">
-                        <label  class="custom-control-label" for="defaultUnchecked">@answer.AnswerOptions.Description</label>
+                        
+                        <input type="radio" class="custom-control-input" id="@answer.AnswerOptions.Id" name="radio" value="@answer.AnswerOptions.Id">
+                        <label class="custom-control-label" for="defaultUnchecked">@answer.AnswerOptions.Description</label>
                     }
-                    <a asp-action="submitPollAnswer" asp-route-id="@item.AnswerOptionsPoll">
+                    <button type="submit">
                         <i class="fa fa-check">Abstimmen</i>
-                    </a>
+                    </button>
+                    </form>
                     @*<div class="form-group">
                 <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
                 <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton1</label>
