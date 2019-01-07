@@ -19,27 +19,35 @@
                 <h4 class="col-md-4">@item.Text</h4>
             </div>
             <div class="panel-body">
-                @foreach (var answer in item.AnswerOptionsPoll)
-                {
-                    //Radiobuttons
-                    <div class="custom-control custom-radio">
-                        <input type="radio" class="custom-control-input" id="radio@answer.Id" name="defaultExampleRadios">
-                        <label class="custom-control-label" for="defaultUnchecked">@answer.Id</label>
+
+                <div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">
+                    @*@foreach (var answer in item.AnswerOptionsPoll)
+        {
+            //Radiobuttons IDs vergeben
+            //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+            //value ist ID aus der Description in AnswerOptions
+            <input asp-for="RadioId" type="radio" class="custom-control-input" id="@answer.AnswerOptions.Id" name="radio" value="@answer.AnswerOptions.Id">
+            <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">@answer.AnswerOptions.Description</label>
+        }
+        $1$<div><button type="submit" class="btn btn-primary"><i class="fa fa-check">Abstimmen</i></button></div>#1#*@
+                    <div class="form-group">
+                        <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
+                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton1</label>
+                        <input asp-for="RadioId" type="radio" class="custom-control-input" id="radio2" name="radio" value="radio2">
+                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton2</label>
+                        
+
+                        <a class="btn btn-primary" id="submitPollAnswer"><i class="fa fa-check"></i>Abstimmen</a>
+
+
                     </div>
-                }
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <div>
-                            <a class="btn btn-primary" id="submitPollAnswer" asp-action="submitPollAnswer" asp-controller="Home"><i class="fa fa-check"></i> Abstimmen</a>
+                <div class="panel-footer row">
+                    <div class="col-xs-3">
+                        <small>Gültig bis: @item.End</small>
                     </div>
-                }
-            </div>
-            <div class="panel-footer row">
-                <div class="col-xs-3">
-                    <small>Gültig bis: @item.End</small>
-                </div>
-                <div class="col-2-xs pull-right">
-                    <small>Von User @item.UserId</small>
+                    <div class="col-2-xs pull-right">
+                        <small>Von User @item.UserId</small>
+                    </div>
                 </div>
             </div>
         </div>

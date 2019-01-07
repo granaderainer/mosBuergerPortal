@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace mosPortal.Models
 {
@@ -19,5 +20,7 @@ namespace mosPortal.Models
 
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
+        [Display(Name = "RadioId")]
+        public string RadioId { get; set; }
     }
 }
