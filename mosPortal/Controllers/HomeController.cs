@@ -146,7 +146,7 @@ namespace mosPortal.Controllers
             //DB Abfrage für Polls
             //Einstellen von Polls (Verwaltung)
 
-            List<Poll> polls = db.Poll.Select(p => new Poll
+            /*List<Poll> polls = db.Poll.Select(p => new Poll
             {
                 Id = p.Id,
                 Text = p.Text,
@@ -157,40 +157,50 @@ namespace mosPortal.Controllers
                 AnswerOptionsPoll = db.AnswerOptionsPoll.Where(c => c.PollId == p.Id).ToList()
 
 
-            }).ToList();
+            }).ToList();*/
             int pollId = 1;
-
-            var answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId).Include("AnswerOptions")
-                .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
-                    {
-                        Id = aop.Id,
-                        AnswerOptionsId = aop.AnswerOptionsId,
-                        PollId = aop.PollId,
-                        AnswerOptions = aop.AnswerOptions
-                    }
-                );
-            foreach (var poll in polls)
+            //Where enddatum < aktuelles datum
+            List<Poll> polls = db.Poll.ToList();
+            foreach (Poll poll in polls)
             {
-               
+                List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                    .Include("AnswerOptions")
+                    .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
+                        {
+                            Id = aop.Id,
+                            AnswerOptionsId = aop.AnswerOptionsId,
+                            PollId = aop.PollId,
+                            AnswerOptions = aop.AnswerOptions
+                        }
+                    ).ToList();
+                poll.AnswerOptionsPoll = answers;
+                
             }
+
+        
         //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
-            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
+            //List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
             return View("PollsView",polls);
 
         }
 
         //public Task<IActionResult> submitPollAnswer(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")])
-        public Task<IActionResult> submitPollAnswer(Poll poll)
+        [HttpPost]
+        public Task<IActionResult> submitPollAnswer(Poll poll, string returnUrl =null, string radioValue = "1")
         {
-
+            
             if (ModelState.IsValid)
             {
+                string RadioId = poll.RadioId;
                 //gehtcurrentUser for Poll
                 //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 //getcurrentDate for Database
                 DateTime date = DateTime.UtcNow;
                 //Anwort in DB (User_Concern)
                 //await db.SaveChangesAsync();
+                //return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
+
+
                 //return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
             }
             else
