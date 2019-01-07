@@ -14,5 +14,6 @@ namespace mosPortal.Models
         public string Description { get; set; }
 
         public ICollection<Concern> Concern { get; set; }
+        public ICollection<Poll> Poll { get; set; }
     }
 }
