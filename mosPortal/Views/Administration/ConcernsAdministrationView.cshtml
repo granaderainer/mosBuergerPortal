@@ -133,6 +133,7 @@
 
         function test(concernId) {
             $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
+                $("#concernModalId").val(concernId);
                 document.getElementById("concernModalTitle").innerHTML= "<h4>"+(data.title)+"</h4>";
                 document.getElementById("concernModalText").innerHTML = (data.text);
                 document.getElementById("concernModalDate").innerHTML = "Erstellt am: "+(data.date);// display id value which is returned from the action method
