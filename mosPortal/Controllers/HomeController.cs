@@ -190,7 +190,7 @@ namespace mosPortal.Controllers
             
             if (ModelState.IsValid)
             {
-                string RadioId = poll.RadioId;
+                
                 //gehtcurrentUser for Poll
                 //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 //getcurrentDate for Database

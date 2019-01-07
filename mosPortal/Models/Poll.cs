@@ -17,10 +17,8 @@ namespace mosPortal.Models
         public int UserId { get; set; }
         public byte? NeedsLocalCouncil { get; set; }
         public byte? Approved { get; set; }
-
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
-        [Display(Name = "RadioId")]
-        public string RadioId { get; set; }
+
     }
 }
