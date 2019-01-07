@@ -32,8 +32,7 @@ namespace mosPortal.Models
         public Category Category { get; set; }
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
-        [Display(Name = "RadioId")]
-        public string RadioId { get; set; }
+        
 
     }
 }
