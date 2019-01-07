@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -176,17 +177,38 @@ namespace mosPortal.Controllers
                 poll.AnswerOptionsPoll = answers;
                 
             }
+            ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
+            foreach (Poll poll in polls)
+            {
+                PollViewModel pollViewModel = new PollViewModel();
 
-        
+                pollViewModel.Id = poll.Id;
+                pollViewModel.Text = poll.Text;
+                pollViewModel.End = poll.End;
+                pollViewModel.UserId = poll.UserId;
+                pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
+                pollViewModel.Approved = poll.Approved;
+                pollViewModel.CategoryId = poll.CategoryId;
+                pollViewModel.Title = poll.Title;
+                pollViewModel.Category = poll.Category;
+                pollViewModel.User = poll.User;
+                pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
+                pollViewModel.RadioId = 0;
+
+                pollViewModels.Add(pollViewModel);
+
+
+
+            }
         //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
             //List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
-            return View("PollsView",polls);
+            return View("PollsView",pollViewModels);
 
         }
 
         //public Task<IActionResult> submitPollAnswer(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")])
         [HttpPost]
-        public Task<IActionResult> submitPollAnswer(Poll poll, string returnUrl =null, string radioValue = "1")
+        public Task<IActionResult> submitPollAnswer(Poll poll, int AnswerOptionId, int pollId)
         {
             
             if (ModelState.IsValid)
