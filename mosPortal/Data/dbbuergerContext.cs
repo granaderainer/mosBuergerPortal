@@ -25,6 +25,7 @@ namespace mosPortal.Data
         public virtual DbSet<Concern> Concern { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<User> User { get; set; }
         public virtual DbSet<UserAnswerOptionsPoll> UserAnswerOptionsPoll { get; set; }
         public virtual DbSet<UserConcern> UserConcern { get; set; }
@@ -34,13 +35,8 @@ namespace mosPortal.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;");
-                optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;",
-                mySqlOptions =>
-                {
-                    mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql);
-                }
-                );
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+                optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;");
             }
         }
 
@@ -176,6 +172,9 @@ namespace mosPortal.Data
                 entity.HasIndex(e => e.CategoryId)
                     .HasName("fk_Concern_Category1_idx");
 
+                entity.HasIndex(e => e.StatusId)
+                    .HasName("fk_Concern_Status1_idx");
+
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_concern_User1_idx");
 
@@ -190,6 +189,10 @@ namespace mosPortal.Data
                 entity.Property(e => e.Date)
                     .HasColumnName("date")
                     .HasColumnType("datetime");
+
+                entity.Property(e => e.StatusId)
+                    .HasColumnName("Status_id")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Text)
                     .HasColumnName("text")
@@ -208,6 +211,12 @@ namespace mosPortal.Data
                     .HasForeignKey(d => d.CategoryId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_Concern_Category1");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Concern)
+                    .HasForeignKey(d => d.StatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Concern_Status1");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Concern)
@@ -267,6 +276,18 @@ namespace mosPortal.Data
                     .HasColumnType("varchar(45)");
             });
 
+            modelBuilder.Entity<Status>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Description)
+                    .IsRequired()
+                    .HasColumnName("description")
+                    .HasColumnType("varchar(100)");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasIndex(e => e.AddressId)
@@ -303,7 +324,7 @@ namespace mosPortal.Data
                 entity.Property(e => e.Password)
                     .IsRequired()
                     .HasColumnName("password")
-                    .HasColumnType("varchar(45)");
+                    .HasColumnType("varchar(200)");
 
                 entity.Property(e => e.UserName)
                     .IsRequired()

@@ -39,6 +39,7 @@ namespace mosPortal.Controllers
         {
             ViewData["Categories"] = db.Category;
             List<Concern> concerns = db.Concern
+                            .Where(c=> c.StatusId == 2 || c.StatusId == 3)
                             .Include("Category")
                             .Where(c=>c.CategoryId == c.Category.Id)
                             .Select (x => new Concern
@@ -103,6 +104,7 @@ namespace mosPortal.Controllers
             {
                 concern.UserId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 concern.Date = DateTime.UtcNow;
+                concern.StatusId = 1;
                 db.Add(concern);
                 await db.SaveChangesAsync();
                 return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });

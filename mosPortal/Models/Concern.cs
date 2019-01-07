@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Newtonsoft.Json;
 
 namespace mosPortal.Models
 {
@@ -24,11 +25,16 @@ namespace mosPortal.Models
         [Required]
         [Display(Name = "Kategorie")]
         public int CategoryId { get; set; }
+        
+        public int StatusId { get; set; }
 
         public Category Category { get; set; }
         public User User { get; set; }
         public ICollection<Comment> Comment { get; set; }
+        [Display(Name = "Likes")]
         public ICollection<UserConcern> UserConcern { get; set; }
+        [Display(Name = "Status")]
+        public Status Status { get; set; }
 
         public int vote(int userID)
         {
