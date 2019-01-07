@@ -143,22 +143,6 @@ namespace mosPortal.Controllers
         [Authorize(Policy = "AllRoles")]
         public IActionResult ShowPolls()
         {
-            //IActionResult
-            //DB Abfrage für Polls
-            //Einstellen von Polls (Verwaltung)
-
-            /*List<Poll> polls = db.Poll.Select(p => new Poll
-            {
-                Id = p.Id,
-                Text = p.Text,
-                End = p.End,
-                UserId = p.UserId,
-                NeedsLocalCouncil = p.NeedsLocalCouncil,
-                Approved = p.Approved,
-                AnswerOptionsPoll = db.AnswerOptionsPoll.Where(c => c.PollId == p.Id).ToList()
-
-
-            }).ToList();*/
             int pollId = 1;
             //Where enddatum < aktuelles datum
             List<Poll> polls = db.Poll.ToList();
@@ -193,7 +177,8 @@ namespace mosPortal.Controllers
                 pollViewModel.Category = poll.Category;
                 pollViewModel.User = poll.User;
                 pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
-                pollViewModel.RadioId = 0;
+                pollViewModel.RadioId = "0";
+                
 
                 pollViewModels.Add(pollViewModel);
 
@@ -208,12 +193,13 @@ namespace mosPortal.Controllers
 
         //public Task<IActionResult> submitPollAnswer(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")])
         [HttpPost]
-        public Task<IActionResult> submitPollAnswer(Poll poll, int AnswerOptionId, int pollId)
+        public async Task<IActionResult> submitPollAnswer(PollViewModel poll)
         {
             
             if (ModelState.IsValid)
             {
                 
+                string selectedRadio = poll.RadioId;
                 //gehtcurrentUser for Poll
                 //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 //getcurrentDate for Database
@@ -231,7 +217,7 @@ namespace mosPortal.Controllers
             }
 
             //return View("PollsView", polls);
-            return null;
+            return this.ShowPolls();
         }
 
 

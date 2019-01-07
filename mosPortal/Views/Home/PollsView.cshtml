@@ -1,4 +1,5 @@
 ﻿@model ICollection<PollViewModel>
+@using System.Linq
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
@@ -7,7 +8,6 @@
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
     //var polls = ViewData["Polls"] as IEnumerable<Category>;
-    
 }
 
 <div class="container">
@@ -15,6 +15,7 @@
     @*Each Poll*@
     @foreach (var item in Model)
     {
+
         <div class="panel panel-default container-fluid">
             <div class="panel-heading row">
                 <h4 class="col-md-4">@item.Text</h4>
@@ -23,19 +24,28 @@
 
                 @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
                 <div class="custom-control custom-radio">
-                    <form asp-action="submitPollAnswer" asp-controller="Home" >
-                    @foreach (var answer in item.AnswerOptionsPoll)
-                    {
-                        //Radiobuttons IDs vergeben
-                        //Submitbuttons Auswahl des Radiobuttons zum Controller geben
-                        //value ist ID aus der Description in AnswerOptions
-                        
-                        <input type="radio" class="custom-control-input" id="@answer.AnswerOptions.Id" name="radio" value="@answer.AnswerOptions.Id">
-                        <label class="custom-control-label" for="defaultUnchecked">@answer.AnswerOptions.Description</label>
-                    }
-                    <button type="submit">
-                        <i class="fa fa-check">Abstimmen</i>
-                    </button>
+                    <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                        <fieldset class="form-group">
+                            @{
+                                for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                                {
+                                    var answer = item.AnswerOptionsPoll.ElementAt(i);
+
+
+                                    //Radiobuttons IDs vergeben
+                                    //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+                                    //value ist ID aus der Description in AnswerOptions
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <input type="radio" class="custom-control-input" value="@answer.AnswerOptions.Id">
+                                    <label asp-for="@item.Id" class="custom-control-label">@answer.AnswerOptions.Description</label>
+                                    <br/>
+                                    <input asp-for="@item.RadioId" type="hidden"/>
+                                }
+                            }
+                            <button class="btn btn-success" type="submit">
+                                <i class="fa fa-check">Abstimmen</i>
+                            </button>
+                        </fieldset>
                     </form>
                     @*<div class="form-group">
                 <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
