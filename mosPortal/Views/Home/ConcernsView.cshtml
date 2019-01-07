@@ -81,11 +81,15 @@
         <div class="col-md-4">
             @if (SignInManager.IsSignedIn(User))
             {
-                <div class="well">
-                    <span class="input-group-btn">
-                        <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
-                    </span>
-                </div>
+            <div class="well">
+                @*<span class="input-group-btn">
+                    <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
+                </span>*@
+                <span class="input-group-btn">
+                    <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
+                </span>
+                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createConcernModal">Neues Anliegen JSon</button>*@
+            </div>
 
             }
             <!-- Blog Search Well -->
@@ -145,17 +149,24 @@
     <hr>
 </div>
 <!-- /.container -->
+@await Html.PartialAsync("CreateConcernModalView", new Concern { }, new ViewDataDictionary(this.ViewData))
+
 <script type="text/javascript">
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
             document.getElementById(btn.id).disabled = true;
             document.getElementById(btn.id).setAttribute('disabled', 'disabled');
 
-            $.get("/Home/VoteForConcernAsync", { concernId: concernId}, function (data) {
-                document.getElementById("likesConcern " + concernId).textContent = (data.votes) +" Likes"; // display id value which is returned from the action method  
-            });  
+            $.get("/Home/VoteForConcernAsync", { concernId: concernId }, function (data) {
+                document.getElementById("likesConcern " + concernId).textContent = (data.votes) + " Likes"; // display id value which is returned from the action method
+            });
         }
-            
+
     }
+    /*$('#createConcernModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        //var concernId = button.data('concernid') // Extract info from data-* attributes
+        //test(concernId)
+    });*/
 
 </script>

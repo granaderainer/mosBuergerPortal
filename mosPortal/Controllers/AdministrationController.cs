@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using mosPortal.Data;
@@ -13,6 +14,14 @@ namespace mosPortal.Controllers
     public class AdministrationController : Controller
     {
         private dbbuergerContext db = new dbbuergerContext();
+        private SignInManager<User> signInManager;
+        private UserManager<User> userManager;
+
+        public AdministrationController(UserManager<User> userManager, SignInManager<User> signManager)
+        {
+            this.userManager = userManager;
+            this.signInManager = signManager;
+        }
         public IActionResult Index()
         {
             ViewData["ConcernStatusOneCount"] = db.Concern.Where(c=> c.StatusId == 1).Count();
@@ -58,6 +67,7 @@ namespace mosPortal.Controllers
                 return View("ConcernsAdministrationView", concerns);
             }
         }
+        [HttpGet]
         public IActionResult CreatePoll()
         {
             Poll poll = new Poll();
@@ -77,6 +87,51 @@ namespace mosPortal.Controllers
             ViewData["AnswerOptionsList"] = answerOptionList;
             return View("CreatePollAdministrationView", poll);
         }
+        [HttpPost]
+        public async Task<IActionResult> CreatePollAsync(string[] answers, Poll poll)
+        {
+            List<int> answerOptionId = new List<int>();
+            if(ModelState.IsValid)
+            {
+                foreach(string answer in answers)
+                {
+                    AnswerOptions answerOption = null;
+                    answerOption = db.AnswerOptions.Where(ao => ao.Description.Equals(answer)).SingleOrDefault();
+                    if(answerOption != null)
+                    {
+                        answerOptionId.Add(answerOption.Id);
+                    }
+                    else
+                    {
+                        answerOption = new AnswerOptions { Description = answer };
+                        db.Add(answerOption);
+                        db.SaveChanges();
+                        answerOptionId.Add(answerOption.Id);
+                    }
+                }
+                if(!poll.NeedsLocalCouncil)
+                {
+                    poll.Approved = true;
+                }
+                else
+                {
+                    poll.Approved = false;
+                }
+                User user = await userManager.GetUserAsync(HttpContext.User);
+                poll.UserId = user.Id;
+                db.Add(poll);
+                db.SaveChanges();
+                foreach(int aoId in answerOptionId)
+                {
+                    db.Add(new AnswerOptionsPoll { PollId = poll.Id, AnswerOptionsId = aoId });
+                    db.SaveChanges();
+                }
+            }
+
+            return View("Index");
+
+
+        }
         public IActionResult ShowConcernsLocalCouncil()
         {
             List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
@@ -87,7 +142,7 @@ namespace mosPortal.Controllers
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             Status[] statuses = db.Status.Where(s=> s.Id >= concern.StatusId).ToArray();
             string statusesJson = Newtonsoft.Json.JsonConvert.SerializeObject(statuses);
-            return Json(new { concernId, title = concern.Title, text= concern.Text,statusId = concern.StatusId ,date = concern.Date, statuses});
+            return Json(new { concernId, title = concern.Title, text= concern.Text,statusId = concern.StatusId ,date = concern.Date.ToString(), statuses});
         }
         [HttpPost]
         public IActionResult ChangeConcernStatus(string concernModalStatus, string concernModalId)

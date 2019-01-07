@@ -9,182 +9,135 @@
 
 <h4>Poll</h4>
 <hr />
-<!--<div class="row">
+<div class="row">
     <div class="col-md-4">
-        <form asp-action="CreatePollAdministrationView" class="input-append">
+        <form asp-action="CreatePollAsync" asp-controller="Administration">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+                <label asp-for="Title" class="col-md-2 control-label"></label>
+
                 <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+                <span asp-validation-for="Title" class="text-danger" />
+
             </div>
             <div class="form-group">
-                <label asp-for="Text" class="control-label"></label>
+                <label asp-for="Text" class="col-md-2 control-label"></label>
+
                 <textarea asp-for="Text" class="form-control"></textarea>
-                <span asp-validation-for="Text" class="text-danger"></span>
+                <span asp-validation-for="Text" class="text-danger" />
+
             </div>
             <div class="form-group">
-                <label asp-for="End" class="control-label"></label>
+                <label asp-for="End" class="col-md-2 control-label"></label>
+
                 <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger"></span>
+                <span asp-validation-for="End" class="text-danger" />
+
             </div>
             <div class="form-group">
-                <label asp-for="NeedsLocalCouncil" class="control-label"></label><br />
-                <input type="radio" name="MyRadioField" value="false" asp-for="NeedsLocalCouncil" checked /> Nein<br />
-                <input type="radio" name="MyRadioField" value="true" asp-for="NeedsLocalCouncil" /> Ja<br />
-                <span asp-validation-for="NeedsLocalCouncil" class="text-danger"></span>
+                <label asp-for="NeedsLocalCouncil" class="col-md-6 control-label"></label>
+                <br /><br />
+                <input data-val="true" data-val-required="The Abstimmung Gemeinderat field is required." id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="True" /> Ja <br />
+                <input id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="False" checked /> Nein
+                @* @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, true) Ja
+                @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, false, new { @checked = "checked" }) Nein
+                 <input type="radio" name="needLocalCouncil" value="false" checked /> Nein <br />
+        <input type="radio" name="needLocalCouncil" value="true" /> Ja*@
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
+                <label asp-for="CategoryId" class=" col-md-2 control-label"></label>
                 <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
+
             </div>
             <div class="form-group">
-                <input type="hidden" name="count" value="1" />
-                <div class="control-group" id="fields">
-                    <label class="control-label" for="field1">Nice Multiple Form Fields</label>
-                    <div class="controls" id="profs">
-                        <div id="field"><input autocomplete="off" class="input" id="field1" name="prof1" type="text" placeholder="Type something" data-items="8" /><button id="b1" class="btn add-more" type="button">+</button></div>
-                        <br>
-                        <small>Press + to add another form field :)</small>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
-            </div>
-
-        </form>
-
-    </div>
-</div>--><div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Title" class="col-md-2 control-label"></label>
-
-                    <input asp-for="Title" class="form-control" />
-                    <span asp-validation-for="Title" class="text-danger" />
-
-                </div>
-                <div class="form-group">
-                    <label asp-for="Text" class="col-md-2 control-label"></label>
-
-                    <textarea asp-for="Text" class="form-control"></textarea>
-                    <span asp-validation-for="Text" class="text-danger" />
-
-                </div>
-                <div class="form-group">
-                    <label asp-for="End" class="col-md-2 control-label"></label>
-
-                    <input asp-for="End" class="form-control" />
-                    <span asp-validation-for="End" class="text-danger" />
-
-                </div>
-                <div class="form-group">
-                    <label asp-for="NeedsLocalCouncil" class="col-md-6 control-label"></label>
-                    <br /><br />
-                    <input type="radio" name="MyRadioField" value="false" asp-for="NeedsLocalCouncil" checked /> Nein <br />
-                    <input type="radio" name="MyRadioField" value="true" asp-for="NeedsLocalCouncil"/> Ja
-                    <span asp-validation-for="NeedsLocalCouncil" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="CategoryId" class=" col-md-2 control-label"></label>
-                    <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
-
-                </div>
-                <div class="form-group">
-                    <label for="sets" class="col-md-2 control-label">Antwortmöglichkeiten</label><br /><br />
-                    <fieldset class="form-add-set">
-                        <div class="col-md-10">
-                            <div class="add-sets">
-                                <div class="form-inline add-set">
-                                    <div class="form-group">
-                                        <label class="control-label">Antwort</label>
-                                        <select class="form-control" asp-items="ViewBag.AnswerOptionsList"></select>
-                                    </div>
-                                    <!--<div class="form-group">
-                <label asp-for="AnswerOptionsPoll.First().Id" class="control-label"></label>
-                <input asp-for="AnswerOptionsPoll.First().Id" placeholder="Reps" class="form-control" />
-                <span asp-validation-for="AnswerOptionsPoll.First().Id" class="text-danger" />
-            </div>-->
-                                    <div class="form-group">
-                                        <button class="btn btn-remove-set" data-toggle="tooltip" title="Remove Set"><span class="glyphicon glyphicon-minus"></span></button>
-                                    </div>
+                <label for="sets" class="col-md-2 control-label">Antwortmöglichkeiten</label><br /><br />
+                <fieldset class="form-add-set">
+                    <div class="col-md-10">
+                        <div class="add-sets">
+                            <div class="form-inline add-set">
+                                <div class="form-group">
+                                    <label class="control-label">Antwort</label>
+                                    <input type="text" class="form-control" name="answers" />
+                                    @*<select class="form-control" asp-items="ViewBag.AnswerOptionsList"></select>*@
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-remove-set btn-danger" data-toggle="tooltip" title="Antwort Entfernen"><span class="glyphicon glyphicon-minus"></span></button>
                                 </div>
                             </div>
-                            <button class="btn btn-add-set">Hinzufügen</button>
-                            <button class="btn">neue Antwort</button>
                         </div>
-                    </fieldset>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Save" class="btn btn-primary" />
+                        <button class="btn btn-add-set">Hinzufügen</button>
                     </div>
+                </fieldset>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-primary" />
                 </div>
+            </div>
         </form>
-        </div>
     </div>
+</div>
 
-        <div>
-            <a asp-action="Index"><span class="glyphicon glyphicon-arrow-left"></span> Back</a>
-        </div>
+<div>
+    <a asp-action="Index"><span class="glyphicon glyphicon-arrow-left"></span> Back</a>
+</div>
 
 
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var wrapper = $('.add-sets');
+<script type="text/javascript">
+    $(document).ready(function () {
+        var wrapper = $('.add-sets');
 
-                $(".btn-add-set").click(function (e) {
+        $(".btn-add-set").click(function (e) {
+            e.preventDefault();
+            $('.add-set:first-child').clone(true).appendTo(wrapper);
+
+            $('.add-set .btn-remove-set').show();
+        });
+
+        $('.btn-remove-set').click(function (e) {
+            e.preventDefault();
+            $(this).parents('.add-set').remove();
+
+            removeButton();
+        });
+        $('.')
+
+        function removeButton() {
+            if ($('.add-set').length == 1) {
+                $('.add-set .btn-remove-set').hide();
+            }
+        }
+    });
+</script>
+
+@*<script type="text/javascript">
+        $(document).ready(function () {
+            var next = 1;
+            $(".add-more").click(function (e) {
+                e.preventDefault();
+                var addto = "#field" + next;
+                var addRemove = "#field" + (next);
+                next = next + 1;
+                var newIn = '<input autocomplete="off" class="input form-control" id="field' + next + '" name="field' + next + '" type="text">';
+                var newInput = $(newIn);
+                var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me">-</button></div><div id="field">';
+                var removeButton = $(removeBtn);
+                $(addto).after(newInput);
+                $(addRemove).after(removeButton);
+                $("#field" + next).attr('data-source', $(addto).attr('data-source'));
+                $("#count").val(next);
+
+                $('.remove-me').click(function (e) {
                     e.preventDefault();
-                    $('.add-set:first-child').clone(true).appendTo(wrapper);
-
-                    $('.add-set .btn-remove-set').show();
+                    var fieldNum = this.id.charAt(this.id.length - 1);
+                    var fieldID = "#field" + fieldNum;
+                    $(this).remove();
+                    $(fieldID).remove();
                 });
-
-                $('.btn-remove-set').click(function (e) {
-                    e.preventDefault();
-                    $(this).parents('.add-set').remove();
-
-                    removeButton();
-                });
-
-                function removeButton() {
-                    if ($('.add-set').length == 1) {
-                        $('.add-set .btn-remove-set').hide();
-                    }
-                }
             });
-        </script>
-
-        <script type="text/javascript">
-            $(document).ready(function () {
-                var next = 1;
-                $(".add-more").click(function (e) {
-                    e.preventDefault();
-                    var addto = "#field" + next;
-                    var addRemove = "#field" + (next);
-                    next = next + 1;
-                    var newIn = '<input autocomplete="off" class="input form-control" id="field' + next + '" name="field' + next + '" type="text">';
-                    var newInput = $(newIn);
-                    var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me">-</button></div><div id="field">';
-                    var removeButton = $(removeBtn);
-                    $(addto).after(newInput);
-                    $(addRemove).after(removeButton);
-                    $("#field" + next).attr('data-source', $(addto).attr('data-source'));
-                    $("#count").val(next);
-
-                    $('.remove-me').click(function (e) {
-                        e.preventDefault();
-                        var fieldNum = this.id.charAt(this.id.length - 1);
-                        var fieldID = "#field" + fieldNum;
-                        $(this).remove();
-                        $(fieldID).remove();
-                    });
-                });
 
 
 
-            });
-        </script>
+        });
+    </script>*@
+

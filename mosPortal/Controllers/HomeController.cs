@@ -23,12 +23,12 @@ namespace mosPortal.Controllers
         private dbbuergerContext db = new dbbuergerContext();
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
-
         public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
         {
             this.userManager = userManager;
             this.signInManager = signManager;
         }
+
         [AllowAnonymous]
         public IActionResult Index()
         {
@@ -38,7 +38,15 @@ namespace mosPortal.Controllers
         [AllowAnonymous]
         public IActionResult ShowConcerns()
         {
-            ViewData["Categories"] = db.Category;
+          
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            ViewData["Categories"] = categories;
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
             List<Concern> concerns = db.Concern
                             .Where(c=> c.StatusId == 2 || c.StatusId == 3)
                             .Include("Category")
@@ -111,7 +119,8 @@ namespace mosPortal.Controllers
                 await db.SaveChangesAsync();
                 return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
             }
-            else {
+            else
+            {
                 return View("CreateConcernView");
             }
         }

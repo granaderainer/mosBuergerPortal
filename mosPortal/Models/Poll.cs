@@ -20,8 +20,8 @@ namespace mosPortal.Models
         public int UserId { get; set; }
         [Required]
         [Display(Name = "Abstimmung Gemeinderat")]
-        public bool? NeedsLocalCouncil { get; set; }
-        public bool? Approved { get; set; }
+        public bool NeedsLocalCouncil { get; set; }
+        public bool Approved { get; set; }
         [Required]
         [Display(Name = "Kategorie")]
         public int CategoryId { get; set; }
