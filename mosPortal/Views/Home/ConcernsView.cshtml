@@ -81,11 +81,12 @@
         <div class="col-md-4">
             @if (SignInManager.IsSignedIn(User))
             {
-                <div class="well">
-                    <span class="input-group-btn">
-                        <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
-                    </span>
-                </div>
+            <div class="well">
+                <span class="input-group-btn">
+                    <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
+                </span>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createConcernModal">Neues Anliegen JSon</button>
+            </div>
 
             }
             <!-- Blog Search Well -->
@@ -145,17 +146,61 @@
     <hr>
 </div>
 <!-- /.container -->
+<!-- Modal -->
+<div class="modal fade" id="createConcernModal" tabindex="-1" role="dialog" aria-labelledby="createConcernModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form asp-action="CreateConcernJson" asp-controller="Home" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                    <h4 class="modal-title">Neues Anliegen anlegen</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        @*<label asp-for="Title" class="control-label"></label>*@
+                        <input name="Title" class="form-control" />
+                        @*<span asp-validation-for="Title" class="text-danger"></span>*@
+                    </div>
+                    <div class="form-group">
+                        @*<label asp-for="Text" class="control-label"></label>*@
+                        <textarea name="Text" class="form-control"></textarea>
+                        @*<span asp-validation-for="Text" class="text-danger"></span>*@
+                    </div>
+                    <div class="form-group">
+                        @*<label asp-for="CategoryId" class="control-label"></label>*@
+                        <select name="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Anlegen" class="btn btn-default" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
             document.getElementById(btn.id).disabled = true;
             document.getElementById(btn.id).setAttribute('disabled', 'disabled');
 
-            $.get("/Home/VoteForConcernAsync", { concernId: concernId}, function (data) {
-                document.getElementById("likesConcern " + concernId).textContent = (data.votes) +" Likes"; // display id value which is returned from the action method  
-            });  
+            $.get("/Home/VoteForConcernAsync", { concernId: concernId }, function (data) {
+                document.getElementById("likesConcern " + concernId).textContent = (data.votes) + " Likes"; // display id value which is returned from the action method
+            });
         }
-            
+
     }
+    $('#createConcernModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        //var concernId = button.data('concernid') // Extract info from data-* attributes
+        //test(concernId)
+    });
 
 </script>

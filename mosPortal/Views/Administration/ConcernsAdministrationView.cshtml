@@ -99,28 +99,24 @@
         <div class="modal-content">
             <form asp-action="ChangeConcernStatus" asp-controller="Administration" method="post">
                 <div class="modal-header">
-                    <h5 class="modal-title"></h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+                    <h4 class="modal-title">Anliegen bearbeiten</h4>
                 </div>
+
                 <div class="modal-body">
-                    <h5 id="concernModalTitle"></h5>
-                    Anliegen:<p ></p>
+                    <div id="concernModalTitle"></div>
+                    <div id="concernModalText"></div>
                     <hr>
-                    <p id="concernModalText"></p>
-                    <hr>
-                    <p id="concernModalDate"></p>
+                    <div id="concernModalDate"></div>
                     <hr>
                     <input type="hidden" name="concernModalId" id="concernModalId" />
                     <div class="form-group">
                         <label class="control-label">Status</label>
-                        <select name ="concernModalStatus" class="form-control" id="concernModalStatus"></select>
+                        <select name="concernModalStatus" class="form-control" id="concernModalStatus"></select>
                     </div>
                 </div>
                 <div class="modal-footer">
-
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
                     <button type="submit" class="btn btn-primary">Speichern</button>
 
                 </div>
@@ -133,24 +129,13 @@
             var button = $(event.relatedTarget) // Button that triggered the modal
             var concernId = button.data('concernid') // Extract info from data-* attributes
             test(concernId)
-
-            //document.getElementById("concernModalTitle").textContent = concernId;
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
-            //var modal = $(this)
-            // modal.find('.modal-title').text('New message to ' + recipient)
-            // modal.find('.modal-body input').val(recipient)
         });
 
         function test(concernId) {
             $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-                //$(".modal-header #concernModalTitle").val(data.title)
-                //alert(data.title);
-                $("#concernModalId").val(concernId);
-                //document.getElementById("concernModalId").textContent = concernId;
-                //document.getElementById("concernModalTitle").textContent = (data.title);
-                //document.getElementById("concernModalText").textContent = (data.text);
-                //document.getElementById("concernModalDate").textContent = "Erstellt am: "(data.date);// display id value which is returned from the action method
+                document.getElementById("concernModalTitle").innerHTML= "<h4>"+(data.title)+"</h4>";
+                document.getElementById("concernModalText").innerHTML = (data.text);
+                document.getElementById("concernModalDate").innerHTML = "Erstellt am: "+(data.date);// display id value which is returned from the action method
                 var selectStatus = document.getElementById("concernModalStatus");
                 var statuses = data.statuses;
                 var fragment = document.createDocumentFragment();

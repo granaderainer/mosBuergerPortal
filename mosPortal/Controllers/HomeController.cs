@@ -23,11 +23,7 @@ namespace mosPortal.Controllers
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
 
-        public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
-        {
-            this.userManager = userManager;
-            this.signInManager = signManager;
-        }
+
         [AllowAnonymous]
         public IActionResult Index()
         {
