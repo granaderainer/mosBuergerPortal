@@ -23,6 +23,6 @@ namespace mosPortal.Models.ViewModels
         public Category Category { get; set; }
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
-        public string  RadioId { get; set; }
+        public int  RadioId { get; set; }
     }
 }

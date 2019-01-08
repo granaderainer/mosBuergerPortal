@@ -20,7 +20,7 @@
         var item = Model.ElementAt(j); 
     <div class="panel panel-default container-fluid">
         <div class="panel-heading row">
-            <h4 class="col-md-4">@item.Text</h4>
+            <h4 class="col-md-12">@item.Text</h4>
         </div>
         <div class="panel-body">
 
@@ -38,13 +38,10 @@
                                 //Radiobuttons IDs vergeben
                                 //Submitbuttons Auswahl des Radiobuttons zum Controller geben
                                 //value ist ID aus der Description in AnswerOptions
-                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)
-                                @Html.Label(answer.AnswerOptions.Description)
-                                @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <input name="item.RadioId" type="radio" class="custom-control-input" value="@answer.AnswerOptions.Id">
-                                    <label asp-for="@item.RadioId" class="custom-control-label">@answer.AnswerOptions.Description</label>
-                                    <br/>
-                                    <input asp-for="@item.RadioId" type="hidden"/>*@
+
+                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                @Html.Label(answer.AnswerOptions.Description)<br />
+
                             }
                         }
                         <button class="btn btn-success" type="submit">
@@ -52,24 +49,15 @@
                         </button>
                     </fieldset>
                 </form>
-                @*<div class="form-group">
-                        <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
-                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton1</label>
-                        <input asp-for="RadioId" type="radio" class="custom-control-input" id="radio2" name="radio" value="radio2">
-                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton2</label>
 
-
-                        <a class="btn btn-primary" id="submitPollAnswer"><i class="fa fa-check"></i>Abstimmen</a>
-
-
-                    </div>*@
-                <div class="panel-footer row">
-                    <div class="col-xs-3">
+                <div class="panel-info row">
+                    <span class="col-xs-3 col-sm-9">
                         <small>Gültig bis: @item.End</small>
-                    </div>
-                    <div class="col-2-xs pull-right">
+                    </span>
+
+                    <span class="col-2-sm pull-right">
                         <small>Von User @item.UserId</small>
-                    </div>
+                    </span>
                 </div>
             </div>
         </div>
