@@ -12,62 +12,67 @@
 
 <div class="container">
     <h2>Show Polls</h2>
-    @*Each Poll*@
-    @foreach (var item in Model)
+    @*Each Poll
+        @foreach (var item in Model)
+        {*@
+    @for (int j = 0; j< Model.Count; j++)
     {
+        var item = Model.ElementAt(j); 
+    <div class="panel panel-default container-fluid">
+        <div class="panel-heading row">
+            <h4 class="col-md-4">@item.Text</h4>
+        </div>
+        <div class="panel-body">
 
-        <div class="panel panel-default container-fluid">
-            <div class="panel-heading row">
-                <h4 class="col-md-4">@item.Text</h4>
-            </div>
-            <div class="panel-body">
-
-                @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
-                <div class="custom-control custom-radio">
-                    <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                        <fieldset class="form-group">
-                            @{
-                                for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
-                                {
-                                    var answer = item.AnswerOptionsPoll.ElementAt(i);
+            @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
+            <div class="custom-control custom-radio">
+                <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                    <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
+                    <fieldset class="form-group">
+                        @{
+                            for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                            {
+                                var answer = item.AnswerOptionsPoll.ElementAt(i);
 
 
-                                    //Radiobuttons IDs vergeben
-                                    //Submitbuttons Auswahl des Radiobuttons zum Controller geben
-                                    //value ist ID aus der Description in AnswerOptions
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                    <input type="radio" class="custom-control-input" value="@answer.AnswerOptions.Id">
-                                    <label asp-for="@item.Id" class="custom-control-label">@answer.AnswerOptions.Description</label>
+                                //Radiobuttons IDs vergeben
+                                //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+                                //value ist ID aus der Description in AnswerOptions
+                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)
+                                @Html.Label(answer.AnswerOptions.Description)
+                                @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <input name="item.RadioId" type="radio" class="custom-control-input" value="@answer.AnswerOptions.Id">
+                                    <label asp-for="@item.RadioId" class="custom-control-label">@answer.AnswerOptions.Description</label>
                                     <br/>
-                                    <input asp-for="@item.RadioId" type="hidden"/>
-                                }
+                                    <input asp-for="@item.RadioId" type="hidden"/>*@
                             }
-                            <button class="btn btn-success" type="submit">
-                                <i class="fa fa-check">Abstimmen</i>
-                            </button>
-                        </fieldset>
-                    </form>
-                    @*<div class="form-group">
-                <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
-                <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton1</label>
-                <input asp-for="RadioId" type="radio" class="custom-control-input" id="radio2" name="radio" value="radio2">
-                <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton2</label>
+                        }
+                        <button class="btn btn-success" type="submit">
+                            <i class="fa fa-check">Abstimmen</i>
+                        </button>
+                    </fieldset>
+                </form>
+                @*<div class="form-group">
+                        <input asp-for="RadioId" class="custom-control-input" id="radio1" name="radio" type="radio" value="radio1">
+                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton1</label>
+                        <input asp-for="RadioId" type="radio" class="custom-control-input" id="radio2" name="radio" value="radio2">
+                        <label asp-for="RadioId" class="custom-control-label" for="defaultUnchecked">Radiobutton2</label>
 
 
-                <a class="btn btn-primary" id="submitPollAnswer"><i class="fa fa-check"></i>Abstimmen</a>
+                        <a class="btn btn-primary" id="submitPollAnswer"><i class="fa fa-check"></i>Abstimmen</a>
 
 
-            </div>*@
-                    <div class="panel-footer row">
-                        <div class="col-xs-3">
-                            <small>Gültig bis: @item.End</small>
-                        </div>
-                        <div class="col-2-xs pull-right">
-                            <small>Von User @item.UserId</small>
-                        </div>
+                    </div>*@
+                <div class="panel-footer row">
+                    <div class="col-xs-3">
+                        <small>Gültig bis: @item.End</small>
+                    </div>
+                    <div class="col-2-xs pull-right">
+                        <small>Von User @item.UserId</small>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     }
 </div>

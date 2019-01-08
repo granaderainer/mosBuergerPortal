@@ -204,10 +204,8 @@ namespace mosPortal.Controllers
         [HttpPost]
         public async Task<IActionResult> submitPollAnswer(PollViewModel poll)
         {
-            
             if (ModelState.IsValid)
             {
-                
                 string selectedRadio = poll.RadioId;
                 //gehtcurrentUser for Poll
                 //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
