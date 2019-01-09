@@ -12,7 +12,7 @@
             </h1>
             <ol class="breadcrumb">
                 <li class="active">
-                    <i class="fa fa-dashboard"></i> Dashboard
+                    <i class="fa fa-dashboard"></i> Übersicht
                 </li>
             </ol>
         </div>
@@ -109,6 +109,52 @@
             </div>
         </div>
     </div>
-        <!-- /.row -->
+    <!-- /.row -->
+    <div class="row">
+        <div class="col-lg-12">
+            <ol class="breadcrumb">
+                <li class="active">
+                    <i class="fa fa-pie-chart"></i> Aktuelle Umfragen
+                </li>
+            </ol>
+        </div>
     </div>
+    @foreach (Poll poll in ViewBag.CurrentPolls)
+    {
+        @await Html.PartialAsync("PollAdministrationpPartialView", poll)
+
+    }
     <!-- /.container-fluid -->
+    <script type="text/javascript">
+    $(document).ready(function()
+    {
+        var matches = [];
+        var elems = document.getElementsByTagName("*");
+        for (var i = 0; i < elems.length; i++) {
+            if (elems[i].id.indexOf("pollChart_") == 0)
+                matches.push(elems[i]);
+        }
+        //console.log(matches)
+        for (var i = 0; i < matches.length; i++) {
+            var id = matches[i].id;
+            var pollId = id[id.length - 1]
+            console.log(matches[i].id);
+            console.log(id[id.length - 1]);
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: '/Administration/GetPollAnswers?pollId='+pollId,
+                success: function (data) {
+                    console.log(data)
+                    Morris.Donut({
+                        element: id,
+                        data: data
+                    });
+                }
+            });
+            /*$.get("/Administration/GetPollAnswers", { pollId: pollId }, function (data) {
+
+            });*/
+        }
+     });
+    </script>

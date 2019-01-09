@@ -29,6 +29,7 @@ namespace mosPortal.Controllers
             ViewData["ConcernStatusThreeCount"] = db.Concern.Where(c => c.StatusId == 3).Count();
             //Ablauf Datum!!!
             ViewData["PollCount"] = db.Poll.Count();
+            ViewData["CurrentPolls"] = db.Poll.Where(p => p.End >= DateTime.UtcNow).OrderBy(p=> p.End).Take(4).ToList();
             return View("Index");
         }
         public IActionResult ShowConcerns(int statusId)
@@ -155,6 +156,41 @@ namespace mosPortal.Controllers
             db.Concern.Update(concern);
             db.SaveChanges();
             return this.ShowConcerns(oldStatus);
+
         }
-    }
+        public IActionResult ShowPolls()
+        {
+            List<Poll> polls = db.Poll.ToList();
+            /*foreach(Poll poll in polls)
+            {
+                List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
+                poll.AnswerOptionsPoll = answerOptionsPolls;
+            }*/
+            
+            return View("PollsAdministrationView", polls );
+        }
+        public IActionResult ShowPoll()
+        {
+            int id = 2;
+            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
+            poll.AnswerOptionsPoll = answerOptionsPolls;
+            return View("PollAdministrationView", poll);
+        }
+        public JsonResult GetPollAnswers(int pollId)
+        {
+            int id = pollId;
+            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
+            foreach (AnswerOptionsPoll answerOptionsPoll in answerOptionsPolls)
+            {
+                List<UserAnswerOptionsPoll> userAnswerOptionsPolls = db.UserAnswerOptionsPoll.Where(uaop => uaop.AnswerOptionsPollId == answerOptionsPoll.Id).ToList();
+                answerOptionsPoll.UserAnswerOptionsPoll = userAnswerOptionsPolls;
+            }
+            poll.AnswerOptionsPoll = answerOptionsPolls;
+
+            return poll.getAnswers();
+
+        }
+        }
 }

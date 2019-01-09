@@ -23,4 +23,10 @@
     <Folder Include="Views\Testing\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\Administration\PollAdministrationpPartialView.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+  </ItemGroup>
+
 </Project>
