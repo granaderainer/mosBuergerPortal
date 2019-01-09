@@ -224,8 +224,8 @@ namespace mosPortal.Controllers
 
                 //den User in der AnsweroptionsPoll suchen
                 var anyAnswers = db.AnswerOptionsPoll.FromSql(
-                    "select * from User_AnswerOptions_Poll as uaop  LEFT JOIN AnswerOptions_Poll AS aop on uaop.answerOptions_poll_ID = aop.ID where aop.poll_ID = {0};",
-                    pollId).ToList();
+                    "select * from User_AnswerOptions_Poll as uaop  LEFT JOIN AnswerOptions_Poll AS aop on uaop.answerOptions_poll_ID = aop.ID where aop.poll_ID = {0} and uaop.User_ID={1};",
+                    pollId,user.Id).ToList();
 
                 //Gibt es schon eine Abstimmung des Users (ja count != 0)
                 if (anyAnswers.Count != 0)
