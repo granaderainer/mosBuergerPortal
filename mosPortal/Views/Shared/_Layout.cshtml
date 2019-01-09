@@ -1,5 +1,7 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Security.Claims
+@{
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,48 +28,50 @@
 
 </head>
 <body>
-    
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Einwohnerbeteiligungsportal Mosbach</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                @await Html.PartialAsync("_NavBarView")
-            </div>
-            <!-- /.navbar-collapse -->
+
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Einwohnerbeteiligungsportal Mosbach</a>
         </div>
-        <!-- /.container -->
-    </nav>
-    @await Html.PartialAsync("_CarouselPartial")
-    <!-- Page Content -->
-    <div class="container body-content">
-        
-        <!--End Login Popup-->
-        @RenderBody()
-
-        <!-- Footer -->
-        @await Html.PartialAsync("_FooterView")
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            @await Html.PartialAsync("_NavBarView")
+        </div>
+        <!-- /.navbar-collapse -->
     </div>
-
     <!-- /.container -->
-    <!--Load Modal-->
-    @await Html.PartialAsync("_Modal")
+</nav>
+@{
+    if (ViewBag.isCarousel != null) { 
+    @await Html.PartialAsync("_CarouselPartial")
+    }
+} 
+
+<!-- Page Content -->
+<div class="container body-content">
+
+    <!--End Login Popup-->
+    @RenderBody()
+
+    <!-- Footer -->
+    @await Html.PartialAsync("_FooterView")
+</div>
+
+<!-- /.container -->
+<!--Load Modal-->
+@await Html.PartialAsync("_Modal")
 
 
-    <script>
-        $('.carousel').carousel({
-            interval: 5000 //changes the speed
-        })</script>
+
 
 </body>
 </html>

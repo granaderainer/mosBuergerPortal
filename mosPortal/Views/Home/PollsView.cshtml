@@ -11,56 +11,62 @@
 }
 
 <div class="container">
-    <h2>Show Polls</h2>
+    <h3>Umfragen der Gemeinde Mosbach</h3>
+    <p>Hier können Sie sich aktiv an Umfragen der Stadt Mosbach einbringen.</p>
+    <p>Nach Ablauf der jeweiligen Frist können die Ergebnisse eingesehen werden.</p>
     @*Each Poll
         @foreach (var item in Model)
         {*@
-    @for (int j = 0; j< Model.Count; j++)
+    @for (int j = 0; j < Model.Count; j++)
     {
-        var item = Model.ElementAt(j); 
-    <div class="panel panel-default container-fluid">
-        <div class="panel-heading row">
-            <h4 class="col-md-12">@item.Text</h4>
-        </div>
-        <div class="panel-body">
+        var item = Model.ElementAt(j);
+        <div class="panel panel-default container-fluid">
+            <div class="panel-heading row">
+                <h4 class="col-xs-12 col-sm-10 col-md-10">@item.Text</h4>
+                <h6 class="col-xs-12 col-sm-2 col-md-2 pull-right">@item.Title</h6>
+                @*<h4 class="col-lg-9 col-md-12 ">@item.Text</h4>
+            <h6 class="col-3-lg col-12-md  pull-right">@item.Title</h6>*@
+            </div>
+            <div class="panel-body">
 
-            @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
-            <div class="custom-control custom-radio">
-                <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                    <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
-                    <fieldset class="form-group">
-                        @{
-                            for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
-                            {
-                                var answer = item.AnswerOptionsPoll.ElementAt(i);
+                @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
+                <div class="custom-control custom-radio">
+                    <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                        <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
+                        <fieldset class="form-group">
+                            @{
+
+                                for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                                {
+                                    var answer = item.AnswerOptionsPoll.ElementAt(i);
 
 
-                                //Radiobuttons IDs vergeben
-                                //Submitbuttons Auswahl des Radiobuttons zum Controller geben
-                                //value ist ID aus der Description in AnswerOptions
+                                    //Radiobuttons IDs vergeben
+                                    //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+                                    //value ist ID aus der Description in AnswerOptions
 
-                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                @Html.Label(answer.AnswerOptions.Description)<br />
+                                    @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                    @Html.Label(answer.AnswerOptions.Description)<br/>
 
+                                }
                             }
-                        }
-                        <button class="btn btn-success" type="submit">
-                            <i class="fa fa-check">Abstimmen</i>
-                        </button>
-                    </fieldset>
-                </form>
+                            <button class="btn btn-success" type="submit">
+                                <i class="fa fa-check">Abstimmen</i>
+                            </button>
+                        </fieldset>
+                    </form>
 
-                <div class="panel-info row">
-                    <span class="col-xs-3 col-sm-9">
-                        <small>Gültig bis: @item.End</small>
-                    </span>
+                    <div class="panel-info row">
+                        <span class="col-xs-3 col-sm-9">
+                            <small>Gültig bis: @item.End</small>
+                        </span>
 
-                    <span class="col-2-sm pull-right">
-                        <small>Von User @item.UserId</small>
-                    </span>
+                        <span class="col-2-sm pull-right">
+                            <small>Von User @item.UserId</small>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     }
 </div>
