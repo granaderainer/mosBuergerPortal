@@ -35,7 +35,7 @@ body {
   color: #ffffff;
 }
 .navbar-header {
-  background: #2f323e;
+    background: #2f323e;
 }
 .navbar-top-links > li > a {
   color: #ffffff;
@@ -97,9 +97,10 @@ body {
   background-color: #707cd2 !important;
 }
 .bg-theme-dark {
-    background-color: #41b3f9 !important;
-    /*background-color: #c4c4c4 !important;*/
+    /*background-color: #41b3f9 !important;*/
+    background-color:#2f323e !important;
 }
+
 /*Button*/
 .btn-custom {
   background: #41b3f9;
