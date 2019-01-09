@@ -34,6 +34,8 @@ namespace mosPortal.Controllers
         [AllowAnonymous]
         public IActionResult Index()
         {
+            ViewData["VotesCount"] = db.UserConcern.Count();
+            ViewData["VotedUserCount"] = db.UserConcern.GroupBy(uc => uc.UserId).Count();
             return View();
         }
         //bei Schow Concern Prüfen ob man nicht den einen Concern übergeben kann => keine Weitere DB Abfrage nötig
