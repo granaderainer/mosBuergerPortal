@@ -87,7 +87,7 @@ namespace mosPortal.Controllers
                 }
             }
             ModelState.AddModelError("", "Invalid register attempt");
-            return View(model);
+            return View("RegisterView" ,model);
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
