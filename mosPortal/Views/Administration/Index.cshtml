@@ -119,16 +119,20 @@
             </ol>
         </div>
     </div>
-    @foreach (Poll poll in ViewBag.CurrentPolls)
-    {
-        @await Html.PartialAsync("PollAdministrationpPartialView", poll)
+    <div class="row">
+        @foreach (Poll poll in ViewBag.CurrentPolls)
+        {
+            @await Html.PartialAsync("PollAdministrationpPartialView", poll)
 
-    }
+        }
+    </div>
+</div>
+
     <!-- /.container-fluid -->
     <script type="text/javascript">
-    $(document).ready(function()
-    {
-        var matches = [];
+        $(document).ready(function () {
+            var matches = [];
+            var colors = ["#1acc1a", "#ff0000","#ffff00",  "#0000ff"];
         var elems = document.getElementsByTagName("*");
         for (var i = 0; i < elems.length; i++) {
             if (elems[i].id.indexOf("pollChart_") == 0)
@@ -145,10 +149,23 @@
                 type: 'GET',
                 url: '/Administration/GetPollAnswers?pollId='+pollId,
                 success: function (data) {
-                    console.log(data)
+                    console.log(data.length);
+                    var count = data.length;
+                    var chartColors = [];
+                    var j = 0;
+                    for (var i = 0; i < count; i++) {
+                        if (j == (colors.length - 1)) {
+                            j = 0;
+                        }
+                        chartColors.push(colors[j]);
+                        j++;
+                    }
+                    console.log(data);
+                    console.log(chartColors);
                     Morris.Donut({
                         element: id,
-                        data: data
+                        data: data,
+                        colors: chartColors
                     });
                 }
             });

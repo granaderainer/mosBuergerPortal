@@ -56,15 +56,14 @@ namespace mosPortal.Models
         }*/
         public JsonResult getAnswers()
         {
-            
             List<Answer> answers = new List<Answer>();
             foreach (AnswerOptionsPoll aop in AnswerOptionsPoll)
             {
+
                 Answer answer = new Answer
                 {
                     value = aop.UserAnswerOptionsPoll.Count,
                     label = aop.AnswerOptions.Description
-
                 };
                 answers.Add(answer);
 
