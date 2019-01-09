@@ -13,8 +13,10 @@
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <!-- Custom CSS -->
     <link href="~/css/modern-business.css" rel="stylesheet">
+
     <!-- Custom Fonts -->
     <link href="~/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
     <!-- jQuery -->
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <!-- Bootstrap Core JavaScript -->
@@ -29,7 +31,7 @@
     <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
+            <div class="">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
@@ -46,56 +48,15 @@
         </div>
         <!-- /.container -->
     </nav>
-    <header id="myCarousel" class="carousel slide">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-        </ol>
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <div class="fill" style="background-image:url('@Url.Content("~/images/stadtsichtMosbach.JPG")');"></div>
-                <div class="carousel-caption">
-                    <!--<h2>Caption 1</h2>-->
-                </div>
-            </div>
-            <div class="item">
-                <div class="fill" style="background-image:url('@Url.Content("~/images/weihnachtsmarktMosbach.jpg")');"></div>
-                <div class="carousel-caption">
-                    <!--<h2>Caption 1</h2>-->
-                </div>
-            </div>
-            <div class="item">
-                <div class="fill" style="background-image:url('@Url.Content("~/images/marktplatzMosbach.JPG")');"></div>
-                <div class="carousel-caption">
-                    <!--<h2>Caption 1</h2>-->
-                </div>
-            </div>
-        </div>
-        <!-- Controls -->
-        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="icon-prev"></span>
-        </a>
-        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="icon-next"></span>
-        </a>
-    </header>
+    @await Html.PartialAsync("_CarouselPartial")
     <!-- Page Content -->
     <div class="container body-content">
-        <div class="bg"></div>
+        
         <!--End Login Popup-->
         @RenderBody()
 
         <!-- Footer -->
-        <footer>
-            <div class="row">
-                <div class="col-lg-12">
-                    <p>Copyright &copy; Einwohnerportal Stadt Mosbach 2018</p>
-                </div>
-            </div>
-        </footer>
+        @await Html.PartialAsync("_FooterView")
     </div>
 
     <!-- /.container -->

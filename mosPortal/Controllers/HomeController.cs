@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using mosPortal.Models;
@@ -15,6 +16,7 @@ using mosPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace mosPortal.Controllers
 {
@@ -152,25 +154,11 @@ namespace mosPortal.Controllers
         [Authorize(Policy = "AllRoles")]
         public IActionResult ShowPolls()
         {
-            //IActionResult
-            //DB Abfrage für Polls
-            //Einstellen von Polls (Verwaltung)
+            int pollId = -1;
+            DateTime time = DateTime.UtcNow;
 
-            /*List<Poll> polls = db.Poll.Select(p => new Poll
-            {
-                Id = p.Id,
-                Text = p.Text,
-                End = p.End,
-                UserId = p.UserId,
-                NeedsLocalCouncil = p.NeedsLocalCouncil,
-                Approved = p.Approved,
-                AnswerOptionsPoll = db.AnswerOptionsPoll.Where(c => c.PollId == p.Id).ToList()
+            List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).ToList();
 
-
-            }).ToList();*/
-            int pollId = 1;
-            //Where enddatum < aktuelles datum
-            List<Poll> polls = db.Poll.ToList();
             foreach (Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
@@ -203,44 +191,58 @@ namespace mosPortal.Controllers
                 pollViewModel.User = poll.User;
                 pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
                 pollViewModel.RadioId = 0;
+                
 
                 pollViewModels.Add(pollViewModel);
 
-
-
             }
-        //AnswerOptions = db.AnswerOptions.Where(a => a.Id == c.Id)
-            //List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(c => c.PollId == 0).ToList();
+
             return View("PollsView",pollViewModels);
 
         }
 
-        //public Task<IActionResult> submitPollAnswer(int id, [Bind("ID,Title,ReleaseDate,Genre,Price")])
+        [Authorize(Policy = "AllRoles")]
         [HttpPost]
-        public Task<IActionResult> submitPollAnswer(Poll poll, int AnswerOptionId, int pollId)
+        public async Task<IActionResult> submitPollAnswer(PollViewModel poll)
         {
-            
             if (ModelState.IsValid)
             {
-                
-                //gehtcurrentUser for Poll
-                //poll.User = (await userManager.GetUserAsync(HttpContext.User)).Id;
-                //getcurrentDate for Database
-                DateTime date = DateTime.UtcNow;
-                //Anwort in DB (User_Concern)
-                //await db.SaveChangesAsync();
-                //return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
+                var selectedRadio = poll.RadioId;
+                var pollId = poll.Id;
+                var user = await userManager.GetUserAsync(HttpContext.User);
 
 
-                //return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
+                var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId)
+                    .Where(aop => aop.AnswerOptionsId == selectedRadio);
+
+                var selectedAnswerOptionsPollId = -1;
+                selectedAnswerOptionsPollId = matchEntry.First().Id;
+                //Neues aktuelles Abstimmungsobjekt
+                var userAnswerOptionsPoll = new UserAnswerOptionsPoll();
+                userAnswerOptionsPoll.AnswerOptionsPollId = selectedAnswerOptionsPollId;
+                userAnswerOptionsPoll.UserId = user.Id;
+
+                //den User in der AnsweroptionsPoll suchen
+                var anyAnswers = db.AnswerOptionsPoll.FromSql(
+                    "select * from User_AnswerOptions_Poll as uaop  LEFT JOIN AnswerOptions_Poll AS aop on uaop.answerOptions_poll_ID = aop.ID where aop.poll_ID = {0} and uaop.User_ID={1};",
+                    pollId,user.Id).ToList();
+
+                //Gibt es schon eine Abstimmung des Users (ja count != 0)
+                if (anyAnswers.Count != 0)
+                {
+                    //db entry wird gelöscht und ein neuer angelegt, mit der neuen ID
+                    var userAnswerOptionsPolltmp = new UserAnswerOptionsPoll();
+                    userAnswerOptionsPolltmp.AnswerOptionsPollId = anyAnswers.First().Id;
+                    userAnswerOptionsPolltmp.UserId = user.Id;
+                    db.UserAnswerOptionsPoll.Remove(userAnswerOptionsPolltmp);
+                    db.SaveChanges();
+                }
+
+                db.UserAnswerOptionsPoll.Add(userAnswerOptionsPoll);
+                db.SaveChanges();
             }
-            else
-            {
-                //return View("CreateConcernView");
-            }
 
-            //return View("PollsView", polls);
-            return null;
+            return ShowPolls();
         }
 
 
