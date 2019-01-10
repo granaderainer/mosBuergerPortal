@@ -24,6 +24,7 @@ namespace mosPortal.Controllers
         }
         public IActionResult Index()
         {
+            ViewData["FullUserName"] = 
             ViewData["ConcernStatusOneCount"] = db.Concern.Where(c=> c.StatusId == 1).Count();
             ViewData["ConcernStatusTwoCount"] = db.Concern.Where(c => c.StatusId == 2).Include("UserConcern").Where(c=> c.UserConcern.Count >=1).Count();
             ViewData["ConcernStatusThreeCount"] = db.Concern.Where(c => c.StatusId == 3).Count();
@@ -32,8 +33,18 @@ namespace mosPortal.Controllers
             ViewData["CurrentPolls"] = db.Poll.Where(p => p.End >= DateTime.UtcNow).OrderBy(p=> p.End).Take(4).ToList();
             return View("Index");
         }
-        public IActionResult ShowConcerns(int statusId)
+        public IActionResult ShowConcerns(int statusId = 0)
         {
+            if(statusId == 0)
+            {
+                List<Concern> concerns = db.Concern.ToList();
+                foreach (Concern concern in concerns)
+                {
+                    concern.Comment = db.Comment.Where(c => c.ConcernId == concern.Id).ToList();
+                    concern.UserConcern = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
+                }
+                return View("ConcernsAdministrationView", concerns);
+            }
             
             ViewData["Status"] = db.Status.Where(s => s.Id == statusId).SingleOrDefault().Description;
             if (statusId != 2)
@@ -161,12 +172,26 @@ namespace mosPortal.Controllers
         public IActionResult ShowPolls()
         {
             List<Poll> polls = db.Poll.ToList();
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<SelectListItem> answerOptionList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            foreach (AnswerOptions anserOption in answerOptions)
+            {
+                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+            ViewData["AnswerOptionsList"] = answerOptionList;
             /*foreach(Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
                 poll.AnswerOptionsPoll = answerOptionsPolls;
             }*/
-            
+
             return View("PollsAdministrationView", polls );
         }
         public IActionResult ShowPoll()
