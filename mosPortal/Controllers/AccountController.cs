@@ -26,10 +26,10 @@ namespace mosPortal.Controllers
         }
 
         [HttpGet] 
-        public IActionResult Login(string returnUrl)
+        public IActionResult Login(string returnUrl = null)
         {
             var model = new LoginViewModel { ReturnUrl = returnUrl };
-            return PartialView("LoginView", model: model);
+            return PartialView("_Modal", model: model);
         }
         [HttpGet]
         public IActionResult Register(string returnUrl = null)
@@ -110,7 +110,7 @@ namespace mosPortal.Controllers
                 }
             }
             ModelState.AddModelError("", "Invalid login attempt");
-            return View("LoginView",model);
+            return View("_Modal",model);
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

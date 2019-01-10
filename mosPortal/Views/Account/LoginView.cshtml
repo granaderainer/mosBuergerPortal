@@ -1,39 +1,111 @@
-﻿@model mosPortal.Models.ViewModels.LoginViewModel
-
-            <form asp-action = "Login" method="post" asp-controller="Account">
+﻿
+            @*<form asp-action = "Login" method="post" asp-controller="Account">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <h4 class="modal-title">Jetzt Anmelden</h4>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body">*@
+@*<form asp-action="Login" method="post" asp-controller="Account">
+    <div class="modal-header">
+        <h4 id="login-modalLabel" class="modal-title">Customer Login</h4>
+        <button type="button" data-dismiss="modal" aria-label="Close" class="close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <input id="email_modal" type="text" placeholder="email" class="form-control" asp-for="Username">
+        </div>
+        <div class="form-group">
+            <input id="password_modal" type="password" placeholder="password" class="form-control" asp-for="Password">
+        </div>
 
-                   
-                        <div class="form-group">
-                            <input type="text" name="username" id="username" class="form-control input-lg" asp-for="Username" placeholder="Benutzername">
+        $1$<span class="button-checkbox">
+            <button type="button" class="btn" data-color="info">Angemeldet bleiben?</button>
+            <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
+            <a href="" class="btn btn-link pull-right">Passwort vergessen?</a>
+        </span>#1#
+        $1$<input type="submit" class="btn btn-lg btn-success btn-block" value="Anmelden">#1#
+        <p class="text-center">
+            <button class="btn btn-template-outlined"><i class="fa fa-sign-in"></i> Log in</button>
+        </p>
+
+        <p class="text-center text-muted">Not registered yet?</p>
+        <p class="text-center text-muted">
+            <a href="~/user_template/customer-register.html">
+                <strong>Register now</strong>
+            </a>! It is easy and done in 1 minute and gives you access to special discounts and much more!
+        </p>
+    </div>
+</form>*@
+
+
+@*<form asp-action="Login" method="post" asp-controller="Account">
+    <div class="modal-header">
+        <h4 id="login-modalLabel" class="modal-title">Customer Login</h4>
+        <button type="button" data-dismiss="modal" aria-label="Close" class="close">
+            <span aria-hidden="true">×</span>
+        </button>
+    </div>
+    <div class="modal-body">
+
+        <div class="form-group">
+            <input type="text" name="username"id="username" asp-for="Username" placeholder="Benutzername" class="form-control">
+        </div>
+        <div class="form-group">
+            <input type="password" name ="password" id="password" asp-for="Password" placeholder="password" class="form-control">
+        </div>
+        <span class="button-checkbox">
+            <button type="button" class="btn" data-color="info">Angemeldet bleiben?</button>
+            <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
+            <a href="" class="btn btn-link pull-right">Passwort vergessen?</a>
+        </span>
+            <p class="text-center">
+                <button class="btn btn-template-outlined"><i class="fa fa-sign-in"></i> Log in</button>
+            </p>
+
+        <hr class="colorgraph">
+        <div class="row">
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <input type="submit" class="btn btn-lg btn-success btn-block" value="Anmelden">
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-6">
+                <a class="btn btn-lg btn-primary btn-block" asp-area="" asp-action="Register" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]">Registrieren</a>
+            </div>
+        </div>
+    </div>
+</form>*@
+
+            
+            
+            
+
+            @*<div class="form-group">
+                        <input type="text" name="username" id="username" class="form-control input-lg" asp-for="Username" placeholder="Benutzername">
+                    </div>
+                    <div class="form-group">
+                        <input type="password" name="password" id="password" class="form-control input-lg" asp-for="Password" placeholder="Passwort">
+                    </div>
+                    <span class="button-checkbox">
+                        <button type="button" class="btn" data-color="info">Angemeldet bleiben?</button>
+                        <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
+                        <a href="" class="btn btn-link pull-right">Passwort vergessen?</a>
+                    </span>
+                    <hr class="colorgraph">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <input type="submit" class="btn btn-lg btn-success btn-block" value="Anmelden">
                         </div>
-                        <div class="form-group">
-                            <input type="password" name="password" id="password" class="form-control input-lg" asp-for="Password" placeholder="Passwort">
+                        <div class="col-xs-6 col-sm-6 col-md-6">
+                            <a class="btn btn-lg btn-primary btn-block" asp-area="" asp-action="Register" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]">Registrieren</a>
                         </div>
-                        <span class="button-checkbox">
-                            <button type="button" class="btn" data-color="info">Angemeldet bleiben?</button>
-                            <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="hidden">
-                            <a href="" class="btn btn-link pull-right">Passwort vergessen?</a>
-                        </span>
-                        <hr class="colorgraph">
-                        <div class="row">
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Anmelden">
-                            </div>
-                            <div class="col-xs-6 col-sm-6 col-md-6">
-                                <a class="btn btn-lg btn-primary btn-block" asp-area="" asp-action="Register" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]">Registrieren</a>
-                            </div>
-                        </div>
-                </div>
-            </form>
-            <script>
-                $(function () {
+                    </div>
+            </div>
+        </form>*@
+    @*<script>
+        $(function () {
             $('.button-checkbox').each(function () {
                 var $widget = $(this),
                     $button = $widget.find('button'),
@@ -85,4 +157,4 @@
                 init();
             });
         });
-            </script>
+    </script>*@

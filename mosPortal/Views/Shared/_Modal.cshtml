@@ -1,30 +1,49 @@
-﻿
+﻿@model mosPortal.Models.ViewModels.LoginViewModel
 
-<div aria-hidden="true" ´role="dialog" tabindex="-1" id="modal" class="modal fade">
-    <div class="modal-dialog ">
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="login-modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
+            @{
+                <form asp-action="Login" method="post" asp-controller="Account">
+                    <div class="modal-header">
+                        <h4 id="login-modalLabel" class="modal-title">Login</h4>
+                        <button type="button" data-dismiss="modal" aria-label="Close" class="close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <input type="text" name="username" id="username" asp-for="Username" placeholder="Benutzername" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="password" id="password" asp-for="Password" placeholder="password" class="form-control">
+                        </div>
+                        <div class="form-check">
+
+                            <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="form-check-input">
+                            <label class="form-check-label" for="remember_me">Angemeldet bleiben</label>
+                            @*<input asp-for="ForgotPassword" type="button" name="forgot_password" id="forgot_password" class="form-check-input btn btn-link pull-right">*@
+                            @*<button for="forgot_password "type="button" name="forgot_password" id="forgot_password" class="form-check-input btn btn-link pull-right"></button>*@
+                            @*<a href="" class="form-control btn btn-link pull-right">Passwort vergessen?</a>*@
+
+                        </div>
+                        @*<p class="text-center">
+                            <button class="btn btn-template-outlined"><i class="fa fa-sign-in"></i> Log in</button>
+                        </p>*@
+
+                        <hr class="colorgraph">
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <input type="submit" class="btn btn-lg btn-success btn-block" value="Anmelden">
+                            </div>
+                            <div class="col-xs-6 col-sm-6 col-md-6">
+                                <a class="btn btn-lg btn-primary btn-block" asp-area="" asp-action="Register" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]">Registrieren</a>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            }
         </div>
     </div>
 </div>
-<script type="text/javascript">
-        $(document).ready(function () {
-            (function ($) {
-                function ModalInit() {
-                    var $this = this;
-                    function initilizeModel() {
-                        $("#loginModalTest").on('loaded.bs.modal', function (e) {
-                        }).on('hidden.bs.modal', function (e) {
-                            $(this).removeData('bs.modal');
-                        });
-                    }
-                    $this.init = function () {
-                        initilizeModel();
-                    }
-                }
-                $(function () {
-                    var self = new ModalInit();
-                    self.init();
-                })
-            }(jQuery))
-        });
-</script>
