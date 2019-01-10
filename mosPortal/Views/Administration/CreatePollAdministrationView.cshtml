@@ -1,85 +1,80 @@
 ﻿@model mosPortal.Models.Poll
 
-@{
-    ViewData["Title"] = "CreatePollAdministrationView";
-    Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
-}
-
-<h2>CreatePollAdministrationView</h2>
-
-<h4>Poll</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="CreatePollAsync" asp-controller="Administration">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="col-md-2 control-label"></label>
-
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger" />
-
-            </div>
-            <div class="form-group">
-                <label asp-for="Text" class="col-md-2 control-label"></label>
-
-                <textarea asp-for="Text" class="form-control"></textarea>
-                <span asp-validation-for="Text" class="text-danger" />
-
-            </div>
-            <div class="form-group">
-                <label asp-for="End" class="col-md-2 control-label"></label>
-
-                <input asp-for="End" class="form-control" />
-                <span asp-validation-for="End" class="text-danger" />
-
-            </div>
-            <div class="form-group">
-                <label asp-for="NeedsLocalCouncil" class="col-md-6 control-label"></label>
-                <br /><br />
-                <input data-val="true" data-val-required="The Abstimmung Gemeinderat field is required." id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="True" /> Ja <br />
-                <input id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="False" checked /> Nein
-                @* @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, true) Ja
-                @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, false, new { @checked = "checked" }) Nein
-                 <input type="radio" name="needLocalCouncil" value="false" checked /> Nein <br />
-        <input type="radio" name="needLocalCouncil" value="true" /> Ja*@
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class=" col-md-2 control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
-
-            </div>
-            <div class="form-group">
-                <label for="sets" class="col-md-2 control-label">Antwortmöglichkeiten</label><br /><br />
-                <fieldset class="form-add-set">
-                    <div class="col-md-10">
-                        <div class="add-sets">
-                            <div class="form-inline add-set">
-                                <div class="form-group">
-                                    <label class="control-label">Antwort</label>
-                                    <input type="text" class="form-control" name="answers" />
-                                    @*<select class="form-control" asp-items="ViewBag.AnswerOptionsList"></select>*@
-                                </div>
-                                <div class="form-group">
-                                    <button class="btn btn-remove-set btn-danger" data-toggle="tooltip" title="Antwort Entfernen"><span class="glyphicon glyphicon-minus"></span></button>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-add-set">Hinzufügen</button>
-                    </div>
-                </fieldset>
-            </div>
-            <div class="form-group">
-                <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Save" class="btn btn-primary" />
+<div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left ">
+    <div role="document" class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form asp-action="CreatePollAsync" asp-controller="Administration">
+                <div class="modal-header">
+                    <h4 id="exampleModalLabel" class="modal-title">Neue Umfrage</h4>
+                    <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                 </div>
-            </div>
-        </form>
-    </div>
-</div>
+                <div class="modal-body">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="col-md-2 control-label"></label>
 
-<div>
-    <a asp-action="Index"><span class="glyphicon glyphicon-arrow-left"></span> Back</a>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-danger" />
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Text" class="col-md-2 control-label"></label>
+
+                        <textarea asp-for="Text" class="form-control"></textarea>
+                        <span asp-validation-for="Text" class="text-danger" />
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="End" class="col-md-2 control-label"></label>
+
+                        <input asp-for="End" class="form-control" />
+                        <span asp-validation-for="End" class="text-danger" />
+
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="NeedsLocalCouncil" class="col-md-6 control-label"></label>
+                        <br />
+                        <input data-val="true" data-val-required="The Abstimmung Gemeinderat field is required." id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="True" /> Ja <br />
+                        <input id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="False" checked /> Nein
+                        @* @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, true) Ja
+                            @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, false, new { @checked = "checked" }) Nein
+                             <input type="radio" name="needLocalCouncil" value="false" checked /> Nein <br />
+                    <input type="radio" name="needLocalCouncil" value="true" /> Ja*@
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CategoryId" class=" col-md-2 control-label"></label>
+                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
+
+                    </div>
+                    <div class="form-group">
+                        <label for="sets" class="col-md-2 control-label">Antwortmöglichkeiten</label><br /><br />
+                        <fieldset class="form-add-set">
+                            <div class="col-md-10">
+                                <div class="add-sets">
+                                    <div class="form-inline add-set">
+                                        <div class="form-group">
+                                            <label class="control-label">Antwort</label>
+                                            <input type="text" class="form-control" name="answers" />
+                                            @*<select class="form-control" asp-items="ViewBag.AnswerOptionsList"></select>*@
+                                        </div>
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-remove-set btn-danger" data-toggle="tooltip" title="Antwort Entfernen"><span class="fa fa-minus"></span></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-add-set">Hinzufügen</button>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Abbrechen</button>
+                    <input type="submit" class="btn btn-primary" value="Erstellen"/>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 
 

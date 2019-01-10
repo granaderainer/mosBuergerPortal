@@ -156,7 +156,7 @@ namespace mosPortal.Controllers
         [Authorize(Policy = "AllRoles")]
         public IActionResult ShowPolls()
         {
-            int pollId = -1;
+            //int pollId = -1;
             DateTime time = DateTime.UtcNow;
 
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).ToList();

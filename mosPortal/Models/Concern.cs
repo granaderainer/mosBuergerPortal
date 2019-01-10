@@ -18,7 +18,7 @@ namespace mosPortal.Models
         [Display(Name = "Text/Beschreibung")]
         public string Text { get; set; }
         public int UserId { get; set; }
-        public DateTime? Date { get; set; }
+        public DateTime Date { get; set; }
         [Required(ErrorMessage = "Bitte geben Sie einen Titel ein")]
         [Display(Name = "Titel")]
         public string Title { get; set; }
