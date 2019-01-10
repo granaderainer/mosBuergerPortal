@@ -1,43 +1,61 @@
-﻿@*@{
+﻿
+@{
     ViewData["Title"] = "_CarouselPartial";
-}*@
-<header id="myCarousel" class="carousel slide">
-    <!-- Indicators -->
-    <ol class="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-    </ol>
-    <!-- Wrapper for slides -->
-    <div class="carousel-inner">
-        <div class="item active">
-            <div class="fill" style="background-image:url('@Url.Content("~/images/stadtsichtMosbach.JPG")');"></div>
-            <div class="carousel-caption">
-                <!--<h2>Caption 1</h2>-->
+}
+<div class="home-carousel">
+    <div class="dark-mask mask-primary"></div>
+    <div class="container">
+        <div class="homepage owl-carousel">
+            <div class="item">
+                <div class="row">
+                    <div class="col-md-5 text-right">
+                        <p><img src="~/user_template/img/logo.png" alt="" class="ml-auto"></p>
+                        <h1>Multipurpose responsive theme</h1>
+                        <p>Business. Corporate. Agency.<br>Portfolio. Blog. E-commerce.</p>
+                    </div>
+                    <div class="col-md-7"><img src="~/user_template/img/template-homepage.png" alt="" class="img-fluid"></div>
+                </div>
             </div>
-        </div>
-        <div class="item">
-            <div class="fill" style="background-image:url('@Url.Content("~/images/weihnachtsmarktMosbach.jpg")');"></div>
-            <div class="carousel-caption">
-                <!--<h2>Caption 1</h2>-->
+            <div class="item">
+                <div class="row">
+                    <div class="col-md-7 text-center"><img src="~/user_template/img/template-mac.png" alt="" class="img-fluid"></div>
+                    <div class="col-md-5">
+                        <h2>46 HTML pages full of features</h2>
+                        <ul class="list-unstyled">
+                            <li>Sliders and carousels</li>
+                            <li>4 Header variations</li>
+                            <li>Google maps, Forms, Megamenu, CSS3 Animations and much more</li>
+                            <li>+ 11 extra pages showing template features</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="item">
-            <div class="fill" style="background-image:url('@Url.Content("~/images/marktplatzMosbach.JPG")');"></div>
-            <div class="carousel-caption">
-                <!--<h2>Caption 1</h2>-->
+            <div class="item">
+                <div class="row">
+                    <div class="col-md-5 text-right">
+                        <h1>Design</h1>
+                        <ul class="list-unstyled">
+                            <li>Clean and elegant design</li>
+                            <li>Full width and boxed mode</li>
+                            <li>Easily readable Roboto font and awesome icons</li>
+                            <li>7 preprepared colour variations</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-7"><img src="~/user_template/img/template-easy-customize.png" alt="" class="img-fluid"></div>
+                </div>
+            </div>
+            <div class="item">
+                <div class="row">
+                    <div class="col-md-7"><img src="~/user_template/img/template-easy-code.png" alt="" class="img-fluid"></div>
+                    <div class="col-md-5">
+                        <h1>Easy to customize</h1>
+                        <ul class="list-unstyled">
+                            <li>7 preprepared colour variations.</li>
+                            <li>Easily to change fonts</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Controls -->
-    <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-        <span class="icon-prev"></span>
-    </a>
-    <a class="right carousel-control" href="#myCarousel" data-slide="next">
-        <span class="icon-next"></span>
-    </a>
-</header>
-<script>
-    $('.carousel').carousel({
-        interval: 5000 //changes the speed
-    })</script>
+</div>

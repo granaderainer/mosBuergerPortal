@@ -3,8 +3,64 @@
     ViewData["isCarousel"] = "isTrue";
 }
 
-
-<div class="container body-content">
+<section style="background: url('~/user_template/img/photogrid.jpg') center center repeat; background-size: cover;" class="bar background-white relative-positioned">
+    <div class="container">
+        <!-- Carousel Start-->
+        @await Html.PartialAsync("_CarouselPartial")
+        <!-- Carousel End-->
+    </div>
+</section>
+        @await Html.PartialAsync("_IconPartial")
+<section class="bar background-pentagon no-mb text-md-center">
+    <div class="container">
+        <div class="heading text-center">
+            <h2>Testimonials</h2>
+        </div>
+        <p class="lead">We have worked with many clients and we always like to hear they come out from the cooperation happy and satisfied. Have a look what our clients said about us.</p>
+        <!-- Carousel Start-->
+        @await Html.PartialAsync("_TestimonialsPartial")
+        <!-- Carousel End-->
+    </div>
+</section>
+<section style="background: url(~/user_template/img/fixed-background-2.jpg) center top no-repeat; background-size: cover;" class="bar no-mb color-white text-center bg-fixed relative-positioned">
+    <div class="dark-mask"></div>
+    <div class="container">
+        <div class="icon icon-outlined icon-lg"><i class="fa fa-file-code-o"></i></div>
+        <h3 class="text-uppercase">Do you want to see more?</h3>
+        <p class="lead">We have prepared for you more than 40 different HTML pages, including 5 variations of homepage.</p>
+        <p class="text-center"><a href="~/user_template/index2.html" class="btn btn-template-outlined-white btn-lg">See another homepage</a></p>
+    </div>
+</section>
+<section class="bg-white bar">
+    @await Html.PartialAsync("_BlogPartial")
+</section>
+<section class="bar bg-gray">
+    <div class="container">
+        <div class="heading text-center">
+            <h2>Our Clients</h2>
+        </div>
+        <ul class="list-unstyled owl-carousel customers no-mb">
+            <li class="item"><img src="~/user_template/img/customer-1.png" alt="" class="img-fluid"></li>
+            <li class="item"><img src="~/user_template/img/customer-2.png" alt="" class="img-fluid"></li>
+            <li class="item"><img src="~/user_template/img/customer-3.png" alt="" class="img-fluid"></li>
+            <li class="item"><img src="~/user_template/img/customer-4.png" alt="" class="img-fluid"></li>
+            <li class="item"><img src="~/user_template/img/customer-5.png" alt="" class="img-fluid"></li>
+            <li class="item"><img src="~/user_template/img/customer-6.png" alt="" class="img-fluid"></li>
+        </ul>
+    </div>
+</section>
+<!-- GET IT-->
+<div class="get-it">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 text-center p-3">
+                <h3>Do you want cool website like this one?</h3>
+            </div>
+            <div class="col-lg-4 text-center p-3">   <a href="#" class="btn btn-template-outlined-white">Buy this template now</a></div>
+        </div>
+    </div>
+</div>
+@*<div class="container body-content">
     <!-- Marketing Icons Section -->
     <div class="row">
         <div class="col-lg-12">
@@ -26,7 +82,7 @@
         <div class="col-md-6" style="text-align:center;">
             <i class="fa fa-comments" style="font-size:220px; color: dodgerblue;"></i>
         </div>
-        @*<div class="col-md-4">
+        $1$<div class="col-md-4">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4><i class="fa fa-fw fa-compass"></i> Easy to Use</h4>
@@ -36,7 +92,7 @@
                     <a href="#" class="btn btn-default">Learn More</a>
                 </div>
             </div>
-        </div>*@
+        </div>#1#
     </div>
     <div class="row">
         <hr />
@@ -56,4 +112,4 @@
         </div>
     </div>
     <!-- /.row -->
-</div>
+</div>*@

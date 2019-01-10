@@ -24,6 +24,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\user_template\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Views\Administration\PollAdministrationpPartialView.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
