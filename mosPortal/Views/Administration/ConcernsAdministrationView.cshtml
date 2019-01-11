@@ -52,8 +52,8 @@
         <div class="modal-content">
             <form asp-action="ChangeConcernStatus" asp-controller="Administration" method="post">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
                     <h4 class="modal-title">Anliegen bearbeiten</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
 
                 <div class="modal-body">
@@ -86,6 +86,7 @@
 
         function test(concernId) {
             $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
+                console.log(data);
                 $("#concernModalId").val(concernId);
                 document.getElementById("concernModalTitle").innerHTML= "<h4>"+(data.title)+"</h4>";
                 document.getElementById("concernModalText").innerHTML = (data.text);
@@ -99,7 +100,9 @@
                     opt.value = status.id;
                     fragment.appendChild(opt);
                 });
-                selectStatus.appendChild(fragment);
+                $("#concernModalStatus").empty();
+                $("#concernModalStatus").append(fragment);
+                //selectStatus.empty().append(fragment);
                 $("#concernModalStatus").val(data.statusId);
             });
         }

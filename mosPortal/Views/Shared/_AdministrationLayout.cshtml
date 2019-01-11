@@ -51,12 +51,27 @@
     <link rel="stylesheet" href="~/admin_template/css/style.default.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="~/admin_template/css/custom.css">
+    <!-- Morris Charts CSS -->
+    <link href="~/css/plugins/morris.css" rel="stylesheet">
     <!-- Favicon-->
     <link rel="shortcut icon" href="~/admin_template/img/favicon.ico">
     <!-- Tweaks for older IEs-->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <!-- JavaScript files-->
+    <script src="~/admin_template/vendor/jquery/jquery.min.js"></script>
+    <script src="~/admin_template/vendor/popper.js/umd/popper.min.js"></script>
+    <script src="~/admin_template/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/admin_template/vendor/jquery.cookie/jquery.cookie.js"></script>
+    <script src="~/admin_template/vendor/chart.js/Chart.min.js"></script>
+    <script src="~/admin_template/vendor/jquery-validation/jquery.validate.min.js"></script>
+    <script src="~/admin_template/js/charts-home.js"></script>
+    <script src="~/js/morris/raphael.min.js"></script>
+    <script src="~/js/morris/morris.min.js"></script>
+    <script src="~/js/morris/morris-data.js"></script>
+    <!-- Main File-->
+    <script src="~/admin_template/js/front.js"></script>
 </head>
 <body>
     <div class="page">
@@ -74,82 +89,92 @@
                             <!-- Toggle Button--><a id="toggle-btn" href="#" class="menu-btn active"><span></span><span></span><span></span></a>
                         </div>
                         <!-- Navbar Menu -->
-                        <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-                            <!-- Notifications-->
-                            <li class="nav-item dropdown">
-                                <a id="notifications" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link"><i class="fa fa-bell-o"></i><span class="badge bg-red badge-corner">12</span></a>
-                                <ul aria-labelledby="notifications" class="dropdown-menu">
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i class="fa fa-envelope bg-green"></i>You have 6 new messages </div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i class="fa fa-upload bg-orange"></i>Server Rebooted</div>
-                                                <div class="notification-time"><small>4 minutes ago</small></div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item">
-                                            <div class="notification">
-                                                <div class="notification-content"><i class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
-                                                <div class="notification-time"><small>10 minutes ago</small></div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center"> <strong>view all notifications                                            </strong></a></li>
-                                </ul>
-                            </li>
-                            <!-- Messages                        -->
-                            <li class="nav-item dropdown">
-                                <a id="messages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link"><i class="fa fa-envelope-o"></i><span class="badge bg-orange badge-corner">10</span></a>
-                                <ul aria-labelledby="notifications" class="dropdown-menu">
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item d-flex">
-                                            <div class="msg-profile"> <img src="~/admin_template/img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                                            <div class="msg-body">
-                                                <h3 class="h5">Jason Doe</h3><span>Sent You Message</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item d-flex">
-                                            <div class="msg-profile"> <img src="~/admin_template/img/avatar-2.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                                            <div class="msg-body">
-                                                <h3 class="h5">Frank Williams</h3><span>Sent You Message</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a rel="nofollow" href="#" class="dropdown-item d-flex">
-                                            <div class="msg-profile"> <img src="~/admin_template/img/avatar-3.jpg" alt="..." class="img-fluid rounded-circle"></div>
-                                            <div class="msg-body">
-                                                <h3 class="h5">Ashley Wood</h3><span>Sent You Message</span>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center"> <strong>Read all messages   </strong></a></li>
-                                </ul>
-                            </li>
-                            <!--Back to Home-->
-                            <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link logout"> <i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
-                            <!-- Logout    -->
-                            <li class="nav-item"><a asp-action="Logout" asp-controller="Account" class="nav-link logout"> <span class="d-none d-sm-inline">Logout</span><i class="fa fa-sign-out"></i></a></li>
+                       
+                            <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                                <!-- Notifications-->
+                                <li class="nav-item dropdown">
+                                    <a id="notifications" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link"><i class="fa fa-bell-o"></i><span class="badge bg-red badge-corner">12</span></a>
+                                    <ul aria-labelledby="notifications" class="dropdown-menu">
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item">
+                                                <div class="notification">
+                                                    <div class="notification-content"><i class="fa fa-envelope bg-green"></i>You have 6 new messages </div>
+                                                    <div class="notification-time"><small>4 minutes ago</small></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item">
+                                                <div class="notification">
+                                                    <div class="notification-content"><i class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
+                                                    <div class="notification-time"><small>4 minutes ago</small></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item">
+                                                <div class="notification">
+                                                    <div class="notification-content"><i class="fa fa-upload bg-orange"></i>Server Rebooted</div>
+                                                    <div class="notification-time"><small>4 minutes ago</small></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item">
+                                                <div class="notification">
+                                                    <div class="notification-content"><i class="fa fa-twitter bg-blue"></i>You have 2 followers</div>
+                                                    <div class="notification-time"><small>10 minutes ago</small></div>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center"> <strong>view all notifications                                            </strong></a></li>
+                                    </ul>
+                                </li>
+                                <!-- Messages                        -->
+                                <li class="nav-item dropdown">
+                                    <a id="messages" rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link"><i class="fa fa-envelope-o"></i><span class="badge bg-orange badge-corner">10</span></a>
+                                    <ul aria-labelledby="notifications" class="dropdown-menu">
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item d-flex">
+                                                <div class="msg-profile"> <img src="~/admin_template/img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle"></div>
+                                                <div class="msg-body">
+                                                    <h3 class="h5">Jason Doe</h3><span>Sent You Message</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item d-flex">
+                                                <div class="msg-profile"> <img src="~/admin_template/img/avatar-2.jpg" alt="..." class="img-fluid rounded-circle"></div>
+                                                <div class="msg-body">
+                                                    <h3 class="h5">Frank Williams</h3><span>Sent You Message</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a rel="nofollow" href="#" class="dropdown-item d-flex">
+                                                <div class="msg-profile"> <img src="~/admin_template/img/avatar-3.jpg" alt="..." class="img-fluid rounded-circle"></div>
+                                                <div class="msg-body">
+                                                    <h3 class="h5">Ashley Wood</h3><span>Sent You Message</span>
+                                                </div>
+                                            </a>
+                                        </li>
+                                        <li><a rel="nofollow" href="#" class="dropdown-item all-notifications text-center"> <strong>Read all messages   </strong></a></li>
+                                    </ul>
+                                </li>
+                                <!--Back to Home-->
+                                <li class="nav-item"><a asp-action="Index" asp-controller="Home" class="nav-link logout"> <i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
+                                <!-- Logout    -->
+
+                                <li class="nav-item">
+                                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                                        @*<button type="submit"><i class="fa fa-fw fa-power-off"></i>Log Out</button>*@
+                                        <a hrfe="#" class="nav-link logout"> <span class="d-none d-sm-inline" onclick="document.getElementById('logoutForm').submit();">Logout</span><i class="fa fa-sign-out"></i></a>
+                                    </form>
+                                </li>
+
+
                         </ul>
+
                     </div>
                 </div>
             </nav>
@@ -159,7 +184,7 @@
             <nav class="side-navbar">
                 <!-- Sidebar Header-->
                 <div class="sidebar-header d-flex align-items-center">
-                    <div class="avatar"><img src="~/admin_template/img/avatar-1.jpg" alt="..." class="img-fluid rounded-circle"></div>
+                    <div class="avatar"><img src="~/img/avatar/boy-1.svg" alt="..." class="img-fluid rounded-circle"></div>
                     <div class="title">
                         <h1 class="h4">@fullUserName</h1>
                         <p>@role</p>
@@ -168,9 +193,9 @@
                 <!-- Sidebar Navidation Menus-->
                 <span class="heading">Navigation</span>
                 <ul class="list-unstyled">
-                    <li class="active"><a href="~/admin_template/index.html"> <i class="icon-home"></i>Home </a></li>
-                    <li><a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a></li>
-                    <li><a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a></li>    
+                    <li id="linkHome" class="active"><a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a></li>
+                    <li id="linkConcerns"><a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a></li>
+                    <li id="linkPolls"><a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a></li>    
                 <li><a href="~/admin_template/tables.html"> <i class="icon-grid"></i>Tables </a></li>
                     <li><a href="~/admin_template/charts.html"> <i class="fa fa-bar-chart"></i>Charts </a></li>
                     <li><a href="~/admin_template/charts.html"s> <i class="fa fa-bar-chart"></i>Charts </a></li>
@@ -211,15 +236,6 @@
     </div>
             </div>
         </div>
-    <!-- JavaScript files-->
-    <script src="~/admin_template/vendor/jquery/jquery.min.js"></script>
-    <script src="~/admin_template/vendor/popper.js/umd/popper.min.js"></script>
-    <script src="~/admin_template/vendor/bootstrap/js/bootstrap.min.js"></script>
-    <script src="~/admin_template/vendor/jquery.cookie/jquery.cookie.js"></script>
-    <script src="~/admin_template/vendor/chart.js/Chart.min.js"></script>
-    <script src="~/admin_template/vendor/jquery-validation/jquery.validate.min.js"></script>
-    <script src="~/admin_template/js/charts-home.js"></script>
-    <!-- Main File-->
-    <script src="~/admin_template/js/front.js"></script>
+
 </body>
 </html>
