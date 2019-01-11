@@ -10,7 +10,7 @@
     <div class="container">
         <div class="row d-flex align-items-center">
             <div class="col-md-6 d-md-block d-none">
-                <p>Contact us on +420 777 555 333 or hello@universal.com.</p>
+                <p>Kontaktiere uns <a href="callto:+420 777 555 333" style="text-decoration: none; color: unset"><span><i class="fa fa-phone mx-2 "></i>+420 777 555 333</span><span class="ml-2">oder</span><span class="ml-2"></span></a><a href="mailto:hello@universal.com" style="text-decoration: none; color: unset"><span class="list-inline-item"><i class="fa fa-envelope mr-2"></i>hello@universal.com.</span></a></p>
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-md-end justify-content-between">
@@ -18,17 +18,24 @@
                         <li class="list-inline-item"><a href="#"><i class="fa fa-phone"></i></a></li>
                         <li class="list-inline-item"><a href="#"><i class="fa fa-envelope"></i></a></li>
                     </ul>
-                    <div class="login"><a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="login-btn"><i class="fa fa-sign-in"></i><span class="d-none d-md-inline-block">Login</span></a>
-                        <a href="~/user_template/customer-register.html" class="signup-btn"><i class="fa fa-user"></i><span class="d-none d-md-inline-block">Sign Up</span></a>
-                        </div>
-                    <ul class="social-custom list-inline">
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-facebook"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-google-plus"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-envelope"></i></a></li>
-                        <li class="list-inline-item"><a asp-area="" asp-controller="Account" asp-action="Logout" method="post"><i class="fa fa-power-off"></i></a></li>
+                    <ul class="list-inline d-block">
+
+                        @if (SignInManager.IsSignedIn(User))
+                        {<li>
+                        <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                            <a href="#" onclick="document.getElementById('logoutForm').submit();" class="login-btn list-inline-item"><i class="fa fa-power-off"></i><span class="d-md-inline-block">Logout</span></a>
+                        </form>
+                         </li>
+                        }
+                        else
+                        {
+                         <li> <a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="login-btn list-inline-item"><i class="fa fa-sign-in"></i><span class="d-md-inline-block">Login</span></a></li>
+                        }
                     </ul>
-                </div>
+                        <ul class="social-custom list-inline">
+                            <li class="list-inline-item"><a href="#"><i class="fa fa-envelope"></i></a></li>
+                        </ul>
+                    </div>
             </div>
         </div>
     </div>
