@@ -5,6 +5,7 @@
 }
 
 
+
 <!-- Page Header-->
 <header class="page-header">
     <div class="container-fluid">
@@ -33,7 +34,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 form-control-label">Status</label>
                                 <div class="col-sm-9">
-                                    <select class="form-control mb-auto" name="concerncStatusSelect" id="concerncStatusSelect"asp-items="ViewBag.statusList" onchange="selectedStatusChanged()"></select>
+                                    <select class="form-control mb-auto" name="concernStatusSelect" id="concernStatusSelect" asp-items="ViewBag.statusList" onchange="selectedStatusChanged()"></select>
                                 </div>
                             </div>
                         </form>
@@ -49,7 +50,7 @@
         @foreach (Concern concern in Model)
         {
             <!-- Project-->
-            <div class="project" name ="concern" id="@concern.Id @concern.StatusId">
+            <div class="project" name="concern" id="@concern.Id @concern.StatusId">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
@@ -70,14 +71,25 @@
                         </div>
                     </div>
                     <div class="right-col col-lg-2 d-flex align-items-center">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                        @if (concern.UserConcern.Count >= 1 && concern.StatusId == 2)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                            <button id="createPollButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                        }
+                        @if (concern.StatusId != 2)
+                        {
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                        }
+                        @if (concern.StatusId == 3 || concern.StatusId == 4)
+                        {
+                            <button id="createPollButton"type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                        }
                     </div>
                 </div>
             </div>
         }
     </div>
 </section>
-<!-- Button trigger modal -->
 <!-- Modal -->
 <div class="modal fade" id="changeConcernStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeConcernStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -94,7 +106,7 @@
                 <div id="concernModalDate"></div>
                 <hr>
                 <input type="hidden" name="concernModalId" id="concernModalId" />
-                <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld"/>
+                <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld" />
                 <div class="form-group">
                     <label class="control-label">Status</label>
                     <select name="concernModalStatus" class="form-control" id="concernModalStatus"></select>
@@ -102,51 +114,150 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                <button id ="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changeConcernStatus()">Speichern</button>
+                <button id="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changeConcernStatus()">Speichern</button>
 
             </div>
         </div>
     </div>
 </div>
+<!-- Modal-->
+@await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var elems;
-        $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget) // Button that triggered the modal
-            var concernId = button.data('concernid')
-            var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
-            console.log("vom Button " + concernStatusOld);
-            test(concernId, concernStatusOld);
-        });
+    $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var concernId = button.data('concernid')
+        var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
+        getConcern(concernId, concernStatusOld);
+    });
 
-        function test(concernId, concernStatusOld) {
-            $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-                $("#concernModalId").val(concernId);
-                $('#concernModelStatusOld').val(concernStatusOld);
-                document.getElementById("concernModalTitle").innerHTML= "<h4>"+(data.title)+"</h4>";
-                document.getElementById("concernModalText").innerHTML = (data.text);
-                document.getElementById("concernModalDate").innerHTML = "Erstellt am: "+(data.date);// display id value which is returned from the action method
-                var selectStatus = document.getElementById("concernModalStatus");
-                var statuses = data.statuses;
-                var fragment = document.createDocumentFragment();
-                statuses.forEach(function (status, index) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = status.description;
-                    opt.value = status.id;
-                    fragment.appendChild(opt);
-                });
-                $("#concernModalStatus").empty();
-                $("#concernModalStatus").append(fragment);
-                $("#concernModalStatus").val(data.statusId);
-            });
+    $('#createPollModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var concernId = button.data('concernid') // Extract info from data-* attributes
+        getConcernToCreatePoll(concernId);
+    });
+    function getConcernToCreatePoll(concernId)
+    {
+        $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
+            console.log(data);
+            var title = data.title;
+            var text = data.text;
+            var date = new Date();
+            var concernId = data.concernId;
+            var minDate = new Date(date.setMonth(date.getMonth() + 1));
+            var maxDate = new Date(date.setMonth(date.getMonth() + 6));
+            console.log(date);
+            console.log(minDate);
+            console.log(maxDate);
+            var minMonth = (minDate.getMonth() + 1);
+            var minMonthString = "-";
+            if (minMonth < 10) {
+               minMonthString = minMonthString + "0" + minMonth;
+            }
+            var maxMonth = (maxDate.getMonth() + 1);
+            var maxMonthString = "-";
+            if (maxMonth< 10) {
+                maxMonthString = maxMonthString+ "0" + maxMonth;
+            }
+            var minDateString = minDate.getFullYear() + minMonthString + "-" + minDate.getDate();
+            
+            var maxDateString = maxDate.getFullYear() + maxMonthString+ "-" + maxDate.getDate();
+            //var endElement = document.getElementById("pollEndModal");
+            $("#pollTextModal").val(text);
+            $("#pollTitleModal").val(title);
+            $("#pollConcernIdModal").val(concernId);
+            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId -1;
+            if (data.comment == null) {
+                $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat")
+            }
+            else {
+                $("#pollCommentModal").val(data.comment);
+            }
+            console.log(minDateString);
+            console.log(maxDateString);
+            document.getElementById("pollEndModal").setAttribute("min", minDateString);
+            document.getElementById("pollEndModal").setAttribute("max", maxDateString);
+            document.getElementById("pollEndModal").setAttribute("value", minDateString);
+            //$("#pollEndModal").minDate(minDate)
+            //$("#pollEndModal").Date(date)
+
+        });
+    }
+    function createPoll() {
+        var answerElements = document.getElementsByName("answers");
+        console.log(answerElements);
+        var answers = [];
+        for (var i = 0; i < answerElements.length; i++) {
+            answers.push(answerElements[i].value);
         }
+        var sendData = {
+            Title: $("#pollTitleModal").val(),
+            Text: $("#pollTextModal").val(),
+            End: $("#pollEndModal").val(),
+            NeedsLocalCouncil: document.getElementById("pollNeedsLocalCouncilModal").checked,
+            CategoryId: $("#pollSelectCategoryModal").val(),
+            ConcernId: $("#pollConcernIdModal").val(),
+            Answers: answers
+        };
+        
+        console.log(sendData);
+        $.ajax({
+            type: 'POST',
+            url: '/Administration/CreatePollAsync',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(sendData),
+            success: function (result) {
+                console.log('Data received: ');
+                console.log(result);
+                var divConcernId = (result.concernId) + " " + (result.concernStatusId);
+                var concern = document.getElementById(divConcernId);
+                var newConcernId = (result.concernId) + " 5";
+                concern.setAttribute("id", newConcernId);
+                if (document.getElementById("concernStatusSelect").value != 0) {
+                    concern.style.display = "none";
+                    $("#createPollButton").hide();
+                }
+            }
+        });
+        /*$.post("/Administration/CreatePollAsync", JSON.stringify(sendData), function (data) {
+            if (data.result == 1) {
+                vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
+            }
+            else {
+                vNotify.errer({ text: "Die Umfrage konnte nicht erstellt werden!", title: "Erstellung fehlgeschlagen!" });
+            }
+        });*/
+    }
+    function getConcern(concernId, concernStatusOld) {
+        $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
+            $("#concernModalId").val(concernId);
+            $('#concernModelStatusOld').val(concernStatusOld);
+            document.getElementById("concernModalTitle").innerHTML = "<h4>" + (data.title) + "</h4>";
+            document.getElementById("concernModalText").innerHTML = (data.text);
+            document.getElementById("concernModalDate").innerHTML = "Erstellt am: " + (data.date);// display id value which is returned from the action method
+            var selectStatus = document.getElementById("concernModalStatus");
+            var statuses = data.statuses;
+            var fragment = document.createDocumentFragment();
+            statuses.forEach(function (status, index) {
+                var opt = document.createElement('option');
+                opt.innerHTML = status.description;
+                opt.value = status.id;
+                fragment.appendChild(opt);
+            });
+            $("#concernModalStatus").empty();
+            $("#concernModalStatus").append(fragment);
+            $("#concernModalStatus").val(data.statusId);
+        });
+    }
     $(document).ready(function () {
         $("li#linkConcerns").addClass("active");
         elems = document.getElementsByName("concern");
         console.log(elems);
+
     });
-    function selectedStatusChanged()
-    {
-        var select = document.getElementById("concerncStatusSelect");
+    function selectedStatusChanged() {
+        var select = document.getElementById("concernStatusSelect");
         var selectedStatus = select.value;
         for (var i = 0; i < elems.length; i++) {
             var id = elems[i].id;
@@ -154,8 +265,7 @@
             if (ids[1] != selectedStatus) {
                 elems[i].style.display = "none";
             }
-            else
-            {
+            else {
                 elems[i].style.display = "block";
             }
             if (selectedStatus == 0) {
@@ -163,8 +273,7 @@
             }
         }
     }
-    function changeConcernStatus()
-    {
+    function changeConcernStatus() {
         var selectElement = document.getElementById("concernModalStatus");
         var concernElement = document.getElementById("concernModalId");
         var oldStatusElement = document.getElementById("concernModelStatusOld");
@@ -180,14 +289,14 @@
                 var concern = document.getElementById(divConcernId);
                 var newConcernId = concernId + " " + statusId;
                 concern.setAttribute("id", newConcernId);
-                if (document.getElementById("concerncStatusSelect").value != 0) {
+                if (document.getElementById("concernStatusSelect").value != 0) {
                     concern.style.display = "none";
                 }
             }
             else {
                 vNotify.error({ text: 'Der Status konnte nicht geändert werden!', title: 'Statusänderung fehlgeschlagen' })
             }
-        });        
+        });
     }
 
 </script>

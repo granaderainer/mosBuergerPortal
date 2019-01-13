@@ -37,6 +37,8 @@ namespace mosPortal.Models
         public ICollection<UserConcern> UserConcern { get; set; }
 
         public ICollection<UserRole> UserRole { get; set; }
+        public ICollection<Concern> ConcernLastUpdatedByUser { get; set; }
+        public ICollection<Poll> PollLastUpdatedByUser { get; set; }
 
         public Boolean allowToVote(int concernId)
         {

@@ -25,16 +25,20 @@
                             <a asp-area="" asp-controller="Home" asp-action="ShowPolls">Umfragen <b class="caret"></b></a>
 
                         </li>
-                        <li class="nav-item dropdown menu-large">
-                            <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
-                        </li>
-                    }
-                    else
-                    {
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
+                        {
+                            <li class="nav-item dropdown menu-large">
+                                <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
+                            </li>
+                        }
+                       
+                     }
+                     else
+                     {
                         <li class="nav-item dropdown active">
                             <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
                         </li>
-                    }
+                        }
 
                 </ul>
 

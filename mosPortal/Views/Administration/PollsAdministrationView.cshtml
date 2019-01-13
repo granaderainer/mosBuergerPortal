@@ -65,7 +65,7 @@
                         <h3 class="h4">Neue Umfrage</h3>
                     </div>
                     <div class="card-body text-center">
-                        <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-primary">Erstellen </button>
+                        <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Erstellen </button>
                         <!-- Modal-->
                         @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
                     </div>

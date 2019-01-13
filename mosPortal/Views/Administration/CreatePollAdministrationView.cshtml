@@ -1,50 +1,39 @@
-﻿@model mosPortal.Models.Poll
-
-<div id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left ">
+﻿<div id="createPollModal" tabindex="-1" role="dialog" aria-labelledby="createPollModalLabel" aria-hidden="true" class="modal fade text-left ">
     <div role="document" class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form asp-action="CreatePollAsync" asp-controller="Administration">
                 <div class="modal-header">
                     <h4 id="exampleModalLabel" class="modal-title">Neue Umfrage</h4>
                     <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true">×</span></button>
                 </div>
                 <div class="modal-body">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input id="pollConcernIdModal" class="form-control" type="hidden"/>
                     <div class="form-group">
-                        <label asp-for="Title" class="col-md-2 control-label"></label>
-
-                        <input asp-for="Title" class="form-control" />
-                        <span asp-validation-for="Title" class="text-danger" />
-
+                        <label class="col-md-2 control-label">Titel</label>
+                        <input id="pollTitleModal" class="form-control" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="Text" class="col-md-2 control-label"></label>
-
-                        <textarea asp-for="Text" class="form-control"></textarea>
-                        <span asp-validation-for="Text" class="text-danger" />
-
+                        <label class="col-md-2 control-label">Text</label>
+                        <textarea id="pollTextModal" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
-                        <label asp-for="End" class="col-md-2 control-label"></label>
-
-                        <input asp-for="End" class="form-control" />
-                        <span asp-validation-for="End" class="text-danger" />
-
+                        <label class="col-md-2 control-label">Ablaufdatum</label>
+                        <input id="pollEndModal" class="form-control" type="date" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="NeedsLocalCouncil" class="col-md-6 control-label"></label>
+                        <label class="col-md-6 control-label">Abstimmung Gemeinderat</label>
                         <br />
-                        <input data-val="true" data-val-required="The Abstimmung Gemeinderat field is required." id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="True" /> Ja <br />
-                        <input id="NeedsLocalCouncil" name="NeedsLocalCouncil" type="radio" value="False" checked /> Nein
-                        @* @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, true) Ja
-                            @Html.RadioButtonFor(Model => Model.NeedsLocalCouncil, false, new { @checked = "checked" }) Nein
-                             <input type="radio" name="needLocalCouncil" value="false" checked /> Nein <br />
-                    <input type="radio" name="needLocalCouncil" value="true" /> Ja*@
+                        <input id="pollNeedsLocalCouncilModal" name="NeedsLocalCouncil" type="radio" /> Ja <br />
+                        <input id="pollNeedsLocalCouncilModal" name="NeedsLocalCouncil" type="radio" checked /> Nein
+                    </div>
+
+                    <div class="form-group">
+                        <label class=" col-md-2 control-label">Kategorie</label>
+                        <select id="pollSelectCategoryModal" class="form-control" asp-items="ViewBag.CategoriesList"></select>
+
                     </div>
                     <div class="form-group">
-                        <label asp-for="CategoryId" class=" col-md-2 control-label"></label>
-                        <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoriesList"></select>
-
+                        <label class="col-md-6 control-label">Kommentar vom Germeinderat</label>
+                        <textarea id="pollCommentModal" class="form-control" disabled="disabled"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="sets" class="col-md-2 control-label">Antwortmöglichkeiten</label><br /><br />
@@ -70,9 +59,8 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Abbrechen</button>
-                    <input type="submit" class="btn btn-primary" value="Erstellen"/>
+                    <input type="submit" data-dismiss="modal" class="btn btn-primary" onclick="createPoll()"value="Erstellen"/>
                 </div>
-            </form>
         </div>
     </div>
 </div>
@@ -104,35 +92,3 @@
         }
     });
 </script>
-
-@*<script type="text/javascript">
-        $(document).ready(function () {
-            var next = 1;
-            $(".add-more").click(function (e) {
-                e.preventDefault();
-                var addto = "#field" + next;
-                var addRemove = "#field" + (next);
-                next = next + 1;
-                var newIn = '<input autocomplete="off" class="input form-control" id="field' + next + '" name="field' + next + '" type="text">';
-                var newInput = $(newIn);
-                var removeBtn = '<button id="remove' + (next - 1) + '" class="btn btn-danger remove-me">-</button></div><div id="field">';
-                var removeButton = $(removeBtn);
-                $(addto).after(newInput);
-                $(addRemove).after(removeButton);
-                $("#field" + next).attr('data-source', $(addto).attr('data-source'));
-                $("#count").val(next);
-
-                $('.remove-me').click(function (e) {
-                    e.preventDefault();
-                    var fieldNum = this.id.charAt(this.id.length - 1);
-                    var fieldID = "#field" + fieldNum;
-                    $(this).remove();
-                    $(fieldID).remove();
-                });
-            });
-
-
-
-        });
-    </script>*@
-
