@@ -1,37 +1,46 @@
 ﻿@using mosPortal.Models
+@using mosPortal.Views.Shared
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 
+
+
 <header class="nav-holder make-sticky">
     <div id="navbar" role="navigation" class="navbar navbar-expand-lg">
         <div class="container">
-            <a href="~/user_template/index.html" class="navbar-brand home">
-                <img src="~/user_template/img/logo.png" alt="Universal logo" class="d-none d-md-inline-block"><img src="~/user_template/img/logo-small.png" alt="Universal logo" class="d-inline-block d-md-none"><span class="sr-only">Universal - go to homepage</span>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand home">
+                <img src="~/admin_template/img/logogroup/logo_group.png" style="height: 3em" alt="" class="d-none d-md-inline-block"><img src="~/admin_template/img/logogroup/logo_group.png" style="height: 3em" alt="" class="d-inline-block d-md-none"><span class="sr-only">Home</span>
             </a>
             <button type="button" data-toggle="collapse" data-target="#navigation" class="navbar-toggler btn-template-outlined">
                 <span class="sr-only">Toggle navigation</span><i class="fa fa-align-justify"></i>
             </button>
             <div id="navigation" class="navbar-collapse collapse">
 
-                <ul class="nav navbar-nav ml-auto">
+                <ul class="nav navbar-nav ml-auto" id="mainMenu">
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        <li class="nav-item dropdown active">
+                        <li class="nav-item dropdown  menu-large" id="entry">
+                            <a asp-area="" asp-controller="Home" asp-action="Index">Home <b class="caret"></b></a>
+                        </li>
+                        <li class="nav-item dropdown menu-large" id="entry">
                             <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
                         </li>
-                        <li class="nav-item dropdown menu-large">
+                        <li class="nav-item dropdown menu-large" id="entry">
                             <a asp-area="" asp-controller="Home" asp-action="ShowPolls">Umfragen <b class="caret"></b></a>
 
                         </li>
-                        <li class="nav-item dropdown menu-large">
+                        <li class="nav-item dropdown menu-large" id="entry">
                             <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
                         </li>
                     }
                     else
                     {
-                        <li class="nav-item dropdown active">
+                        <li class="nav-item dropdown  menu-large" id="entry">
+                            <a asp-area="" asp-controller="Home" asp-action="Index">Home <b class="caret"></b></a>
+                        </li>
+                        <li class="nav-item dropdown menu-large" id="entry">
                             <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
                         </li>
                     }
@@ -42,3 +51,17 @@
         </div>
     </div>
 </header>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $("li#mainMenu").addClass("active");
+        var matches = [];
+//var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
+        var elems = document.getElementsByTagName("*");
+        for (var i = 0; i < elems.length; i++) {
+            if (elems[i].id.indexOf("entry") == 0)
+                matches.push(elems[i]);
+        }
+    });
+ </script>
+            
