@@ -4,19 +4,22 @@
 @inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "_TopBarPartial";
+    string mail = "hello@universal.com";
+    string tel = "+420 777 555 333";
+    string github = "https://github.com/granaderainer/mosBuergerPortal";
 }
 
 <div class="top-bar">
     <div class="container">
         <div class="row d-flex align-items-center">
             <div class="col-md-6 d-md-block d-none">
-                <p>Kontaktiere uns <a href="callto:+420 777 555 333" style="text-decoration: none; color: unset"><span><i class="fa fa-phone mx-2 "></i>+420 777 555 333</span><span class="ml-2">oder</span><span class="ml-2"></span></a><a href="mailto:hello@universal.com" style="text-decoration: none; color: unset"><span class="list-inline-item"><i class="fa fa-envelope mr-2"></i>hello@universal.com.</span></a></p>
+                <p>Kontaktiere uns <a href="callto:@tel" style="text-decoration: none; color: unset"><span><i class="fa fa-phone mx-2 "></i>@tel</span><span class="ml-2">oder</span><span class="ml-2"></span></a><a href="mailto:@mail" style="text-decoration: none; color: unset"><span class="list-inline-item"><i class="fa fa-envelope mr-2"></i>@mail.</span></a></p>
             </div>
             <div class="col-md-6">
                 <div class="d-flex justify-content-md-end justify-content-between">
                     <ul class="list-inline contact-info d-block d-md-none">
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-phone"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fa fa-envelope"></i></a></li>
+                        <li class="list-inline-item"><a href="callto:@tel"><i class="fa fa-phone"></i></a></li>
+                        <li class="list-inline-item"><a href="mailto:@mail"><i class="fa fa-envelope"></i></a></li>
                     </ul>
                     <ul class="list-inline d-block">
 
@@ -33,7 +36,7 @@
                         }
                     </ul>
                         <ul class="social-custom list-inline">
-                            <li class="list-inline-item"><a href="#"><i class="fa fa-envelope"></i></a></li>
+                            <li class="list-inline-item"><a target="_blank" rel="noopener noreferrer" href="@github"><i class="fa fa-github"></i></a></li>
                         </ul>
                     </div>
             </div>

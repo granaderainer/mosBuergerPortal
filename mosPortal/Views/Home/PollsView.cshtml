@@ -8,65 +8,103 @@
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
     //var polls = ViewData["Polls"] as IEnumerable<Category>;
+ 
 }
 
-<div class="container">
-    <h3>Umfragen der Gemeinde Mosbach</h3>
-    <p>Hier können Sie sich aktiv an Umfragen der Stadt Mosbach einbringen.</p>
-    <p>Nach Ablauf der jeweiligen Frist können die Ergebnisse eingesehen werden.</p>
-    @*Each Poll
-        @foreach (var item in Model)
-        {*@
-    @for (int j = 0; j < Model.Count; j++)
-    {
-        var item = Model.ElementAt(j);
-        <div class="panel panel-default container-fluid">
-            <div class="panel-heading row">
-                <h4 class="col-xs-12 col-sm-10 col-md-10">@item.Text</h4>
-                <h6 class="col-xs-12 col-sm-2 col-md-2 pull-right">@item.Title</h6>
-                @*<h4 class="col-lg-9 col-md-12 ">@item.Text</h4>
-            <h6 class="col-3-lg col-12-md  pull-right">@item.Title</h6>*@
-            </div>
-            <div class="panel-body">
 
-                @*<div asp-action="submitPollAnswer" asp-controller="Home" class="custom-control custom-radio">*@
-                <div class="custom-control custom-radio">
-                    <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                        <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
-                        <fieldset class="form-group">
-                            @{
+<div id="content">
+    <div class="container">
+        <div class="row bar">
+            <div class="col-md-3">
+                <!-- PAGES MENU -->
+                <div class="panel panel-default sidebar-menu">
+                    <div class="panel-heading">
+                        <h3 class="h4 panel-title">Umfragen</h3>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="nav nav-pills flex-column text-sm">
+                            <li class="nav-item">
+                                <a href="text.html" class="nav-link">Alle Umfragen</a>
+                            </li>@*Alle Polls*@
+                            <li class="nav-item">
+                                <a href="contact.html" class="nav-link">Endende Umfragen</a>
+                            </li>@*Polls die ablaufen*@
 
-                                for (int i = 0; i < item.AnswerOptionsPoll.Count; i++)
-                                {
-                                    var answer = item.AnswerOptionsPoll.ElementAt(i);
-
-
-                                    //Radiobuttons IDs vergeben
-                                    //Submitbuttons Auswahl des Radiobuttons zum Controller geben
-                                    //value ist ID aus der Description in AnswerOptions
-
-                                    @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                    @Html.Label(answer.AnswerOptions.Description)<br/>
-
-                                }
-                            }
-                            <button class="btn btn-success" type="submit">
-                                <i class="fa fa-check">Abstimmen</i>
-                            </button>
-                        </fieldset>
-                    </form>
-
-                    <div class="panel-info row">
-                        <span class="col-xs-3 col-sm-9">
-                            <small>Gültig bis: @item.End</small>
-                        </span>
-
-                        <span class="col-2-sm pull-right">
-                            <small>Von User @item.UserId</small>
-                        </span>
+                        </ul>
                     </div>
                 </div>
             </div>
+            <div class="col-md-9">
+                <section>
+                    <div id="text-page">
+                        <p class="lead">Hier können Sie sich aktiv an Umfragen der Stadt Mosbach einbringen. Nach Ablauf der jeweiligen Frist können die Ergebnisse eingesehen werden.</p>
+                        <h1>Umfragen der Gemeinde Mosbach</h1>
+                        
+
+
+                        <div id="blog-listing-big" class="col-md-9">
+                            @for (var j = 0; j < Model.Count; j++)
+                            {
+                                var item = Model.ElementAt(j);
+                                <div class="shadow">
+                                    <section class="post box">
+                                        <h2>
+                                            <a href="blog-post.html">@item.Title</a>
+                                        </h2>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <p class="author-category">By <a href="#">User @item.UserId</a> in <a href="blog.html">@item.Category</a></p>
+                                            </div>
+                                            <div class="col-sm-6 text-right">
+                                                <p class="date-comments">
+                                                    <i class="fa fa-calendar-o"></i>@item.End
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <p class="intro">@item.Text</p>
+                                        <div class="image">
+                                            @*<a href="blog-post.html">
+               <img src="img/blog2.jpg" alt="Example blog post alt" class="img-fluid">
+            </a>*@
+                                        </div>
+                                        <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                                            <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                                            <fieldset class="form-group">
+                                                @{
+
+                                                    for (var i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                                                    {
+                                                        var answer = item.AnswerOptionsPoll.ElementAt(i);
+
+
+                                                        //Radiobuttons IDs vergeben
+                                                        //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+                                                        //value ist ID aus der Description in AnswerOptions
+
+                                                        @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                                        @Html.Label(answer.AnswerOptions.Description)<br />
+                                                    }
+                                                }
+                                                <button class="btn btn-success" type="submit">
+                                                    <i class="fa fa-check">Abstimmen</i>
+                                                </button>
+                                            </fieldset>
+                                        </form>
+
+
+
+                                    </section>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </section>
+            </div>
         </div>
-    }
+    </div>
 </div>
+@*Each Poll
+    @foreach (var item in Model)
+    {*@
+
