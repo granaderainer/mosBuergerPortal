@@ -11,13 +11,45 @@
         <h2 class="no-margin-bottom">Anliegen</h2>
     </div>
 </header>
+
+<section class="forms">
+    <div class="container-fluid">
+
+        <div class="row">
+            <!-- Inline Form-->
+            <div class="col-lg-10">
+                <div class="card">
+                    <div class="card-close">
+                        <div class="dropdown">
+                            <button type="button" id="closeCard3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                            <div aria-labelledby="closeCard3" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                        </div>
+                    </div>
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="h4">Filter</h3>
+                    </div>
+                    <div class="card-body">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label class="col-sm-3 form-control-label">Status</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control mb-auto" name="concerncStatusSelect" id="concerncStatusSelect"asp-items="ViewBag.statusList" onchange="selectedStatusChanged()"></select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 <!-- Projects Section-->
 <section class="projects no-padding-top">
     <div class="container-fluid">
         @foreach (Concern concern in Model)
         {
             <!-- Project-->
-            <div class="project">
+            <div class="project" name ="concern" id="@concern.Id @concern.StatusId">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
@@ -38,7 +70,7 @@
                         </div>
                     </div>
                     <div class="right-col col-lg-2 d-flex align-items-center">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id">Bearbeiten</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                     </div>
                 </div>
             </div>
@@ -50,44 +82,46 @@
 <div class="modal fade" id="changeConcernStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeConcernStatusModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="ChangeConcernStatus" asp-controller="Administration" method="post">
-                <div class="modal-header">
-                    <h4 class="modal-title">Anliegen bearbeiten</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-                </div>
+            <div class="modal-header">
+                <h4 class="modal-title">Anliegen bearbeiten</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
 
-                <div class="modal-body">
-                    <div id="concernModalTitle"></div>
-                    <div id="concernModalText"></div>
-                    <hr>
-                    <div id="concernModalDate"></div>
-                    <hr>
-                    <input type="hidden" name="concernModalId" id="concernModalId" />
-                    <div class="form-group">
-                        <label class="control-label">Status</label>
-                        <select name="concernModalStatus" class="form-control" id="concernModalStatus"></select>
-                    </div>
+            <div class="modal-body">
+                <div id="concernModalTitle"></div>
+                <div id="concernModalText"></div>
+                <hr>
+                <div id="concernModalDate"></div>
+                <hr>
+                <input type="hidden" name="concernModalId" id="concernModalId" />
+                <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld"/>
+                <div class="form-group">
+                    <label class="control-label">Status</label>
+                    <select name="concernModalStatus" class="form-control" id="concernModalStatus"></select>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                    <button type="submit" class="btn btn-primary">Speichern</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                <button id ="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changeConcernStatus()">Speichern</button>
 
-                </div>
-            </form>
+            </div>
         </div>
     </div>
 </div>
 <script type="text/javascript">
+    var elems;
         $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
-            var concernId = button.data('concernid') // Extract info from data-* attributes
-            test(concernId)
+            var concernId = button.data('concernid')
+            var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
+            console.log("vom Button " + concernStatusOld);
+            test(concernId, concernStatusOld);
         });
 
-        function test(concernId) {
+        function test(concernId, concernStatusOld) {
             $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-                console.log(data);
                 $("#concernModalId").val(concernId);
+                $('#concernModelStatusOld').val(concernStatusOld);
                 document.getElementById("concernModalTitle").innerHTML= "<h4>"+(data.title)+"</h4>";
                 document.getElementById("concernModalText").innerHTML = (data.text);
                 document.getElementById("concernModalDate").innerHTML = "Erstellt am: "+(data.date);// display id value which is returned from the action method
@@ -102,25 +136,58 @@
                 });
                 $("#concernModalStatus").empty();
                 $("#concernModalStatus").append(fragment);
-                //selectStatus.empty().append(fragment);
                 $("#concernModalStatus").val(data.statusId);
             });
         }
     $(document).ready(function () {
-        $("#mytable #checkall").click(function () {
-            if ($("#mytable #checkall").is(':checked')) {
-                $("#mytable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", true);
-                });
-
-            } else {
-                $("#mytable input[type=checkbox]").each(function () {
-                    $(this).prop("checked", false);
-                });
-            }
-        });
-
-        $("[data-toggle=tooltip]").tooltip();
+        $("li#linkConcerns").addClass("active");
+        elems = document.getElementsByName("concern");
+        console.log(elems);
     });
+    function selectedStatusChanged()
+    {
+        var select = document.getElementById("concerncStatusSelect");
+        var selectedStatus = select.value;
+        for (var i = 0; i < elems.length; i++) {
+            var id = elems[i].id;
+            var ids = id.split(" ");
+            if (ids[1] != selectedStatus) {
+                elems[i].style.display = "none";
+            }
+            else
+            {
+                elems[i].style.display = "block";
+            }
+            if (selectedStatus == 0) {
+                elems[i].style.display = "block";
+            }
+        }
+    }
+    function changeConcernStatus()
+    {
+        var selectElement = document.getElementById("concernModalStatus");
+        var concernElement = document.getElementById("concernModalId");
+        var oldStatusElement = document.getElementById("concernModelStatusOld");
+        var oldStatusId = oldStatusElement.value;
+        var statusId = selectElement.value;
+        var concernId = concernElement.value;
+        var result;
+        $.post("/Administration/ChangeConcernStatus", { concern: concernId, status: statusId }, function (data) {
+            result = (data.result);
+            if (result == 1) {
+                vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' });
+                var divConcernId = concernId + " " + oldStatusId;
+                var concern = document.getElementById(divConcernId);
+                var newConcernId = concernId + " " + statusId;
+                concern.setAttribute("id", newConcernId);
+                if (document.getElementById("concerncStatusSelect").value != 0) {
+                    concern.style.display = "none";
+                }
+            }
+            else {
+                vNotify.error({ text: 'Der Status konnte nicht geändert werden!', title: 'Statusänderung fehlgeschlagen' })
+            }
+        });        
+    }
 
 </script>

@@ -83,11 +83,13 @@
 </section>
 
 <script type="text/javascript">
-        $(document).ready(function () {
+    $(document).ready(function () {
+            $("li#linkHome").addClass("active");
+
             var matches = [];
             var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
-        var elems = document.getElementsByTagName("*");
-        for (var i = 0; i < elems.length; i++) {
+            var elems = document.getElementsByTagName("*");
+            for (var i = 0; i < elems.length; i++) {
             if (elems[i].id.indexOf("pollChart_") == 0)
                 matches.push(elems[i]);
         }
@@ -95,8 +97,8 @@
         for (var i = 0; i < matches.length; i++) {
             var id = matches[i].id;
             var pollId = id[id.length - 1]
-            console.log(matches[i].id);
-            console.log(id[id.length - 1]);
+            //console.log(matches[i].id);
+            //console.log(id[id.length - 1]);
             $.ajax({
                 async: false,
                 type: 'GET',

@@ -53,6 +53,8 @@
     <link rel="stylesheet" href="~/admin_template/css/custom.css">
     <!-- Morris Charts CSS -->
     <link href="~/css/plugins/morris.css" rel="stylesheet">
+
+    <link href="~/vanilla/vanilla-notify.css" rel="stylesheet" />
     <!-- Favicon-->
     <link rel="shortcut icon" href="~/admin_template/img/favicon.ico">
     <!-- Tweaks for older IEs-->
@@ -70,6 +72,7 @@
     <script src="~/js/morris/raphael.min.js"></script>
     <script src="~/js/morris/morris.min.js"></script>
     <script src="~/js/morris/morris-data.js"></script>
+    <script src="~/vanilla/vanilla-notify.js"></script>
     <!-- Main File-->
     <script src="~/admin_template/js/front.js"></script>
 </head>
@@ -193,7 +196,7 @@
                 <!-- Sidebar Navidation Menus-->
                 <span class="heading">Navigation</span>
                 <ul class="list-unstyled">
-                    <li id="linkHome" class="active"><a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a></li>
+                    <li id="linkHome"><a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a></li>
                     <li id="linkConcerns"><a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a></li>
                     <li id="linkPolls"><a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a></li>    
                 <li><a href="~/admin_template/tables.html"> <i class="icon-grid"></i>Tables </a></li>

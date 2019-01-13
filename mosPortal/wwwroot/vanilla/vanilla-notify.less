@@ -1,0 +1,143 @@
+
+@vn-info-background: #3498db;
+@vn-success-background: #2ecc71;
+@vn-error-background: #e74c3c;
+@vn-warning-background: #f39c12;
+@vn-notify-background: #333;
+
+@vn-info-color: #fff;
+@vn-success-color: #fff;
+@vn-error-color: #fff;
+@vn-warning-color: #fff;
+@vn-notify-color: #fff;
+@vn-close-color: #fff;
+
+@vn-border-radius: 5px;
+@vn-container-top: 10px;
+@vn-container-bottom: 10px;
+@vn-container-left: 10px;
+@vn-container-right: 10px;
+
+@vn-opacity: .8;
+@vn-hover-opacity: 1;
+
+.vn-border-radius(@radius) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+      -ms-border-radius: @radius;
+          border-radius: @radius;
+}
+
+.vn-opacity(@vn-value){
+  @vn-IEValue: @vn-value*100;
+  opacity: @vn-value;
+  -ms-filter: ~"progid:DXImageTransform.Microsoft.Alpha(Opacity=@{vn-IEValue})";
+  filter: alpha(opacity=@vn-IEValue);
+}
+
+.vn-transform(@vn-deg) {
+  -webkit-transform: rotate(@vn-deg);
+  -moz-transform: rotate(@vn-deg);
+  transform: rotate(@vn-deg);
+}
+
+.vnotify-container {
+  position: fixed;
+
+  &.vn-top-right {
+    right: @vn-container-right;
+    top: @vn-container-top;
+  }
+
+  &.vn-top-left {
+    top: @vn-container-top;
+    left: @vn-container-left;
+  }
+
+  &.vn-bottom-right {
+    bottom: @vn-container-bottom;
+    right: @vn-container-right;
+  }
+
+  &.vn-bottom-left {
+    bottom: @vn-container-bottom;
+    left: @vn-container-left;
+  }
+
+  &.vn-center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .vn-close {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    padding: 2px;
+    cursor: pointer;
+
+    &:before, &:after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      height: 2px;
+      background: @vn-close-color;
+    }
+
+    &:before {
+      .vn-transform(45deg);
+    }
+
+    &:after {
+      .vn-transform(-45deg);
+    }
+  }
+}
+
+.vnotify-item {
+  width: 20em;
+  padding: 15px;
+  position: relative;
+  .vn-border-radius(@vn-border-radius);
+  margin-bottom: 15px;
+  .vn-opacity(@vn-opacity);
+
+  &:hover {
+    opacity: @vn-hover-opacity;
+  }
+}
+
+.vnotify-title {
+  font-weight: bold;
+}
+
+.vnotify {
+  &-info {
+    background: @vn-info-background;
+    color: @vn-info-color;
+  }
+
+  &-success {
+    background: @vn-success-background;
+    color: @vn-success-color;
+  }
+
+  &-error {
+    background: @vn-error-background;
+    color: @vn-error-color;
+  }
+
+  &-warning {
+    background: @vn-warning-background;
+    color: @vn-warning-color;
+  }
+
+  &-notify {
+    background: @vn-notify-background;
+    color: @vn-notify-color;
+  }
+}
