@@ -248,5 +248,9 @@ namespace mosPortal.Controllers
         }
 
 
+        public IActionResult ShowImpressum()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

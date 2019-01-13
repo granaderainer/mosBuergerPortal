@@ -3,21 +3,21 @@
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-@if (SignInManager.IsSignedIn(User))
-{
 
-    <header class="nav-holder make-sticky">
-        <div id="navbar" role="navigation" class="navbar navbar-expand-lg">
-            <div class="container">
-                <a href="~/user_template/index.html" class="navbar-brand home">
-                    <img src="~/user_template/img/logo.png" alt="Universal logo" class="d-none d-md-inline-block"><img src="~/user_template/img/logo-small.png" alt="Universal logo" class="d-inline-block d-md-none"><span class="sr-only">Universal - go to homepage</span>
-                </a>
-                <button type="button" data-toggle="collapse" data-target="#navigation" class="navbar-toggler btn-template-outlined">
-                    <span class="sr-only">Toggle navigation</span><i class="fa fa-align-justify"></i>
-                </button>
-                <div id="navigation" class="navbar-collapse collapse">
+<header class="nav-holder make-sticky">
+    <div id="navbar" role="navigation" class="navbar navbar-expand-lg">
+        <div class="container">
+            <a href="~/user_template/index.html" class="navbar-brand home">
+                <img src="~/user_template/img/logo.png" alt="Universal logo" class="d-none d-md-inline-block"><img src="~/user_template/img/logo-small.png" alt="Universal logo" class="d-inline-block d-md-none"><span class="sr-only">Universal - go to homepage</span>
+            </a>
+            <button type="button" data-toggle="collapse" data-target="#navigation" class="navbar-toggler btn-template-outlined">
+                <span class="sr-only">Toggle navigation</span><i class="fa fa-align-justify"></i>
+            </button>
+            <div id="navigation" class="navbar-collapse collapse">
 
-                    <ul class="nav navbar-nav ml-auto">
+                <ul class="nav navbar-nav ml-auto">
+                    @if (SignInManager.IsSignedIn(User))
+                    {
                         <li class="nav-item dropdown active">
                             <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
                         </li>
@@ -28,37 +28,17 @@
                         <li class="nav-item dropdown menu-large">
                             <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
                         </li>
-                    </ul>
+                    }
+                    else
+                    {
+                        <li class="nav-item dropdown active">
+                            <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
+                        </li>
+                    }
 
-                        </div>
-                    </div>
-                </div>
-            </header>
-        }
-        else
-        {
-        <header class="nav-holder make-sticky">
-            <div id="navbar" role="navigation" class="navbar navbar-expand-lg">
-                <div class="container">
-                    <a href="~/user_template/index.html" class="navbar-brand home">
-                        <img src="~/user_template/img/logo.png" alt="Universal logo" class="d-none d-md-inline-block"><img src="~/user_template/img/logo-small.png" alt="Universal logo" class="d-inline-block d-md-none"><span class="sr-only">Universal - go to homepage</span>
-                    </a>
-                    <button type="button" data-toggle="collapse" data-target="#navigation" class="navbar-toggler btn-template-outlined">
-                        <span class="sr-only">Toggle navigation</span><i class="fa fa-align-justify"></i>
-                    </button>
-                    <div id="navigation" class="navbar-collapse collapse">
-                        <ul class="nav navbar-nav ml-auto">
-                            <li class="nav-item dropdown active">
-                                <a asp-area="" asp-controller="Home" asp-action="ShowConcerns" data-toggle="dropdown">Anliegen <b class="caret"></b></a>
-                            </li>
-                            <li class="nav-item dropdown menu-large">
-                                <a asp-area="" asp-controller="Home" asp-action="ShowPolls" data-toggle="dropdown">Umfragen <b class="caret"></b></a>
-                            </li>
+                </ul>
 
-                        </ul>
-                    </div>
-                </div>
             </div>
-        </header>
-        }
-
+        </div>
+    </div>
+</header>
