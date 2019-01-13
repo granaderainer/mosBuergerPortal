@@ -28,8 +28,15 @@ namespace mosPortal.Models
         
         public int StatusId { get; set; }
 
+        public int? LastUpdatedBy { get; set; }
+
+        public DateTime? LastUpdatedAt { get; set; }
+
+        public string AdminComment { get; set; }
+
         public Category Category { get; set; }
         public User User { get; set; }
+        public User LastUpdatedByUser { get; set; }
         public ICollection<Comment> Comment { get; set; }
         [Display(Name = "Likes")]
         public ICollection<UserConcern> UserConcern { get; set; }

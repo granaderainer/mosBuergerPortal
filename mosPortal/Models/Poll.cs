@@ -30,8 +30,17 @@ namespace mosPortal.Models
         [Display(Name = "Titel")]
         public string Title { get; set; }
 
+        public int? LastUpdatedBy { get; set; }
+
+        public DateTime? LastUpdatedAt { get; set; }
+
+        public int? StatusId { get; set; }
+
+        public Status Status { get; set; }
+
         public Category Category { get; set; }
         public User User { get; set; }
+        public User LastUpdatedByUser { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
         public class Answer
         {

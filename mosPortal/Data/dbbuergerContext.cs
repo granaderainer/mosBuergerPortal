@@ -176,6 +176,8 @@ namespace mosPortal.Data
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_concern_User1_idx");
+                entity.HasIndex(e => e.LastUpdatedBy)
+                    .HasName("fk_poll_User2_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -204,6 +206,16 @@ namespace mosPortal.Data
                 entity.Property(e => e.UserId)
                     .HasColumnName("User_ID")
                     .HasColumnType("int(11)");
+                entity.Property(e => e.LastUpdatedBy)
+                    .HasColumnName("lastUpdatedBy")
+                    .HasColumnType("int(11)");
+                entity.Property(e => e.LastUpdatedAt)
+                    .HasColumnName("lastUpdatedAt")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.AdminComment)
+                    .HasColumnName("comment")
+                    .HasColumnType("varchar(5000)");
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Concern)
@@ -222,6 +234,11 @@ namespace mosPortal.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_concern_User1");
+                entity.HasOne(d => d.LastUpdatedByUser)
+                    .WithMany(p => p.ConcernLastUpdatedByUser)
+                    .HasForeignKey(d => d.LastUpdatedBy)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("fk_Concern_User2");
             });
 
             modelBuilder.Entity<Poll>(entity =>
@@ -231,6 +248,11 @@ namespace mosPortal.Data
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("fk_poll_User1_idx");
+
+                entity.HasIndex(e => e.LastUpdatedBy)
+                    .HasName("fk_poll_User2_idx");
+                entity.HasIndex(e => e.StatusId)
+                    .HasName("fk_poll_Status1_idx");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -264,6 +286,17 @@ namespace mosPortal.Data
                     .HasColumnName("User_ID")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.LastUpdatedBy)
+                    .HasColumnName("lastUpdatedBy")
+                    .HasColumnType("int(11)");
+                entity.Property(e => e.LastUpdatedAt)
+                    .HasColumnName("lastUpdatedAt")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.StatusId)
+                    .HasColumnName("Status_id")
+                    .HasColumnType("int(11)");
+
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Poll)
                     .HasForeignKey(d => d.CategoryId)
@@ -275,6 +308,18 @@ namespace mosPortal.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_poll_User1");
+
+                entity.HasOne(d => d.Status)
+                    .WithMany(p => p.Poll)
+                    .HasForeignKey(d => d.StatusId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("fk_Poll_Status1");
+
+                entity.HasOne(d => d.LastUpdatedByUser)
+                    .WithMany(p => p.PollLastUpdatedByUser)
+                    .HasForeignKey(d => d.LastUpdatedBy)
+                    .OnDelete(DeleteBehavior.SetNull)
+                    .HasConstraintName("fk_poll_User2");
             });
 
             modelBuilder.Entity<Role>(entity =>
