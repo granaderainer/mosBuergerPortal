@@ -3,6 +3,7 @@
     -webkit-border-radius: 0% 0% 100% 100% / 0% 0% 8px 8px;
     -webkit-box-shadow: rgba(0, 0, 0,.30) 0 2px 3px;
 }
+
 .box {
     margin: 0 auto;
     margin-top: 50px;
@@ -17,5 +18,12 @@
     align-items: center;
     text-align: center;
 
+}
+
+.not-active {
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+    
 }
 

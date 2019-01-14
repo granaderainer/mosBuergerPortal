@@ -153,13 +153,13 @@ namespace mosPortal.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [Authorize(Policy = "AllRoles")]
+        
         public IActionResult ShowPolls()
         {
             //int pollId = -1;
             DateTime time = DateTime.UtcNow;
 
-            List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).ToList();
+            List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
 
             foreach (Poll poll in polls)
             {
@@ -179,11 +179,20 @@ namespace mosPortal.Controllers
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)
             {
+                
                 PollViewModel pollViewModel = new PollViewModel();
 
                 pollViewModel.Id = poll.Id;
                 pollViewModel.Text = poll.Text;
-                pollViewModel.End = poll.End;
+                if (pollViewModel.End == null)
+                {
+                   pollViewModel.End = DateTime.UtcNow;
+                    }
+                else
+                {
+                   pollViewModel.End = (DateTime) poll.End;
+                  }
+                
                 pollViewModel.UserId = poll.UserId;
                 pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
                 pollViewModel.Approved = poll.Approved;
