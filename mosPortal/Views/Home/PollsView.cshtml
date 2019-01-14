@@ -7,8 +7,7 @@
 @{
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
-    //var polls = ViewData["Polls"] as IEnumerable<Category>;
- 
+    var category = "default";
 }
 
 
@@ -39,7 +38,6 @@
                     <div id="text-page">
                         <p class="lead">Hier können Sie sich aktiv an Umfragen der Stadt Mosbach einbringen. Nach Ablauf der jeweiligen Frist können die Ergebnisse eingesehen werden.</p>
                         <h1>Umfragen der Gemeinde Mosbach</h1>
-                        
 
 
                         <div id="blog-listing-big" class="col-md-9">
@@ -48,16 +46,27 @@
                                 var item = Model.ElementAt(j);
                                 <div class="shadow">
                                     <section class="post box">
-                                        <h2>
-                                            <a href="blog-post.html">@item.Title</a>
-                                        </h2>
+                                        <h2>@item.Title</h2>
                                         <div class="row">
                                             <div class="col-sm-6">
-                                                <p class="author-category">By <a href="#">User @item.UserId</a> in <a href="blog.html">@item.Category</a></p>
+                                                <p class="author-category">
+                                                    Von <a href="#" class="not-active">User @item.UserId</a> in
+                                                    <a href="#" class="not-active">
+                                                        @if (item.Category is null)
+                                                        {
+                                                            category = "Unbekannt";
+                                                        }
+                                                        else
+                                                        {
+                                                            category = item.Category.Description;
+                                                        }
+                                                        @category
+                                                    </a>
+                                                </p>
                                             </div>
                                             <div class="col-sm-6 text-right">
                                                 <p class="date-comments">
-                                                    <i class="fa fa-calendar-o"></i>@item.End
+                                                    <i class="fa fa-calendar-o"></i>@item.End.ToString("dd/MM/yyyy")
                                                 </p>
                                             </div>
                                         </div>
@@ -68,7 +77,7 @@
             </a>*@
                                         </div>
                                         <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                                            <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                                            <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
                                             <fieldset class="form-group">
                                                 @{
 
@@ -82,7 +91,7 @@
                                                         //value ist ID aus der Description in AnswerOptions
 
                                                         @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                                        @Html.Label(answer.AnswerOptions.Description)<br />
+                                                        @Html.Label(answer.AnswerOptions.Description)<br/>
                                                     }
                                                 }
                                                 <button class="btn btn-success" type="submit">
@@ -90,7 +99,6 @@
                                                 </button>
                                             </fieldset>
                                         </form>
-
 
 
                                     </section>
@@ -104,7 +112,4 @@
         </div>
     </div>
 </div>
-@*Each Poll
-    @foreach (var item in Model)
-    {*@
 

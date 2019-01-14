@@ -19,32 +19,30 @@
             <div id="navigation" class="navbar-collapse collapse">
 
                 <ul class="nav navbar-nav ml-auto" id="mainMenu">
+                    <li class="nav-item dropdown  menu-large" id="NavHome">
+                        <a asp-area="" asp-controller="Home" asp-action="Index">Home <b class="caret"></b></a>
+                    </li>
+                    <li class="nav-item dropdown menu-large" id="NavConcern">
+                        <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
+                    </li>
+                    <li class="nav-item dropdown menu-large" id="NavPoll">
+                        <a asp-area="" asp-controller="Home" asp-action="ShowPolls">Umfragen <b class="caret"></b></a>
+                    </li>
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        <li class="nav-item dropdown  menu-large" id="entry">
-                            <a asp-area="" asp-controller="Home" asp-action="Index">Home <b class="caret"></b></a>
-                        </li>
-                        <li class="nav-item dropdown menu-large" id="entry">
-                            <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
-                        </li>
-                        <li class="nav-item dropdown menu-large" id="entry">
-                            <a asp-area="" asp-controller="Home" asp-action="ShowPolls">Umfragen <b class="caret"></b></a>
-
-                        </li>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
+                        
+                        if ((await AuthorizationService.AuthorizeAsync(User, "AllAdministrationRoles")).Succeeded)
                         {
-                            <li class="nav-item dropdown menu-large" id="entry">
+                            <li class="nav-item dropdown menu-large" id="NavAdmin">
                                 <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
                             </li>
                         }
+
+                    }
+                    else
+                    {
                        
-                     }
-                     else
-                     {
-                        <li class="nav-item dropdown active" id="entry">
-                            <a asp-area="" asp-controller="Home" asp-action="ShowConcerns">Anliegen <b class="caret"></b></a>
-                        </li>
-                        }
+                    }
 
                 </ul>
 
@@ -52,17 +50,6 @@
         </div>
     </div>
 </header>
-<script type="text/javascript">
-    $(document).ready(function() {
 
-        $("li#mainMenu").addClass("active");
-        var matches = [];
-//var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
-        var elems = document.getElementsByTagName("*");
-        for (var i = 0; i < elems.length; i++) {
-            if (elems[i].id.indexOf("entry") == 0)
-                matches.push(elems[i]);
-        }
-    });
- </script>
-            
+
+
