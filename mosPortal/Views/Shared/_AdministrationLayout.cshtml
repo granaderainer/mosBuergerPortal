@@ -204,10 +204,10 @@
                     <li><a href="~/admin_template/charts.html"s> <i class="fa fa-bar-chart"></i>Charts </a></li>
                     <li><a href="~/admin_template/forms.html"> <i class="icon-padnote"></i>Forms </a></li>
                     <li>
-                        <a href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
+                        <a id="linkAdministration" href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
                         <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
                             <li><a href="#">Benutzer verwalten</a></li>
-                            <li><a href="#">Test</a></li>
+                            <li id="linkCategoriesCRUD"><a asp-controller="Administration" asp-action="ShowCategories">Kategorie verwalten</a></li>
                             <li><a href="#">Test</a></li>
                         </ul>
                     </li>

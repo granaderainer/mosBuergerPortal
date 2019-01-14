@@ -291,5 +291,55 @@ namespace mosPortal.Controllers
             return poll.getAnswers();
 
         }
+        public IActionResult ShowCategories()
+        {
+            List<Category> categories = db.Category.ToList();
+            return View("CategoriesAdministrationView", categories);
+        }
+        [HttpPost]
+        public IActionResult crudCategory(string categoryId, string description, string operation)
+        {
+            Category category = new Category {};
+            string title = "";
+            string text = "";
+            int result = 0;
+            int categoryIdInt = Convert.ToInt32(categoryId);
+            try
+            {
+                if (Equals(operation, "update"))
+                {
+                    title = "Update erfolgreich";
+                    text = "Kategorie '" + description + "' erfolgreich geändert!";
+                    result = 2;
+                    category = db.Category.Where(c => c.Id == categoryIdInt).SingleOrDefault();
+                    category.Description = description;
+                    db.Update(category);
+                    db.SaveChanges();
+                }
+                if (Equals(operation, "create"))
+                {
+                    title = "Erstellung erfolgreich";
+                    text = "Kategorie '" + description + "' erfolgreich angelegt!"; 
+                    result = 1;
+                    category.Description = description;
+                    db.Add(category);
+                    db.SaveChanges();
+                    categoryIdInt = category.Id;
+                }
+                if (Equals(operation, "delete"))
+                {
+                    result = 3;
+                }
+            }
+            catch(Exception e)
+            {
+                title = "Fehler";
+                text = e.Message;
+                result = 0;
+            }
+            return Json(new { result, title, text, description, categoryId = categoryIdInt });
+        }
+
+            
         }
 }
