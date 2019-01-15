@@ -15,8 +15,8 @@
 <!-- Breadcrumb-->
 <div class="breadcrumb-holder container-fluid">
     <ul class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-        <li class="breadcrumb-item active">Forms            </li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
+        <li class="breadcrumb-item active">Umfragen            </li>
     </ul>
 </div>
 <section class="forms">
@@ -24,7 +24,7 @@
 
         <div class="row">
             <!-- Inline Form-->
-            <div class="col-lg-10">
+            <div class="col-lg-12">
                 <div class="card">
                     <div class="card-close">
                         <div class="dropdown">
@@ -33,111 +33,89 @@
                         </div>
                     </div>
                     <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Inline Form</h3>
+                        <h3 class="h4">Filter</h3>
                     </div>
+
                     <div class="card-body">
-                        <form class="form-inline">
-                            <div class="form-group">
-                                <label for="inlineFormInput" class="sr-only">Name</label>
-                                <input id="inlineFormInput" type="text" placeholder="Jane Doe" class="mr-3 form-control">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <select id="pollStatusSelect" class="col-lg-12"></select>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="inlineFormInputGroup" class="sr-only">Username</label>
-                                <input id="inlineFormInputGroup" type="text" placeholder="Username" class="mr-3 form-control">
+                            <div class="col">
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Submit</button>
+                            <div class="col">
+                                <div class="form-group">
+                                    <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
+                                </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- Modal Form-->
-            <div class="col-lg-2">
-                <div class="card">
-                    <div class="card-close">
-                        <div class="dropdown">
-                            <button type="button" id="closeCard4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard4" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                        </div>
-                    </div>
-                    <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Neue Umfrage</h3>
-                    </div>
-                    <div class="card-body text-center">
-                        <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Erstellen </button>
-                        <!-- Modal-->
-                        @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
-                    </div>
-                </div>
-            </div>
+            @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
         </div>
     </div>
 </section>
 
-<section class="tables">
+<section class="charts">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-close">
-                        <div class="dropdown">
-                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
-                        </div>
-                    </div>
-                    <div class="card-header d-flex align-items-center">
-                        <h3 class="h4">Alle Umfragen</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Title)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.End)
-                                        </th>
-                                        <th>
-                                            CRUD
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Id)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Title)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.End)
-                                            </td>
+            @foreach (Poll poll in Model)
+            {
+                @await Html.PartialAsync("PollAdministrationpPartialView", poll)
 
-                                            <td>
-                                                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                                                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                                                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            }
         </div>
     </div>
 </section>
+
 <script type="text/javascript">
     $(document).ready(function () {
-        $('linkPolls').addClass('active');
-    });
+        $('li#linkPolls').addClass('active');
+        var matches = [];
+        var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
+        var elems = document.getElementsByTagName("*");
+        for (var i = 0; i < elems.length; i++) {
+            if (elems[i].id.indexOf("pollChart_") == 0)
+            matches.push(elems[i]);
+        }
+        //console.log(matches)
+        for (var i = 0; i < matches.length; i++) {
+            var id = matches[i].id;
+        var pollId = id[id.length - 1]
+        //console.log(matches[i].id);
+        //console.log(id[id.length - 1]);
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/Administration/GetPollAnswers?pollId='+pollId,
+            success: function (data) {
+                console.log(data.length);
+                var count = data.length;
+                var chartColors = [];
+                var j = 0;
+                for (var i = 0; i < count; i++) {
+                    if (j == (colors.length - 1)) {
+                        j = 0;
+                    }
+                    chartColors.push(colors[j]);
+                    j++;
+                }
+                console.log(data);
+                console.log(chartColors);
+                Morris.Donut({
+                    element: id,
+                    data: data,
+                    colors: chartColors
+                });
+            }
+        });
+    }
+ });
 </script>

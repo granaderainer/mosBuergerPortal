@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <Content Remove="Views\Home\Index1.cshtml" />
+    <Content Remove="Views\Shared\SnakeView.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
