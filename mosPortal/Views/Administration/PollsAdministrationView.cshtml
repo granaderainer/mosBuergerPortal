@@ -40,34 +40,46 @@
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">
-                                    <select id="pollStatusSelect" class="col-lg-12"></select>
+                                    <label class="col-sm-12 form-control-label">Status</label>
+                                    <select id="pollStatusSelect" class="col-lg-12" asp-items="ViewBag.StatusList" onchange="selectedFilterChanged()"></select>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
-                                    <select id="categorySelect" class="col-lg-12" asp-items="ViewBag.CategoriesList"></select>
+                                    <label class="col-sm-12 form-control-label">Kategorie</label>
+                                    <select id="pollCategorySelect" class="col-lg-12" asp-items="ViewBag.CategoriesList" onchange="selectedFilterChanged()"></select>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                    <label class="col-sm-12 form-control-label">Suche</label>
+                                    <input id="pollSearchText" class="col-lg-12" />
+
                                 </div>
                             </div>
                             <div class="col">
-                                <div class="form-group">
-                                    <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <label class="col-sm-12 form-control-label"></label>
+                                            <button id="pollSearchButton" type="button" class="btn btn-primary">Suche</button>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <label class="col-sm-12 form-control-label"></label>
+                                        <div class="form-group">
+                                            <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Modal Form-->
-            @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
         </div>
     </div>
 </section>
-
 <section class="charts">
     <div class="container-fluid">
         <div class="row">
@@ -79,48 +91,92 @@
         </div>
     </div>
 </section>
-
+<!-- Modal Form-->
+@await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
+    var pollElems = [];
     $(document).ready(function () {
+        pollElems = document.getElementsByName("poll");
+        console.log(elems);
         $('li#linkPolls').addClass('active');
-        var matches = [];
         var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
-        var elems = document.getElementsByTagName("*");
+        var elems = document.getElementsByName("pollChart");
         for (var i = 0; i < elems.length; i++) {
-            if (elems[i].id.indexOf("pollChart_") == 0)
-            matches.push(elems[i]);
-        }
-        //console.log(matches)
-        for (var i = 0; i < matches.length; i++) {
-            var id = matches[i].id;
-        var pollId = id[id.length - 1]
-        //console.log(matches[i].id);
-        //console.log(id[id.length - 1]);
-        $.ajax({
-            async: false,
-            type: 'GET',
-            url: '/Administration/GetPollAnswers?pollId='+pollId,
-            success: function (data) {
-                console.log(data.length);
-                var count = data.length;
-                var chartColors = [];
-                var j = 0;
-                for (var i = 0; i < count; i++) {
-                    if (j == (colors.length - 1)) {
-                        j = 0;
+            var id = elems[i].id;
+            var pollId = (id.split(" "))[1];
+            console.log("Poll Id =" +pollId)
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: '/Administration/GetPollAnswers?pollId=' + pollId,
+                success: function (data) {
+                    console.log(data.length);
+                    var count = data.length;
+                    var chartColors = [];
+                    var j = 0;
+                    for (var i = 0; i < count; i++) {
+                        if (j == (colors.length - 1)) {
+                            j = 0;
+                        }
+                        chartColors.push(colors[j]);
+                        j++;
                     }
-                    chartColors.push(colors[j]);
-                    j++;
+                    console.log(data);
+                    console.log(chartColors);
+                    Morris.Donut({
+                        element: id,
+                        data: data,
+                        colors: chartColors
+                    });
                 }
-                console.log(data);
-                console.log(chartColors);
-                Morris.Donut({
-                    element: id,
-                    data: data,
-                    colors: chartColors
-                });
+            });
+        }
+    });
+    function selectedFilterChanged() {
+        var statusSelect = document.getElementById("pollStatusSelect");
+        var selectedStatus = statusSelect.value;
+        var categorySelect = document.getElementById("pollCategorySelect");
+        var selectedCategory = categorySelect.value;
+        for (var i = 0; i < pollElems.length; i++) {
+            var display = "block";
+
+            var id = pollElems[i].id;
+            var ids = id.split(" ");
+
+            if (ids[1] != selectedStatus) {
+                display = "none";
             }
-        });
+            else {
+                display = "block";
+            }
+            if (selectedStatus == 0) {
+                 display= "block";
+            }
+            if (display != "none") {
+                if (ids[2] != selectedCategory) {
+                    display = "none";
+                }
+                else {
+                    display = "block";
+                }
+                if (selectedCategory == 0) {
+                    display = "block";
+                }
+            }
+            pollElems[i].style.display = display;
+        }
     }
- });
+    $("#pollSearchButton").click(function () {
+        var searchText = $("#pollSearchText").val();
+        $("#pollSearchText").val("");
+        console.log(searchText);
+        if (searchText == null || searchText == "") {
+            console.log("nein");
+            vNotify.info({ Title: "Suchtext eingeben", Text: "Bitte geben sie einen Suchtext ein!" })
+        }
+        else
+        {
+            console.log("ja");
+        }
+    });
 </script>

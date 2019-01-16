@@ -136,7 +136,6 @@
         var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
         getConcern(concernId, concernStatusOld);
     });
-
     $('#createPollModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid') // Extract info from data-* attributes
@@ -148,27 +147,7 @@
             console.log(data);
             var title = data.title;
             var text = data.text;
-            var date = new Date();
             var concernId = data.concernId;
-            var minDate = new Date(date.setMonth(date.getMonth() + 1));
-            var maxDate = new Date(date.setMonth(date.getMonth() + 6));
-            console.log(date);
-            console.log(minDate);
-            console.log(maxDate);
-            var minMonth = (minDate.getMonth() + 1);
-            var minMonthString = "-";
-            if (minMonth < 10) {
-               minMonthString = minMonthString + "0" + minMonth;
-            }
-            var maxMonth = (maxDate.getMonth() + 1);
-            var maxMonthString = "-";
-            if (maxMonth< 10) {
-                maxMonthString = maxMonthString+ "0" + maxMonth;
-            }
-            var minDateString = minDate.getFullYear() + minMonthString + "-" + minDate.getDate();
-            
-            var maxDateString = maxDate.getFullYear() + maxMonthString+ "-" + maxDate.getDate();
-            //var endElement = document.getElementById("pollEndModal");
             $("#pollTextModal").val(text);
             $("#pollTitleModal").val(title);
             $("#pollConcernIdModal").val(concernId);
@@ -179,14 +158,6 @@
             else {
                 $("#pollCommentModal").val(data.comment);
             }
-            console.log(minDateString);
-            console.log(maxDateString);
-            document.getElementById("pollEndModal").setAttribute("min", minDateString);
-            document.getElementById("pollEndModal").setAttribute("max", maxDateString);
-            document.getElementById("pollEndModal").setAttribute("value", minDateString);
-            //$("#pollEndModal").minDate(minDate)
-            //$("#pollEndModal").Date(date)
-
         });
     }
     function createPoll() {
@@ -304,5 +275,4 @@
             }
         });
     }
-
 </script>

@@ -3,7 +3,7 @@
 @{
     var pollId = Model.Id;
 }
-<div class="col-lg-3">
+<div name ="poll" id="@pollId @Model.StatusId @Model.CategoryId"class="col-lg-3">
     <div class="card">
         <div class="card-close">
             <div class="dropdown">
@@ -23,7 +23,7 @@
                     @Html.DisplayFor(model => model.End)
                 </dd>
             </dl>
-            <div id="pollChart_@Model.Id" style="height: 250px;"></div>
+            <div name="pollChart" id="pollChart @Model.Id" style="height: 250px;"></div>
             <div class="text-right">
                 <a class="btn btn-primary" asp-area="" asp-controller="Home" asp-action="ShowConcerns">Umfrage anzeigen</a>
             </div>

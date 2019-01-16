@@ -242,15 +242,32 @@ namespace mosPortal.Controllers
             return Json(new { result });
 
         }
-        public IActionResult ShowPolls()
+        public async Task<IActionResult> ShowPolls()
         {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            IList<string> roles = await userManager.GetRolesAsync(user);
             List<Poll> polls = db.Poll.ToList();
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             //List<SelectListItem> answerOptionList = new List<SelectListItem>();
             List<SelectListItem> statusList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
-
+            statusList.Add(new SelectListItem { Value = "0", Text = "Alle Umfragen" });
+            statusList.Add(new SelectListItem { Value = "2", Text = "laufende Umfragen" });
+            statusList.Add(new SelectListItem { Value = "3", Text = "beendete Umfragen" });
+            categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
+            if (roles[0] == "Verwaltung")
+            {
+                
+            }
+            if (roles[0] == "Gemeinderat")
+            {
+                
+            }
+            if (roles[0] == "Admin")
+            {
+                statusList.Add(new SelectListItem { Value = "5", Text = "abgeschlossene Umfragen" });
+            }
             foreach (Category category in categories)
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
@@ -260,6 +277,7 @@ namespace mosPortal.Controllers
                 answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
             }*/
             ViewData["CategoriesList"] = categoriesList;
+            ViewData["StatusList"] = statusList;
             //ViewData["AnswerOptionsList"] = answerOptionList;
             /*foreach(Poll poll in polls)
             {
@@ -340,7 +358,35 @@ namespace mosPortal.Controllers
             }
             return Json(new { result, title, text, description, categoryId = categoryIdInt });
         }
+        public IActionResult ShowUsers()
+        {
+            List<User> users = db.User.Include("UserRole").ToList();
+            List<SelectListItem> rolesList = new List<SelectListItem>();
+            List<Role> roles = db.Role.ToList();
+            foreach (Role role in roles)
+            {
+                string description = "";
+                if(role.Name.Equals("GR"))
+                {
+                    int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
+                    description = role.Description + "(" + count + "/35)";
+                }
+                else
+                {
+                    description = role.Description;
+                }
+                rolesList.Add(new SelectListItem { Value= role.Id.ToString(), Text=description });
+            }
+            ViewData["Roles"] = rolesList;
+            return View("UsersAdministrationView", users);
+        }
+        public IActionResult GetUser(string userId)
+        {
+            int userIdInt = Convert.ToInt32(userId);
+            User user = db.User.Where(u => u.Id == userIdInt).Include("Address").Include("UserRole").SingleOrDefault();
+            return Json(user);
+        }
 
-            
+
         }
 }
