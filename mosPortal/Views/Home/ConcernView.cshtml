@@ -15,47 +15,100 @@
     <div class="row">
         <div class="col-lg-12">
             <h1 class="page-header">
-                @Model.Title
+                Anliegen
             </h1>
             <ol class="breadcrumb">
                 <li>
-                    <a href="index.html">Home</a>
+                    <ul class="breadcrumb d-flex justify-content-end">
+                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <!--Richtigen Link einfügen-->
+                        <li class="breadcrumb-item"><a href="#">Alle Anliegen</a></li>
+                        <li class="breadcrumb-item active">Anliegen</li>
+                    </ul>
                 </li>
-                <li class="active">Blog Post</li>
             </ol>
         </div>
     </div>
     <!-- /.row -->
-    <!-- Content Row -->
     <div class="row">
+        <!-- Blog Sidebar Widgets Column NEW -->
+        <div class="col-md-3">
+            <!-- PAGES MENU -->
+            <div class="panel panel-default sidebar-menu">
+                <!-- "Neues Anliegen" Button Sidebar-->
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <div class="well">
+                        @*<span class="input-group-btn">
+                                <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
+                            </span>*@
+                        <span class="input-group-btn">
+                            <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
+                        </span>
+                        @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createConcernModal">Neues Anliegen JSon</button>*@
+                    </div>
+                }
+                <hr>
+                <!-- Blog Search Well -->
+                <div class="well">
+                    <h4>Nach Anliegen suchen:</h4>
+                    <div class="input-group">
+                        <input type="text" class="form-control">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                        </span>
+                    </div>
+                    <!-- /.input-group -->
+                </div>
+                <hr>
+                <!-- Blog Categories Well -->
+                <div class="panel-body">
+                    <h4>Alle Kategorien</h4>
+                    <ul class="nav nav-pills flex-column text-sm">
+                        <li class="nav-item">
+                            <a href="text.html" class="nav-link">Straßen</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="contact.html" class="nav-link">Öffentliche Einrichtungen</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Blog Entries Column -->
         <!-- Blog Post Content Column -->
-        <div class="col-lg-8">
+        <div class="col-lg-9">
             <!-- Blog Post -->
+            <h3>@Model.Title</h3>
             <hr>
             <!-- Date/Time -->
-            <p><i class="fa fa-clock-o"></i>Erstellt am @Model.Date</p>
-            <hr>
+            <p class="read-more text-right"><i class="fa fa-clock-o"></i> Erstellt am @Model.Date.ToString("dd/MM/yyyy")</p>
+            <p></p>
             <!-- Preview Image -->
-            <img class="img-responsive" src="http://placehold.it/900x300" alt="">
-            <hr>
+            <img class="img-responsive" src="http://placehold.it/820x300" alt="">
+            <p></p>
             <!-- Post Content -->
             <p>@Model.Text</p>
-            @if (Model.UserConcern.Count() == 1)
-            {
-                <p id="likesConcern @Model.Id">@Model.UserConcern.Count() Like</p>
-            }
-            else
-            {
-                <p id="likesConcern @Model.Id">@Model.UserConcern.Count() Likes</p>
-            }
-            @if (Model.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
-            {
-                <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Like <i class="fa fa-thumbs-up"></i></a>
-            }
-            else
-            {
-                <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
-            }
+            <p class="read-more text-right">
+                <a>
+                    @if (Model.UserConcern.Count() == 1)
+                    {
+                        <span id="likesConcern @Model.Id">@Model.UserConcern.Count() Like</span>
+                    }
+                    else
+                    {
+                        <span id="likesConcern @Model.Id">@Model.UserConcern.Count() Likes</span>
+                    }
+                </a>
+                @if (SignInManager.IsSignedIn(User) && Model.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
+                {
+                    <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                }
+                else
+                {
+                    <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
+                }
+            </p>
             <hr>
             <!-- Blog Comments -->
             <!-- Comments Form -->
@@ -82,72 +135,29 @@
                         @comment.Text
                     </div>
 
-                </div>
+                </div><br />
+
             }
-        </div>
-        <!-- Blog Sidebar Widgets Column -->
-        <div class="col-md-4">
-            <!-- Blog Search Well -->
-            <div class="well">
-                <h4>Blog Search</h4>
-                <div class="input-group">
-                    <input type="text" class="form-control">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
-                    </span>
-                </div>
-                <!-- /.input-group -->
-            </div>
-            <!-- Blog Categories Well -->
-            <div class="well">
-                <h4>Blog Categories</h4>
-                <div class="row">
-                    <div class="col-lg-6">
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-6">
-                        <ul class="list-unstyled">
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                            <li>
-                                <a href="#">Category Name</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- /.row -->
-            </div>
-            <!-- Side Widget Well -->
-            <div class="well">
-                <h4>Side Widget Well</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-            </div>
+            <br/>
         </div>
     </div>
-    <!-- /.row -->
-    <hr>
+
+
 </div>
+<!-- /.row
+</div>
+<!-- Side Widget Well
+<div class="well">
+    <h4>Side Widget Well</h4>
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
+</div>
+</div>
+</div>
+<!-- /.row -->
+
 <!-- /.container -->
+@await Html.PartialAsync("CreateConcernModalView", new Concern { }, new ViewDataDictionary(this.ViewData))
+
 <script type="text/javascript">
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
@@ -160,5 +170,10 @@
         }
 
     }
+                        /*$('#createConcernModal').on('show.bs.modal', function (event) {
+                            var button = $(event.relatedTarget) // Button that triggered the modal
+                            //var concernId = button.data('concernid') // Extract info from data-* attributes
+                            //test(concernId)
+                        });*/
 
 </script>

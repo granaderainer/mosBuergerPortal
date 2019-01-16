@@ -16,7 +16,7 @@ namespace mosPortal.Models.ViewModels
         public string Name { get; set; }
         [Required]
         [EmailAddress]
-        [Display(Name = "EMail", Prompt = "example@web.de")]
+        [Display(Name = "E-Mail", Prompt = "example@web.de")]
         public string Email { get; set; }
         [Required]
         [Display(Name = "Benutzername", Prompt = "Benutzername")]
@@ -39,14 +39,20 @@ namespace mosPortal.Models.ViewModels
         [Display(Name = "Passwort bestätigen", Prompt = "Passwort")]
         public string ConfirmPassword { get; set; }
         [Required]
+        [Display(Name = "Land", Prompt = "Land")]
         public string Country { get; set; }
         [Required]
+        [Display(Name = "Stadt", Prompt = "Stadt")]
         public string City { get; set; }
         [Required]
+        [Display(Name = "Straße", Prompt = "Straße")]
         public string Street { get; set; }
         [Required]
+        [Display(Name = "Hausnummer", Prompt = "Hausnummer")]
         public string Number { get; set; }
         [Required]
+        [StringLength(5, ErrorMessage = "ungültiges Format")]
+        [Display(Name = "Postleitzahl", Prompt = "12345")]
         public int ZipCode { get; set; }
 
 
