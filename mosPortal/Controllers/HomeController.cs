@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -110,14 +111,54 @@ namespace mosPortal.Controllers
 
         }
         [Authorize(Policy = "AllRoles")]
-        [HttpPost]
-        public async Task<IActionResult> CreateConcernAsync(Concern concern)
+        [HttpPost()]
+        public async Task<IActionResult> CreateConcernAsync(Concern concern, List<IFormFile> files)
         {
 
             if (ModelState.IsValid)
             {
+               // Image[] files = concern.Image.ToArray();
                 concern.UserId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 concern.Date = DateTime.UtcNow;
+
+                long size = files.Sum(f => f.Length);
+
+                // full path to file in temp location
+                var filePath = Path.GetTempFileName();
+                foreach (var formFile in files)
+                {
+                    mosPortal.Models.File file = new mosPortal.Models.File();
+                    Image image = new Image();
+                    if (formFile.Length > 0)
+                    {
+                        using (var stream = new MemoryStream())
+                        {
+                            await formFile.CopyToAsync(stream);
+
+                            if (string.Equals(formFile.ContentType, "application/pdf", StringComparison.OrdinalIgnoreCase)) /*"\"application/pdf\"")*/
+                            {
+                                file.File1 = stream.ToArray();
+                                file.ConcernId = concern.Id;
+                                file.PollId = null;
+                                concern.File.Add(file);
+                            }
+                            else
+                            {
+                                image.Img = stream.ToArray();
+                                image.ConcernId = concern.Id;
+                                image.PollId = null;
+                                concern.Image.Add(image);
+                            }
+                            
+                            
+                            
+                        }
+                        
+                    }
+                    
+                }
+
+
                 concern.StatusId = 1;
                 db.Add(concern);
                 await db.SaveChangesAsync();

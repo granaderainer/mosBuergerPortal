@@ -22,6 +22,7 @@ namespace mosPortal.Data
         public virtual DbSet<Category> Category { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Concern> Concern { get; set; }
+        public virtual DbSet<File> File { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Status> Status { get; set; }
@@ -498,6 +499,44 @@ namespace mosPortal.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_User_has_Role_User1");
+            });
+            modelBuilder.Entity<File>(entity =>
+            {
+                entity.HasIndex(e => e.ConcernId)
+                    .HasName("File_Concern_id_fk");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("File_id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PollId)
+                    .HasName("File_Poll_id_fk");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ConcernId)
+                    .HasColumnName("concern_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.File1)
+                    .HasColumnName("File")
+                    .HasColumnType("mediumblob");
+
+                entity.Property(e => e.PollId)
+                    .HasColumnName("poll_ID")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Concern)
+                    .WithMany(p => p.File)
+                    .HasForeignKey(d => d.ConcernId)
+                    .HasConstraintName("File_Concern_id_fk");
+
+                entity.HasOne(d => d.Poll)
+                    .WithMany(p => p.File)
+                    .HasForeignKey(d => d.PollId)
+                    .HasConstraintName("File_Poll_id_fk");
             });
             modelBuilder.Entity<Image>(entity =>
             {

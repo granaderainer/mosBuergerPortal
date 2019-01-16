@@ -11,6 +11,7 @@ namespace mosPortal.Models
         {
             AnswerOptionsPoll = new HashSet<AnswerOptionsPoll>();
             Image = new HashSet<Image>();
+            File = new HashSet<File>();
         }
 
         public int Id { get; set; }
@@ -44,6 +45,7 @@ namespace mosPortal.Models
         public User LastUpdatedByUser { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
         public ICollection<Image> Image { get; set; }
+        public ICollection<File> File { get; set; }
         public class Answer
         {
             public int value { get; set; }
