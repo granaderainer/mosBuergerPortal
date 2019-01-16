@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace mosPortal.Models
@@ -10,6 +11,7 @@ namespace mosPortal.Models
         public int Id { get; set; }
 
         public Role Role { get; set; }
+        [JsonIgnore]
         public User User { get; set; }
 
     }

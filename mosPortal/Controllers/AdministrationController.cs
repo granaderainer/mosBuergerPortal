@@ -358,7 +358,35 @@ namespace mosPortal.Controllers
             }
             return Json(new { result, title, text, description, categoryId = categoryIdInt });
         }
+        public IActionResult ShowUsers()
+        {
+            List<User> users = db.User.Include("UserRole").ToList();
+            List<SelectListItem> rolesList = new List<SelectListItem>();
+            List<Role> roles = db.Role.ToList();
+            foreach (Role role in roles)
+            {
+                string description = "";
+                if(role.Name.Equals("GR"))
+                {
+                    int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
+                    description = role.Description + "(" + count + "/35)";
+                }
+                else
+                {
+                    description = role.Description;
+                }
+                rolesList.Add(new SelectListItem { Value= role.Id.ToString(), Text=description });
+            }
+            ViewData["Roles"] = rolesList;
+            return View("UsersAdministrationView", users);
+        }
+        public IActionResult GetUser(string userId)
+        {
+            int userIdInt = Convert.ToInt32(userId);
+            User user = db.User.Where(u => u.Id == userIdInt).Include("Address").Include("UserRole").SingleOrDefault();
+            return Json(user);
+        }
 
-            
+
         }
 }

@@ -1,0 +1,277 @@
+﻿@model IEnumerable<mosPortal.Models.User>
+@{
+    ViewData["Title"] = "UsersAdministrationView";
+    Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
+}
+<!-- Page Header-->
+<header class="page-header">
+    <div class="container-fluid">
+        <h2 class="no-margin-bottom">Benutzer verwalten</h2>
+    </div>
+</header>
+<div class="breadcrumb-holder container-fluid">
+    <ul class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
+        <li class="breadcrumb-item active">Benutzer verwalten           </li>
+    </ul>
+</div>
+<section class="forms">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Basic Form-->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header d-flex align-items-center">
+                        <h3 class="h4">Benutzer</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label class="form-control-label">Suche</label>
+                            <input id="userSearch" class="form-control" type="text" onchange="searchUserInSelect()"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Durch klicken User auswählen</label>
+                            <select id="selectuser" multiple="" class="form-control" onchange="showuser()">
+                                @foreach (User user in Model)
+                                {
+                                    <option value="@user.Id">@user.Firstname @user.Name (@user.UserName)</option>
+                                }
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <button style="display: none;" id="deleteuser" class="btn btn-primary">Löschen</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Basic Form-->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-close">
+                        <div class="dropdown">
+                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
+                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                        </div>
+                    </div>
+                    <div id="userHeader" class="card-header d-flex align-items-center">
+                        <h3 class="h4">User anzeigen</h3>
+                    </div>
+                    <div class="card-body pre-scrollable">
+                        <div class="form-group">
+                            <label class="form-control-label">ID</label>
+                            <input id="userId" type="text" placeholder="ID" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Vorname</label>
+                            <input id="userFirstName" type="text" placeholder="Name" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Name</label>
+                            <input id="userName" type="text" placeholder="Name" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Benutzername</label>
+                            <input id="userUserName" type="text" placeholder="Username" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">E-Mail Adresse</label>
+                            <input id="userEmail" type="email" placeholder="Email" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Geburtsort</label>
+                            <input id="userBirthPlace" type="text" placeholder="Geburtsort" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Geburtstag</label>
+                            <input id="userBirthDay" type="date" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Adresse</label>
+                            <div id="userAddress"></div>
+
+                            <button id="editAddress" class="btn btn-primary">Bearbeiten</button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Rolle</label>
+                            <select id="userRole" class="form-control" asp-items="ViewBag.Roles" disabled></select>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <button style="display: none;" id="edituser" class="btn btn-primary">Bearbeiten</button>
+                                <button style="display: none;" id="cancelEdituser" class="btn btn-secondary">Abbrechen</button>
+                                <button style="display: none;" id="saveuser" class="btn btn-primary">Speichern</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('li#linkUsersCRUD').addClass('active');
+        $('#linkAdministration').attr({
+            'aria-expanded': true,
+            'class': ""
+        });
+        $('#exampledropdownDropdown').addClass("show");
+    });
+    function searchUserInSelect() {
+
+    }
+
+    function showuser() {
+        var selectElement = document.getElementById("selectuser");
+        var index = selectElement.selectedIndex;
+        var userId = selectElement.options[index].value;
+        $("#userHeader").html('<h3  class="h4">User anzeigen</h3>');
+
+        $.get("/Administration/GetUser", { userId: userId }, function (data) {
+            console.log(data);
+            var date = ((data.birthday).split(" "))[0].split(".");
+            var address = data.address;
+            var addressHtml = "<p>"+ address.street + " " + address.number + "</br>" + address.zipCode + " " + address.city + "</br>" + address.country+"</p>";
+            console.log(addressHtml);
+            $("#userId").val(data.id);
+            $("#userFirstName").val(data.firstname);
+            $("#userName").val(data.name);
+            $("#userBirthPlace").val(data.birthplace);
+            $("#userBirthDay").val(date[2]+"-"+date[1]+"-"+date[0]);
+            $("#userUserName").val(data.userName);
+            $("#userEmail").val(data.email);
+            $("#userAddress").html(addressHtml);
+
+
+        });
+        $("#edituser").show();
+        $("#cancelEdituser").hide();
+        $("#saveuser").hide();
+        $("#deleteuser").show();
+        /*$("#userId").val(userId)
+        $("#userDescription").val(userDescription)
+
+        $("#edituser").show();
+        $("#cancelEdituser").hide();
+        $("#saveuser").hide();
+        $("#userDescription").attr('disabled', 'disabled');
+        $("#deleteuser").show();
+        console.log(userId);
+        console.log(userDescription);
+        console.log(index);*/
+    }
+    
+    $("#edituser").click(function () {
+        $("#edituser").hide();
+        $("#cancelEdituser").show();
+        $("#saveuser").show();
+        $("#userDescription").removeAttr('disabled');
+        $("#userId").removeAttr('disabled');
+        $("#userFirstName").removeAttr('disabled');
+        $("#userName").removeAttr('disabled');
+        $("#userBirthPlace").removeAttr('disabled');
+        $("#userBirthDay").removeAttr('disabled');
+        $("#userUserName").removeAttr('disabled');
+        $("#userEmail").removeAttr('disabled');
+        $("#userRole").removeAttr('disabled');
+    });
+    $("#cancelEdituser").click(function () {
+        $("#cancelEdituser").hide();
+        $("#saveuser").hide();
+
+        $("#userDescription").attr('disabled', 'disabled');
+        $("#userId").attr('disabled', 'disabled');
+        $("#userFirstName").attr('disabled', 'disabled');
+        $("#userName").attr('disabled', 'disabled');
+        $("#userBirthPlace").attr('disabled', 'disabled');
+        $("#userBirthDay").attr('disabled', 'disabled');
+        $("#userUserName").attr('disabled', 'disabled');
+        $("#userEmail").attr('disabled', 'disabled');
+        $("#userRole").attr('disabled', 'disabled');
+        if ($("#selectuser")[0].selectedIndex < 0) {
+            $("#edituser").hide();
+        }
+        else {
+            $("#edituser").show();
+        }
+        $("#newuser").show();
+
+
+        $("#userDescription").attr('disabled', 'disabled');
+    });
+    $("#saveuser").click(function () {
+        var userId = $("#userId").val();
+        var operation = "update";
+        if (userId == "") {
+            userId = 0;
+            var operation = "create";
+        }
+        var userDescription = $("#userDescription").val();
+
+        console.log(userId);
+        console.log(operation);
+        console.log(userDescription);
+        cruduser(userId, userDescription, operation);
+
+
+    });
+    $("#newuser").click(function () {
+        $("#newuser").hide();
+        $("#edituser").hide();
+        $("#userHeader").html('<h3  class="h4">neue Kategorie</h3>');
+        $("#cancelEdituser").show();
+        $("#saveuser").show();
+        $("#userId").val("");
+        $("#userDescription").val("");
+        $("#userDescription").removeAttr('disabled');
+        $("#selectuser")[0].selectedIndex = -1;
+        $("#deleteuser").hide();
+    });
+    $("#deleteuser").click(function () {
+        var operation = "delete";
+        var selectElement = document.getElementById("selectuser");
+        var index = selectElement.selectedIndex;
+        var userId = selectElement.options[index].value;
+        var userDescription = selectElement.options[index].text;
+
+
+        cruduser(userId, userDescription, operation);
+    })
+
+    function cruduser(userId, description, operation) {
+        $.post("/Administration/cruduser", { userId: userId, description: userDescription, operation: operation }, function (data) {
+
+            if ((data.result) == 1 || (data.result) == 2) {
+                $("#cancelEdituser").hide();
+                $("#saveuser").hide();
+                $("#edituser").show();
+                $("#newuser").show();
+                $("#userDescription").attr('disabled', 'disabled');
+
+                var select = document.getElementById("selectuser");
+                console.log(data);
+                if ((data.result) == 2) {
+                    var index = select.selectedIndex;
+                    select.options[index].text = (data.description);
+                }
+                else {
+                    var option = document.createElement("option");
+                    option.text = (data.description);
+                    option.value = (data.userId);
+                    select.add(option);
+                    $("#userId").val(data.userId);
+                }
+                vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
+            }
+            else {
+                vNotify.error({ title: (data.title), text: (data.text), position: positionOption.topRight });
+            }
+
+        });
+    }
+</script>
+

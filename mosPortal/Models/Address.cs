@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace mosPortal.Models
@@ -17,6 +18,7 @@ namespace mosPortal.Models
         public string Street { get; set; }
         public string Number { get; set; }
 
+        [JsonIgnore]
         public ICollection<User> User { get; set; }
     }
 }

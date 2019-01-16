@@ -202,11 +202,12 @@
                     <li>
                         <a id="linkAdministration" href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
                         <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
-                            <li><a href="#">Benutzer verwalten</a></li>
+                            <li id="linkUsersCRUD"><a asp-action="ShowUsers" asp-controller="Administration">Benutzer verwalten</a></li>
                             <li id="linkCategoriesCRUD"><a asp-controller="Administration" asp-action="ShowCategories">Kategorie verwalten</a></li>
                             <li><a href="#">Test</a></li>
                         </ul>
                     </li>
+                </ul>
             </nav>
             <div class="content-inner">
                 @RenderBody()
