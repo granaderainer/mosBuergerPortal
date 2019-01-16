@@ -499,6 +499,40 @@ namespace mosPortal.Data
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_User_has_Role_User1");
             });
+            modelBuilder.Entity<Image>(entity =>
+            {
+                entity.HasIndex(e => e.ConcernId)
+                    .HasName("Image_Concern_id_fk");
+
+                entity.HasIndex(e => e.Id)
+                    .HasName("Image_Id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.PollId)
+                    .HasName("Image_Poll_id_fk");
+
+                entity.Property(e => e.Id).HasColumnType("int(11)");
+
+                entity.Property(e => e.ConcernId)
+                    .HasColumnName("concern_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Img).HasColumnType("mediumblob");
+
+                entity.Property(e => e.PollId)
+                    .HasColumnName("poll_ID")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.Concern)
+                    .WithMany(p => p.Image)
+                    .HasForeignKey(d => d.ConcernId)
+                    .HasConstraintName("Image_Concern_id_fk");
+
+                entity.HasOne(d => d.Poll)
+                    .WithMany(p => p.Image)
+                    .HasForeignKey(d => d.PollId)
+                    .HasConstraintName("Image_Poll_id_fk");
+            });
         }
     }
 }

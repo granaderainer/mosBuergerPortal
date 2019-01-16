@@ -10,6 +10,7 @@ namespace mosPortal.Models
         public Poll()
         {
             AnswerOptionsPoll = new HashSet<AnswerOptionsPoll>();
+            Image = new HashSet<Image>();
         }
 
         public int Id { get; set; }
@@ -42,6 +43,7 @@ namespace mosPortal.Models
         public User User { get; set; }
         public User LastUpdatedByUser { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
+        public ICollection<Image> Image { get; set; }
         public class Answer
         {
             public int value { get; set; }

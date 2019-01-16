@@ -199,10 +199,6 @@
                     <li id="linkHome"><a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a></li>
                     <li id="linkConcerns"><a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a></li>
                     <li id="linkPolls"><a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a></li>    
-                <li><a href="~/admin_template/tables.html"> <i class="icon-grid"></i>Tables </a></li>
-                    <li><a href="~/admin_template/charts.html"> <i class="fa fa-bar-chart"></i>Charts </a></li>
-                    <li><a href="~/admin_template/charts.html"s> <i class="fa fa-bar-chart"></i>Charts </a></li>
-                    <li><a href="~/admin_template/forms.html"> <i class="icon-padnote"></i>Forms </a></li>
                     <li>
                         <a id="linkAdministration" href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
                         <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
@@ -211,14 +207,6 @@
                             <li><a href="#">Test</a></li>
                         </ul>
                     </li>
-                    <li><a href="~/admin_template/login.html"> <i class="icon-interface-windows"></i>Login page </a></li>
-                </ul><span class="heading">Extras</span>
-                <ul class="list-unstyled">
-                    <li> <a href="#"> <i class="icon-flask"></i>Demo </a></li>
-                    <li> <a href="#"> <i class="icon-screen"></i>Demo </a></li>
-                    <li> <a href="#"> <i class="icon-mail"></i>Demo </a></li>
-                    <li> <a href="#"> <i class="icon-picture"></i>Demo </a></li>
-                </ul>
             </nav>
             <div class="content-inner">
                 @RenderBody()

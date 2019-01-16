@@ -203,12 +203,11 @@ namespace mosPortal.Controllers
             }
             
         }
-
-        public IActionResult ShowConcernsLocalCouncil()
+        /*public IActionResult ShowConcernsLocalCouncil()
         {
             List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
             return View("ConcernsAdministrationView", concerns);
-        }
+        }*/
         public JsonResult GetConcernJson(int concernId)
         {
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
@@ -247,19 +246,21 @@ namespace mosPortal.Controllers
         {
             List<Poll> polls = db.Poll.ToList();
             List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<SelectListItem> answerOptionList = new List<SelectListItem>();
+            //List<SelectListItem> answerOptionList = new List<SelectListItem>();
+            List<SelectListItem> statusList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
+
             foreach (Category category in categories)
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
-            foreach (AnswerOptions anserOption in answerOptions)
+            /*foreach (AnswerOptions anserOption in answerOptions)
             {
                 answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
-            }
+            }*/
             ViewData["CategoriesList"] = categoriesList;
-            ViewData["AnswerOptionsList"] = answerOptionList;
+            //ViewData["AnswerOptionsList"] = answerOptionList;
             /*foreach(Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();

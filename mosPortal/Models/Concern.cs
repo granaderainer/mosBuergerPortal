@@ -11,6 +11,7 @@ namespace mosPortal.Models
         {
             Comment = new HashSet<Comment>();
             UserConcern = new HashSet<UserConcern>();
+            Image = new HashSet<Image>();
         }
 
         public int Id { get; set; }
@@ -40,6 +41,7 @@ namespace mosPortal.Models
         public ICollection<Comment> Comment { get; set; }
         [Display(Name = "Likes")]
         public ICollection<UserConcern> UserConcern { get; set; }
+        public ICollection<Image> Image { get; set; }
         [Display(Name = "Status")]
         public Status Status { get; set; }
 
