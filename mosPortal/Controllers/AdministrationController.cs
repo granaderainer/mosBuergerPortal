@@ -242,15 +242,32 @@ namespace mosPortal.Controllers
             return Json(new { result });
 
         }
-        public IActionResult ShowPolls()
+        public async Task<IActionResult> ShowPolls()
         {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            IList<string> roles = await userManager.GetRolesAsync(user);
             List<Poll> polls = db.Poll.ToList();
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             //List<SelectListItem> answerOptionList = new List<SelectListItem>();
             List<SelectListItem> statusList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
-
+            statusList.Add(new SelectListItem { Value = "0", Text = "Alle Umfragen" });
+            statusList.Add(new SelectListItem { Value = "2", Text = "laufende Umfragen" });
+            statusList.Add(new SelectListItem { Value = "3", Text = "beendete Umfragen" });
+            categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
+            if (roles[0] == "Verwaltung")
+            {
+                
+            }
+            if (roles[0] == "Gemeinderat")
+            {
+                
+            }
+            if (roles[0] == "Admin")
+            {
+                statusList.Add(new SelectListItem { Value = "5", Text = "abgeschlossene Umfragen" });
+            }
             foreach (Category category in categories)
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
@@ -260,6 +277,7 @@ namespace mosPortal.Controllers
                 answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
             }*/
             ViewData["CategoriesList"] = categoriesList;
+            ViewData["StatusList"] = statusList;
             //ViewData["AnswerOptionsList"] = answerOptionList;
             /*foreach(Poll poll in polls)
             {
