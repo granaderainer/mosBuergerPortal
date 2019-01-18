@@ -31,6 +31,8 @@ namespace mosPortal.Data
         public virtual DbSet<UserConcern> UserConcern { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
+        public virtual DbSet<Image> Image { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -528,6 +530,14 @@ namespace mosPortal.Data
                     .HasColumnName("poll_ID")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("varchar(100)");
+
+                entity.Property(e => e.Ending)
+                    .HasColumnName("ending")
+                    .HasColumnType("varchar(45)");
+
                 entity.HasOne(d => d.Concern)
                     .WithMany(p => p.File)
                     .HasForeignKey(d => d.ConcernId)
@@ -561,6 +571,13 @@ namespace mosPortal.Data
                 entity.Property(e => e.PollId)
                     .HasColumnName("poll_ID")
                     .HasColumnType("int(11)");
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("varchar(100)");
+
+                entity.Property(e => e.Ending)
+                    .HasColumnName("ending")
+                    .HasColumnType("varchar(45)");
 
                 entity.HasOne(d => d.Concern)
                     .WithMany(p => p.Image)
