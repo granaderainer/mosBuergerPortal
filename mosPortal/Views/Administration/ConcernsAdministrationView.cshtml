@@ -108,6 +108,7 @@
 
             <div class="modal-body">
                 <div id="concernModalTitle"></div>
+                <div  class="image has-shadow"><img id="concernModalImage" src="~/admin_template/img/project-1.jpg" alt="..." class="img-fluid"></div>
                 <div id="concernModalText"></div>
                 <hr>
                 <div id="concernModalDate"></div>
@@ -152,6 +153,7 @@
             $("#pollTextModal").val(text);
             $("#pollTitleModal").val(title);
             $("#pollConcernIdModal").val(concernId);
+
             document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId -1;
             if (data.comment == null) {
                 $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat")
@@ -226,6 +228,7 @@
             $("#concernModalStatus").empty();
             $("#concernModalStatus").append(fragment);
             $("#concernModalStatus").val(data.statusId);
+            $("#concernModalImage").attr("src", "https://localhost:44388/Image/GetImage?concernId=" + concernId);
         });
     }
     $(document).ready(function () {
