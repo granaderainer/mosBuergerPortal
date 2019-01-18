@@ -23,6 +23,7 @@ namespace mosPortal.Data
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Concern> Concern { get; set; }
         public virtual DbSet<File> File { get; set; }
+        public virtual DbSet<Image> Image { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Status> Status { get; set; }
@@ -522,9 +523,17 @@ namespace mosPortal.Data
                     .HasColumnName("concern_ID")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.Ending)
+                    .HasColumnName("ending")
+                    .HasColumnType("varchar(50)");
+
                 entity.Property(e => e.File1)
                     .HasColumnName("File")
                     .HasColumnType("mediumblob");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.PollId)
                     .HasColumnName("poll_ID")
@@ -566,7 +575,15 @@ namespace mosPortal.Data
                     .HasColumnName("concern_ID")
                     .HasColumnType("int(11)");
 
+                entity.Property(e => e.Ending)
+                    .HasColumnName("ending")
+                    .HasColumnType("varchar(50)");
+
                 entity.Property(e => e.Img).HasColumnType("mediumblob");
+
+                entity.Property(e => e.Name)
+                    .HasColumnName("name")
+                    .HasColumnType("varchar(100)");
 
                 entity.Property(e => e.PollId)
                     .HasColumnName("poll_ID")
