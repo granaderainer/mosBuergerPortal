@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using File = mosPortal.Models.File;
 
 namespace mosPortal.Controllers
 {
@@ -78,10 +79,22 @@ namespace mosPortal.Controllers
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             List<Comment> comments = db.Comment.Where(c => c.ConcernId == concernId).ToList();
             List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
+            List<Image> images = db.Image.Where(i => i.ConcernId == concern.Id).ToList();
+            
             concern.UserConcern = userConcerns;
             concern.Comment = comments;
+            concern.Image = images;
             return View("ConcernView", concern);
         }
+        
+//            public ActionResult Show(int id)
+//            {
+//                Image image = 
+//                var imageData = ...get bytes from database...
+//        
+//                return File(imageData, "image/jpg");
+//            }
+        
 
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
@@ -140,6 +153,8 @@ namespace mosPortal.Controllers
                                 file.File1 = stream.ToArray();
                                 file.ConcernId = concern.Id;
                                 file.PollId = null;
+                                file.Name = formFile.FileName;
+                                file.Ending = formFile.ContentType;
                                 concern.File.Add(file);
                             }
                             else
@@ -147,6 +162,8 @@ namespace mosPortal.Controllers
                                 image.Img = stream.ToArray();
                                 image.ConcernId = concern.Id;
                                 image.PollId = null;
+                                image.Name = formFile.FileName;
+                                image.Ending = formFile.ContentType;
                                 concern.Image.Add(image);
                             }
                             

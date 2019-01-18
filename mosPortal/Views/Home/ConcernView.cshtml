@@ -1,4 +1,4 @@
-﻿@model mosPortal.Models.Concern
+﻿@model Concern
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
@@ -20,9 +20,13 @@
             <ol class="breadcrumb">
                 <li>
                     <ul class="breadcrumb d-flex justify-content-end">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="index.html">Home</a>
+                        </li>
                         <!--Richtigen Link einfügen-->
-                        <li class="breadcrumb-item"><a href="#">Alle Anliegen</a></li>
+                        <li class="breadcrumb-item">
+                            <a href="#">Alle Anliegen</a>
+                        </li>
                         <li class="breadcrumb-item active">Anliegen</li>
                     </ul>
                 </li>
@@ -55,7 +59,9 @@
                     <div class="input-group">
                         <input type="text" class="form-control">
                         <span class="input-group-btn">
-                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
+                            <button class="btn btn-default" type="button">
+                                <i class="fa fa-search"></i>
+                            </button>
                         </span>
                     </div>
                     <!-- /.input-group -->
@@ -85,8 +91,9 @@
             <p class="read-more text-right"><i class="fa fa-clock-o"></i> Erstellt am @Model.Date.ToString("dd/MM/yyyy")</p>
             <p></p>
             <!-- Preview Image -->
-            <img class="img-responsive" src="http://placehold.it/820x300" alt="">
-            <p></p>
+            <!--<img class="img-responsive" src='@Url.Action( "show", "image", new { id = ViewData["imageID"] })' />-->
+            <img class="img-responsive" id="ItemPreview" src="" />
+            <br />
             <!-- Post Content -->
             <p>@Model.Text</p>
             <p class="read-more text-right">
@@ -135,8 +142,7 @@
                         @comment.Text
                     </div>
 
-                </div><br />
-
+                </div><br/>
             }
             <br/>
         </div>
@@ -144,19 +150,8 @@
 
 
 </div>
-<!-- /.row
-</div>
-<!-- Side Widget Well
-<div class="well">
-    <h4>Side Widget Well</h4>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-</div>
-</div>
-</div>
-<!-- /.row -->
 
-<!-- /.container -->
-@await Html.PartialAsync("CreateConcernModalView", new Concern { }, new ViewDataDictionary(this.ViewData))
+@await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
     function disableButton(btn, concernId) {
@@ -164,16 +159,17 @@
             document.getElementById(btn.id).disabled = true;
             document.getElementById(btn.id).setAttribute('disabled', 'disabled');
 
-            $.get("/Home/VoteForConcernAsync", { concernId: concernId }, function (data) {
-                document.getElementById("likesConcern " + concernId).textContent = (data.votes) + " Likes"; // display id value which is returned from the action method
-            });
+            $.get("/Home/VoteForConcernAsync",
+                { concernId: concernId },
+                function(data) {
+                    document.getElementById("likesConcern " + concernId).textContent =
+                        (data.votes) + " Likes"; // display id value which is returned from the action method
+                });
         }
 
     }
-                        /*$('#createConcernModal').on('show.bs.modal', function (event) {
-                            var button = $(event.relatedTarget) // Button that triggered the modal
-                            //var concernId = button.data('concernid') // Extract info from data-* attributes
-                            //test(concernId)
-                        });*/
+    document.getElementById("ItemPreview").src = "data:image/jpeg;base64," + @Model.Image.First().Img;
+
+
 
 </script>
