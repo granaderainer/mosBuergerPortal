@@ -120,7 +120,8 @@
             <!-- Blog Comments -->
             <!-- Comments Form -->
             <div class="well">
-                <h4>Jetzt kommentieren:</h4>
+                    <h4>Jetzt kommentieren:</h4>
+                    <p class="read-more text-right">Anzahl Kommentare: @Model.Comment.Count </p>
                 <form role="form" method="post" asp-route-concernId="@Model.Id" asp-action="PostCommentAsync" asp-controller="Home">
                     <div class="form-group">
                         <textarea class="form-control" rows="3" name="commentText" id="commentText"></textarea>
