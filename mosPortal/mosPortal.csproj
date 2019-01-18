@@ -24,7 +24,6 @@
     <Folder Include="Views\Testing\" />
     <Folder Include="wwwroot\img\avatar\" />
     <Folder Include="wwwroot\js\morris\" />
-    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
   <ItemGroup>

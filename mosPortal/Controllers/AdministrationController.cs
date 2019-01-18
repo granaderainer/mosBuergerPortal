@@ -212,9 +212,26 @@ namespace mosPortal.Controllers
         {
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             Status[] statuses = db.Status.Where(s=> s.Id >= concern.StatusId).ToArray();
+            List<File> files = db.File.Where(f => f.ConcernId == concernId).ToList();
+            List<Image> images = db.Image.Where(i => i.ConcernId == concernId).ToList();
+            
+            int[] imageIds = new int[images.Count()];
+            int[] fileIds = new int[files.Count()];
+            int k = 0;
+            int j = 0;
+            foreach(File file in files)
+            {
+                fileIds[k] = file.Id;
+                    k++;
+            }
+            foreach(Image image in images)
+            {
+                imageIds[j] = image.Id;
+                j++;
+            }
             string statusesJson = Newtonsoft.Json.JsonConvert.SerializeObject(statuses);
             int categoryId = concern.CategoryId;
-            return Json(new { concernId, title = concern.Title, text= concern.Text,categoryId,statusId = concern.StatusId ,date = concern.Date.ToString(), statuses, });
+            return Json(new { concernId, title = concern.Title, text= concern.Text,categoryId,statusId = concern.StatusId ,date = concern.Date.ToString(), statuses, imageIds, fileIds });
         }
         /*[HttpPost]
         public async Task<IActionResult> ChangeConcernStatus(string concernModalStatus, string concernModalId)
