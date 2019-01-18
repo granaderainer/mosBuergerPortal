@@ -32,8 +32,6 @@ namespace mosPortal.Data
         public virtual DbSet<UserConcern> UserConcern { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
-        public virtual DbSet<Image> Image { get; set; }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
