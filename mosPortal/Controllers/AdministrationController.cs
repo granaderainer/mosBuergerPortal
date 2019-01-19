@@ -75,6 +75,7 @@ namespace mosPortal.Controllers
             ViewData["statusList"] = statusList;
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
+            categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
             foreach (Category category in categories)
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });

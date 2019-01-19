@@ -37,5 +37,12 @@ namespace mosPortal.Controllers
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
         }
+        public FileStreamResult GetFile(int id)
+        {
+            Models.File file = db.File.Where(f => f.Id == id).SingleOrDefault();
+            Stream fileStream = new MemoryStream(file.File1);
+            return new FileStreamResult(fileStream, file.Ending);
+        }
+
     }
 }
