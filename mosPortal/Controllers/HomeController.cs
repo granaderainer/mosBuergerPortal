@@ -47,6 +47,7 @@ namespace mosPortal.Controllers
           
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
+
             ViewData["Categories"] = categories;
             foreach (Category category in categories)
             {

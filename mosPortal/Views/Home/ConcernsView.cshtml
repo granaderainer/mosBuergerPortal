@@ -1,4 +1,4 @@
-﻿@model IEnumerable<mosPortal.Models.Concern>
+﻿@model IEnumerable<Concern>
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
@@ -22,7 +22,9 @@
             </div>
             <div class="col-md-5">
                 <ul class="breadcrumb d-flex justify-content-end">
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" asp-controller="Home">Home</a>
+                    </li>
                     <li class="breadcrumb-item active">Alle Anliegen</li>
                 </ul>
             </div>
@@ -32,7 +34,7 @@
 <!-- Page Content -->
 <div class="container">
     <!-- Page Heading/Breadcrumbs -->
-    
+
     <!-- /.row -->
     <div class="row">
         <!-- Blog Sidebar Widgets Column NEW -->
@@ -40,19 +42,21 @@
             <!-- PAGES MENU -->
             <div class="panel panel-default sidebar-menu">
                 <!-- "Neues Anliegen" Button Sidebar-->
-               
+
                 <hr>
                 <!-- Blog Search Well -->
-                
-                    <h4>Nach Anliegen suchen:</h4>
-                    <div class="input-group">
-                        <input type="text" class="form-control">
-                        <span class="input-group-btn">
-                            <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
-                        </span>
-                    </div>
-                    <!-- /.input-group -->
-                
+
+                <h4>Nach Anliegen suchen:</h4>
+                <div class="input-group">
+                    <input type="text" class="form-control">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+                <!-- /.input-group -->
+
                 <hr>
                 <!-- Blog Categories Well -->
                 <div class="panel-body">
@@ -79,27 +83,36 @@
                                 <section class="post">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <div class="image"><a class="" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id"><img class="img-fluid" id="ItemPreview" src='@Url.Action("GetImage", "Image", new {concernId = item.Id.ToString()})' /></a></div>
+                                            <div class="image">
+                                                <a class="" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">
+                                                    <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetConcernTitleImage", "Image", new {concernId = item.Id})'/>
+                                                </a>
+                                            </div>
                                         </div>
                                         <div class="col-md-8">
-                                            <h2 class="h3 mt-0"><a href="post.htmls" class="not-active">@item.Title</a></h2>
+                                            <h2 class="h3 mt-0">
+                                                <a href="post.htmls" class="not-active">@item.Title</a>
+                                            </h2>
                                             <div class="d-flex flex-wrap justify-content-between text-xs">
                                                 <p class="author-category">Kategorie <a href="#" class="not-active">@item.Category.Description</a></p>
                                                 <div class="not-active">
-                                                    <p class="date-comments"><a href="blog-post.html"><i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <!-- Muss noch angepasst werden--> 8 Kommentare</a></p>
+                                                    <p class="date-comments">
+                                                        <a href="blog-post.html">
+                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <!-- Muss noch angepasst werden--> @item.Comment.Count() Kommentare</a>
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <!--<p class="intro">@item.Text</p>-->
+                                            
                                             <br>
                                             <p class="read-more text-right">
                                                 <a>
                                                     @if (item.UserConcern.Count() == 1)
                                                     {
-                                                        <span id="likesConcern @item.Id">@item.UserConcern.Count() Like</span>
+                                                        <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
                                                     }
                                                     else
                                                     {
-                                                        <span id="likesConcern @item.Id">@item.UserConcern.Count() Likes</span>
+                                                        <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
                                                     }
                                                 </a>
                                                 @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
@@ -119,149 +132,46 @@
                         </div>
                     </div>
                 </div>
-                <!-- First Blog Post
-                <h2>
-                <font color="#138880"> @item.Title </font>
 
-                <p class="lead">
-                    Kategorie: <a href="index.php">@item.Category.Description</a>
-                </p>
-                <p><i class="fa fa-clock-o"></i> Erstellt am @item.Date</p>
-                <hr>
-                <!-- <a href="blog-post.html">
-                    <img class="img-responsive img-hover" src="http://placehold.it/900x300" alt="">
-                </a>
-                <hr>
-                <p>@item.Text</p>
-                @if (item.UserConcern.Count() == 1)
-                {
-                    <p id="likesConcern @item.Id">@item.UserConcern.Count() Like</p>
-                }
-                else
-                {
-                    <p id="likesConcern @item.Id">@item.UserConcern.Count() Likes</p>
-                }
-                @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
-                {
-                    <a class="btn btn-primary" href="#" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
-                }
-                else
-                {
-                    <a class="btn btn-primary" href="#" id="likeConcern @item.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
-                }
-                <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
-
-                <hr>
-                    -->
-
+               
             }
 
             <!-- Pager new -->
             <ul class="pager d-flex align-items-center justify-content-between list-unstyled">
-                <li class="previous"><a href="#" class="btn btn-template-outlined">← Older</a></li>
-                <li class="next disabled"><a href="#" class="btn btn-template-outlined">Newer →</a></li>
-            </ul>
-            <!-- Pager
-            <ul class="pager">
                 <li class="previous">
-                    <a href="#">&larr; Older</a>
+                    <a href="#" class="btn btn-template-outlined">← Older</a>
                 </li>
-                <li class="next">
-                    <a href="#">Newer &rarr;</a>
+                <li class="next disabled">
+                    <a href="#" class="btn btn-template-outlined">Newer →</a>
                 </li>
             </ul>
-            -->
+
         </div>
 
-        <!-- Blog Sidebar Widgets Column NEW
-        <div class="col-md-3">
-        @if (SignInManager.IsSignedIn(User))
-        {
-            <div class="well">
-                @*<span class="input-group-btn">
-                        <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
-                    </span>*@
-                <span class="input-group-btn">
-                    <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
-                </span>
-                @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createConcernModal">Neues Anliegen JSon</button>*@
-            </div>
 
-        }
-        <!-- Blog Search Well
-        <div class="well">
-        <h4>Nach Anliegen suchen:</h4>
-        <div class="input-group">
-            <input type="text" class="form-control">
-            <span class="input-group-btn">
-                <button class="btn btn-default" type="button"><i class="fa fa-search"></i></button>
-            </span>
-        </div>
-        <!-- /.input-group
-        </div>
-        <!-- Blog Categories Well
-        <div class="well">
-        <h4>Alle Kategorien</h4>
-        <div class="row">
-        <div class="col-lg-6">
-            <ul class="list-unstyled">
-                @foreach (var category in categories)
-                {
-                    <li>
-                        <a href="#">@category.Description</a>
-                    </li>
-                }
-            </ul>
-        </div>
-        <!-- /.col-lg-6
-        <div class="col-lg-6">
-            <ul class="list-unstyled">
-                <li>
-                    <a href="#">Category Name</a>
-                </li>
-                <li>
-                    <a href="#">Category Name</a>
-                </li>
-                <li>
-                    <a href="#">Category Name</a>
-                </li>
-                <li>
-                    <a href="#">Category Name</a>
-                </li>
-            </ul>
-        </div>
-        <!-- /.col-lg-6 -->
+     
+
     </div>
-    <!-- /.row
-            </div>
-            <!-- Side Widget Well
-            <div class="well">
-                <h4>Side Widget Well</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-            </div>
-        </div>
-    </div>
-                        <!-- /.row -->
+
 </div>
 <!-- /.container -->
-@await Html.PartialAsync("CreateConcernModalView", new Concern { }, new ViewDataDictionary(this.ViewData))
+@await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
-    function disableButton(btn, concernId) {
+   function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
             document.getElementById(btn.id).disabled = true;
             document.getElementById(btn.id).setAttribute('disabled', 'disabled');
 
-            $.get("/Home/VoteForConcernAsync", { concernId: concernId }, function (data) {
-                document.getElementById("likesConcern " + concernId).textContent = (data.votes) + " Likes"; // display id value which is returned from the action method
-            });
+            $.get("/Home/VoteForConcernAsync",
+                { concernId: concernId },
+                function(data) {
+                    document.getElementById("likesConcern " + concernId).textContent =
+                        (data.votes) + " Likes"; // display id value which is returned from the action method
+                });
         }
 
     }
-                        /*$('#createConcernModal').on('show.bs.modal', function (event) {
-                            var button = $(event.relatedTarget) // Button that triggered the modal
-                            //var concernId = button.data('concernid') // Extract info from data-* attributes
-                            //test(concernId)
-                        });*/
+
 
 </script>

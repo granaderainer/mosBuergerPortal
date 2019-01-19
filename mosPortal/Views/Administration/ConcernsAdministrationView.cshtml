@@ -76,8 +76,8 @@
                     <div class="right-col col-lg-2 d-flex align-items-center">
                         @if (concern.UserConcern.Count >= 1 && concern.StatusId == 2)
                         {
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
-                            <button id="createPollButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                            <button type="button" class="btn btn-primary col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                            <button id="createPollButton" type="button" class="btn btn-primary col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
                         @if (concern.StatusId != 2)
                         {

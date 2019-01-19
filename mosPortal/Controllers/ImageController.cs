@@ -15,6 +15,10 @@ namespace mosPortal.Controllers
         public FileStreamResult GetImage(int id)
         {
             Image image = db.Image.Where(i => i.Id == id).SingleOrDefault();
+//            if (image == null)
+//            {
+//                image = db.Image.Where(i => i.Id == 18).SingleOrDefault();
+//            }
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
         }
@@ -28,7 +32,7 @@ namespace mosPortal.Controllers
             }
             catch
             {
-                image = db.Image.Where(i => i.Id == 10).SingleOrDefault();
+                image = db.Image.Where(i => i.Id == 18).SingleOrDefault();
             }
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
