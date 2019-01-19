@@ -3,9 +3,6 @@
     ViewData["Title"] = "ConcernsAdministrationView";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
 }
-
-
-
 <!-- Page Header-->
 <header class="page-header">
     <div class="container-fluid">
@@ -60,8 +57,7 @@
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
-                            <div class="image has-shadow"><img src="img/project-1.jpg" alt="..." class="img-fluid"></div>
-                            <!--<div class="image has-shadow"><img src="@Url.Action("GetImage", "Image", new { concernId = concern.Id.ToString()})" alt="..." class="img-fluid"></div>-->
+                            <div class="image has-shadow"><img src="@Url.Action("GetConcernTitleImage", "Image", new { concernId = concern.Id})" style="max-height:100%; max-width:100%;   margin-left: auto; margin-right: auto;" alt="..." class="img-fluid"></div>
                             <div class="text">
                                 <h3 class="h4">@Html.DisplayFor(modelItem => concern.Title)</h3><small> @Html.DisplayFor(modelItem => concern.Text)</small>
                             </div>
@@ -89,7 +85,7 @@
                         }
                         @if (concern.StatusId == 3 || concern.StatusId == 4)
                         {
-                            <button id="createPollButton"type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                            <button id="createPollButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
                     </div>
                 </div>
@@ -99,7 +95,7 @@
 </section>
 <!-- Modal -->
 <div class="modal fade" id="changeConcernStatusModal" tabindex="-1" role="dialog" aria-labelledby="changeConcernStatusModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Anliegen bearbeiten</h4>
@@ -108,7 +104,22 @@
 
             <div class="modal-body">
                 <div id="concernModalTitle"></div>
-                <div  class="image has-shadow"><img id="concernModalImage" src="~/admin_template/img/project-1.jpg" alt="..." class="img-fluid"></div>
+                <hr>
+                <div id="concernModalCarousel" class="carousel slide" data-ride="carousel"  style="display: none;">
+                    <ol id="concernModalCarouselOl" class="carousel-indicators">
+                    </ol> 
+                    <div id="concernModalCarouselItemDiv" class="carousel-inner"style=" width:100%; height: 500px !important;">
+                    </div>
+                    <a class="carousel-control-prev" href="#concernModalCarousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next" href="#concernModalCarousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+                <hr id="concernModalSpacer" style="display:none;">
                 <div id="concernModalText"></div>
                 <hr>
                 <div id="concernModalDate"></div>
@@ -132,10 +143,16 @@
 @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var elems;
+    var url = "@Url.Action("GetImage", "Image")";
     $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid')
         var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
+        $("#concernModalCarouselItemDiv").empty();
+        $("ol#concernModalCarouselOl").empty();
+        $("#concernModalCarousel").hide();
+        $("#concernModalSpacer").hide();
+
         getConcern(concernId, concernStatusOld);
     });
     $('#createPollModal').on('show.bs.modal', function (event) {
@@ -143,8 +160,7 @@
         var concernId = button.data('concernid') // Extract info from data-* attributes
         getConcernToCreatePoll(concernId);
     });
-    function getConcernToCreatePoll(concernId)
-    {
+    function getConcernToCreatePoll(concernId) {
         $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
             console.log(data);
             var title = data.title;
@@ -154,7 +170,7 @@
             $("#pollTitleModal").val(title);
             $("#pollConcernIdModal").val(concernId);
 
-            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId -1;
+            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId - 1;
             if (data.comment == null) {
                 $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat");
             }
@@ -179,7 +195,7 @@
             ConcernId: $("#pollConcernIdModal").val(),
             Answers: answers
         };
-        
+
         console.log(sendData);
         $.ajax({
             type: 'POST',
@@ -228,7 +244,37 @@
             $("#concernModalStatus").empty();
             $("#concernModalStatus").append(fragment);
             $("#concernModalStatus").val(data.statusId);
-            $("#concernModalImage").attr("src", "https://localhost:44388/Image/GetImage?concernId=" + concernId);
+            var imageIds = data.imageIds;
+            var fileIds = data.fileIds;
+            console.log(imageIds);
+            console.log(imageIds.length > 0);
+            if (imageIds.length > 0) {
+                $("#concernModalCarousel").show();
+                $("#concernModalSpacer").show();
+                for (var i = 0; i < imageIds.length; i++) {
+                    console.log("Schleife "+i)
+                    var li = "";
+                    var div = "";
+                    if (i == 0) {
+                        li = '<li data-target="#concernModalCarousel" data-slide-to="' + i + '" class="active"></li>';
+                        div = '<div class="carousel-item active">';
+                    }
+                    else {
+                        li = '<li data-target="#concernModalCarousel" data-slide-to="' + i + '" class="active"></li>';
+                        div = '<div class="carousel-item">'
+                    }
+                    $("ol#concernModalCarouselOl").append(li);
+                    
+                    var image = '<img class="d-block w-100" src="https://localhost:44388/Image/GetImage?id=' + imageIds[i] + '">';
+                    $("#concernModalCarouselItemDiv").append(div + image + "</div>");
+                }
+            }
+
+            fileIds.forEach(function (fileId) {
+
+
+            });
+            //$("#concernModalImage").attr("src", "https://localhost:44388/Image/GetImage?concernId=" + concernId);
         });
     }
     $(document).ready(function () {
