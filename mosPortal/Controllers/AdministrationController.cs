@@ -58,6 +58,13 @@ namespace mosPortal.Controllers
             }
             foreach (Concern concern in concerns)
             {
+                int length = 100;
+                string text = concern.Text;
+                if(text.Length >length)
+                {
+                    text = text.Substring(0, length)+"...";
+                }
+                concern.Text = text;
                 concern.Comment = db.Comment.Where(c => c.ConcernId == concern.Id).ToList();
                 concern.UserConcern = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
             }
