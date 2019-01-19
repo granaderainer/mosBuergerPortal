@@ -9,7 +9,7 @@ using mosPortal.Models;
 
 namespace mosPortal.Controllers
 {
-    public class ImageController : Controller
+    public class FileController : Controller
     {
         private dbbuergerContext db = new dbbuergerContext();
         public FileStreamResult GetImage(int id)
