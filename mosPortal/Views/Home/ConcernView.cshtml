@@ -128,7 +128,7 @@
 
                 <div class="project owl-carousel">
                     <div class="item">
-                        <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetImage", "Image", new {concernId = Model.Id.ToString()})'/>
+                        <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetConcernTitleImage", "Image", new {concernId = Model.Id.ToString()})'/>
                     </div>
                     <div class="item">
                         <img src="img/main-slider2.jpg" alt="" class="img-fluid">
@@ -148,7 +148,7 @@
                         }
                         else
                         {
-                            <span id="likesConcern @Model.Id" class="badge"> Abstimmung</span>
+                            <span id="likesConcern @Model.Id" class="badge"> Abstimmungen</span>
                         }
 
 
@@ -212,6 +212,7 @@
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
+ 
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
             document.getElementById(btn.id).disabled = true;
