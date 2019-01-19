@@ -76,25 +76,19 @@ namespace mosPortal.Controllers
         [Authorize(Policy = "AllRoles")]
         public IActionResult ShowConcern(int concernId)
         {
-            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            Concern concern = db.Concern.SingleOrDefault(c => c.Id == concernId);
+            Category category = db.Category.SingleOrDefault(c => c.Id == concern.CategoryId);
             List<Comment> comments = db.Comment.Where(c => c.ConcernId == concernId).ToList();
             List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
-            List<Image> images = db.Image.Where(i => i.ConcernId == concern.Id).ToList();
             
             concern.UserConcern = userConcerns;
             concern.Comment = comments;
-            concern.Image = images;
+            concern.Category = category;
+            
             return View("ConcernView", concern);
         }
-        
-//            public ActionResult Show(int id)
-//            {
-//                Image image = 
-//                var imageData = ...get bytes from database...
-//        
-//                return File(imageData, "image/jpg");
-//            }
-        
+    
+      
 
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {

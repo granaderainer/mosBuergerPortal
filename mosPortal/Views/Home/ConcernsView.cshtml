@@ -9,48 +9,41 @@
     var categories = ViewData["Categories"] as IEnumerable<Category>;
 }
 
-
+<div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row d-flex align-items-center flex-wrap">
+            <div class="col-md-7">
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    <span class="input-group-btn">
+                        <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
+                    </span>
+                }
+            </div>
+            <div class="col-md-5">
+                <ul class="breadcrumb d-flex justify-content-end">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">Alle Anliegen</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Page Content -->
 <div class="container">
     <!-- Page Heading/Breadcrumbs -->
-    <div class="row">
-        <div class="col-lg-12">
-            <h1 class="page-header">
-                Anliegen
-                <small>Alle aktuellen Anliegen</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <ul class="breadcrumb d-flex justify-content-end">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item active">Alle Anliegen</li>
-                    </ul>
-                </li>
-            </ol>
-        </div>
-    </div>
+    
     <!-- /.row -->
     <div class="row">
         <!-- Blog Sidebar Widgets Column NEW -->
-        <div class="col-md-3">
+        <div class="col-md-3 bar">
             <!-- PAGES MENU -->
             <div class="panel panel-default sidebar-menu">
                 <!-- "Neues Anliegen" Button Sidebar-->
-                @if (SignInManager.IsSignedIn(User))
-                {
-                    <div class="well">
-                        @*<span class="input-group-btn">
-                                <a class="btn btn-primary" id="createNewConcern" asp-action="CreateConcern" asp-controller="Home">Neues Anliegen <i class="fa fa-plus-square"></i></a>
-                            </span>*@
-                        <span class="input-group-btn">
-                            <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
-                        </span>
-                        @*<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createConcernModal">Neues Anliegen JSon</button>*@
-                    </div>
-                }
+               
                 <hr>
                 <!-- Blog Search Well -->
-                <div class="well">
+                
                     <h4>Nach Anliegen suchen:</h4>
                     <div class="input-group">
                         <input type="text" class="form-control">
@@ -59,7 +52,7 @@
                         </span>
                     </div>
                     <!-- /.input-group -->
-                </div>
+                
                 <hr>
                 <!-- Blog Categories Well -->
                 <div class="panel-body">
@@ -81,12 +74,12 @@
             {
                 <div id="content">
                     <div class="container">
-                        <div class="row bar">
+                        <div class="row box Pollbox shadow">
                             <div id="blog-listing-medium">
                                 <section class="post">
                                     <div class="row">
                                         <div class="col-md-4">
-                                            <div class="image"><a href="blog-post.html"><img src="http://placehold.it/400x300" alt="Example blog post alt" class="img-fluid"></a></div>
+                                            <div class="image"><a class="" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id"><img class="img-fluid" id="ItemPreview" src='@Url.Action("GetImage", "Image", new {concernId = item.Id.ToString()})' /></a></div>
                                         </div>
                                         <div class="col-md-8">
                                             <h2 class="h3 mt-0"><a href="post.htmls" class="not-active">@item.Title</a></h2>
@@ -96,7 +89,7 @@
                                                     <p class="date-comments"><a href="blog-post.html"><i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <!-- Muss noch angepasst werden--> 8 Kommentare</a></p>
                                                 </div>
                                             </div>
-                                            <p class="intro">@item.Text</p>
+                                            <!--<p class="intro">@item.Text</p>-->
                                             <br>
                                             <p class="read-more text-right">
                                                 <a>
