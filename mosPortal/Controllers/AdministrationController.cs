@@ -312,14 +312,28 @@ namespace mosPortal.Controllers
 
             return View("PollsAdministrationView", polls );
         }
-        public IActionResult ShowPoll()
+        [HttpGet]
+        public IActionResult GetPollJson(int pollId)
+        {
+            int votes = 0;
+            Poll poll = db.Poll.Where(p => p.Id == pollId).SingleOrDefault();
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId).ToList();
+            foreach(AnswerOptionsPoll answerOptionsPoll in answerOptionsPolls)
+            {
+                votes += db.UserAnswerOptionsPoll.Where(uaop => uaop.AnswerOptionsPollId == answerOptionsPoll.Id).Count();
+            }
+            return Json(new { title = poll.Title, text = poll.Text, end = poll.End, votes});
+
+        }
+
+        /*public IActionResult ShowPoll()
         {
             int id = 2;
             Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
             List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
             poll.AnswerOptionsPoll = answerOptionsPolls;
             return View("PollAdministrationView", poll);
-        }
+        }*/
         public JsonResult GetPollAnswers(int pollId)
         {
             int id = pollId;
@@ -408,25 +422,6 @@ namespace mosPortal.Controllers
                         break;
 
                 }
-                /*if(role.Name.Equals("GR"))
-                {
-                    int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
-                    if (count >= 35) disabled = true;
-                    description = role.Description + "(" + count + "/35)";
-                }
-                else
-                {
-                    if (role.Name.Equals("BM"))
-                {
-                    if (db.UserRole.Where(ur => ur.RoleId == role.Id).Count() >= 1) disabled = true;
-                    description = role.Description;
-                }
-                    else
-                    {
-                        description = role.Description;
-                    }
-                    
-                }*/
                 rolesList.Add(new SelectListItem { Value= role.Id.ToString(), Text=description,Disabled=disabled });
             }
             ViewData["Roles"] = rolesList;

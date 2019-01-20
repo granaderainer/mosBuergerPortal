@@ -91,47 +91,89 @@
         </div>
     </div>
 </section>
+<!-- Modal -->
+<div class="modal fade" id="showPollModal" tabindex="-1" role="dialog" aria-labelledby="showPollModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Umfrage anzeigen</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="pollModalDiv" style="display:none;">
+                    <div id="pollModalTitle"></div>
+                    <hr>
+                    <div id="pollModalText"></div>
+                    <hr>
+                    <div id="pollModalEnd"></div>
+                    <hr>
+                    <input type="hidden" name="pollModalId" id="pollModalId" />
+                    <div id="pollModalVotes"></div>
+                    <div id="pollChartModal" style="height: 400px;"></div>
+                </div>
+                <div id="pollModalLoad">
+                    <div class="text-center">
+                        <span class="fa fa-spinner fa-spin fa-3x"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                <button id="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changepollStatus()">Speichern</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal-->
 <!-- Modal Form-->
 @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var pollElems = [];
+    var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
+
+
     $(document).ready(function () {
         pollElems = document.getElementsByName("poll");
         console.log(elems);
         $('li#linkPolls').addClass('active');
-        var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
+        
         var elems = document.getElementsByName("pollChart");
         for (var i = 0; i < elems.length; i++) {
             var id = elems[i].id;
             var pollId = (id.split(" "))[1];
-            console.log("Poll Id =" +pollId)
-            $.ajax({
-                async: false,
-                type: 'GET',
-                url: '/Administration/GetPollAnswers?pollId=' + pollId,
-                success: function (data) {
-                    console.log(data.length);
-                    var count = data.length;
-                    var chartColors = [];
-                    var j = 0;
-                    for (var i = 0; i < count; i++) {
-                        if (j == (colors.length - 1)) {
-                            j = 0;
-                        }
-                        chartColors.push(colors[j]);
-                        j++;
-                    }
-                    console.log(data);
-                    console.log(chartColors);
-                    Morris.Donut({
-                        element: id,
-                        data: data,
-                        colors: chartColors
-                    });
-                }
-            });
+            console.log("Poll Id =" + pollId)
+            createChart(id, pollId);
         }
     });
+
+    function createChart(id, pollId) {
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/Administration/GetPollAnswers?pollId=' + pollId,
+            success: function (data) {
+                //console.log(data.length);
+                var count = data.length;
+                var chartColors = [];
+                var j = 0;
+                for (var i = 0; i < count; i++) {
+                    if (j == (colors.length - 1)) {
+                        j = 0;
+                    }
+                    chartColors.push(colors[j]);
+                    j++;
+                }
+                //console.log(data);
+                //console.log(chartColors);
+                Morris.Donut({
+                    element: id,
+                    data: data,
+                    colors: chartColors
+                });
+            }
+        });
+    }
     function selectedFilterChanged() {
         var statusSelect = document.getElementById("pollStatusSelect");
         var selectedStatus = statusSelect.value;
@@ -150,7 +192,7 @@
                 display = "block";
             }
             if (selectedStatus == 0) {
-                 display= "block";
+                display = "block";
             }
             if (display != "none") {
                 if (ids[2] != selectedCategory) {
@@ -166,6 +208,34 @@
             pollElems[i].style.display = display;
         }
     }
+    function getPoll(pollId) {
+        $.get("/Administration/GetPollJson", { pollId: pollId }, function (data) {
+            console.log(data);
+            $("#pollModalDiv").show();
+            $("#pollModalLoad").hide();
+            $("#pollModalId").val(pollId);
+            $("#pollModalTitle").html("<h4>" + (data.title) + "</h4>");
+            $("#pollModalText").html(data.text);
+            $("#pollModalEnd").html("Läuft am " + (data.end) + " ab.");
+            $("#pollModalVotes").html("Es haben "+ (data.votes) +"Einwohner abgestimmt!");
+            var id = $("#pollChartModal").attr('id');
+            createChart(id, pollId);
+            setTimeout(function () {
+                $("#pollModalDiv").show();
+                $("#pollModalLoad").hide();
+            }, 3000)
+
+        });
+    }
+    $('#showPollModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var pollId = button.data('pollid')
+        $("#pollModalDiv").hide();
+        $("#pollModalLoad").show();
+        getPoll(pollId);
+    });
+
+    ///Implement!!!
     $("#pollSearchButton").click(function () {
         var searchText = $("#pollSearchText").val();
         $("#pollSearchText").val("");
@@ -174,9 +244,9 @@
             console.log("nein");
             vNotify.info({ Title: "Suchtext eingeben", Text: "Bitte geben sie einen Suchtext ein!" })
         }
-        else
-        {
+        else {
             console.log("ja");
         }
     });
+
 </script>
