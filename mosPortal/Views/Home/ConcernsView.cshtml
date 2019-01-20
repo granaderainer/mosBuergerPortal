@@ -48,9 +48,9 @@
 
                 <h4>Nach Anliegen suchen:</h4>
                 <div class="input-group">
-                    <input type="text" class="form-control">
+                    <input id="search" type="text" class="form-control">
                     <span class="input-group-btn">
-                        <button class="btn btn-default" type="button">
+                        <button class="btn btn-default" type="submit">
                             <i class="fa fa-search"></i>
                         </button>
                     </span>
@@ -85,7 +85,7 @@
                                         <div class="col-md-4">
                                             <div class="image">
                                                 <a class="" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">
-                                                    <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetConcernTitleImage", "Image", new {concernId = item.Id})'/>
+                                                    <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetConcernTitleImage", "File", new {concernId = item.Id})'/>
                                                 </a>
                                             </div>
                                         </div>
@@ -172,6 +172,11 @@
         }
 
     }
+   $('#search').keyup(function()
+   {
+       
+       //Das soll ausgeführt werden
+   });
 
 
 </script>

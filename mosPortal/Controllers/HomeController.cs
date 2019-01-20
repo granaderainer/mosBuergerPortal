@@ -79,17 +79,51 @@ namespace mosPortal.Controllers
         {
             Concern concern = db.Concern.SingleOrDefault(c => c.Id == concernId);
             Category category = db.Category.SingleOrDefault(c => c.Id == concern.CategoryId);
+            List<Image> images = db.Image.Where(i => i.ConcernId == concernId).Select(ii => new Image
+            {
+                Id = ii.Id
+            }).ToList();
             List<Comment> comments = db.Comment.Where(c => c.ConcernId == concernId).ToList();
             List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
             
             concern.UserConcern = userConcerns;
             concern.Comment = comments;
             concern.Category = category;
+            concern.Image = images;
             
             return View("ConcernView", concern);
         }
-    
-      
+
+        public JsonResult GetConcernJson(int concernId)
+        {
+            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
+            List<File> files = db.File.Where(f => f.ConcernId == concernId).ToList();
+            List<Image> images = db.Image.Where(i => i.ConcernId == concernId).ToList();
+
+            int[] imageIds = new int[images.Count()];
+            int[] fileIds = new int[files.Count()];
+            int k = 0;
+            int j = 0;
+            foreach (File file in files)
+            {
+                fileIds[k] = file.Id;
+                k++;
+            }
+
+            foreach (Image image in images)
+            {
+                imageIds[j] = image.Id;
+                j++;
+            }
+
+            int categoryId = concern.CategoryId;
+            return Json(new
+            {
+                concernId, title = concern.Title, text = concern.Text, categoryId, date = concern.Date.ToString(),
+                imageIds, fileIds
+            });
+        }
+
 
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
