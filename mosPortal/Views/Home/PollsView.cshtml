@@ -85,10 +85,32 @@
                                             </div>
                                         </div>
                                         <p class="intro">@item.Text</p>
-                                        <div class="image">
-                                            @*<a href="blog-post.html">
-               <img src="img/blog2.jpg" alt="Example blog post alt" class="img-fluid">
-            </a>*@
+                                        <div class="project owl-carousel" id="carousel">
+                                            @{
+                                                if (item.Image != null)
+                                                {
+                                                    foreach (var image in item.Image)
+                                                    {
+                                                       <div class="item">
+                                                            <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
+                                                        </div>
+                                                    }
+                                                }
+                                                if (item.File != null)
+                                                {
+                                                   
+                                                    foreach (var file in item.File)
+                                                    {
+                                                        <div class="">
+                                                            <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
+                                                        </div>
+                                                        
+                                                    }
+                                                }
+
+                                                else { }
+
+                                            }
                                         </div>
                                         <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
                                             <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>

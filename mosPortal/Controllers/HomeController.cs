@@ -247,11 +247,11 @@ namespace mosPortal.Controllers
             DateTime time = DateTime.UtcNow;
 
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
-
+            
             foreach (Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
-                    .Include("AnswerOptions")
+                .Include("AnswerOptions")
                     .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
                         {
                             Id = aop.Id,
@@ -260,8 +260,19 @@ namespace mosPortal.Controllers
                             AnswerOptions = aop.AnswerOptions
                         }
                     ).ToList();
+                List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
+                {
+                    Id = ii.Id
+                }).ToList();
+                List<File> files = db.File.Where(f => f.PollId== poll.Id).Select(ff => new File
+                {
+                    Id = ff.Id,
+                    Name = ff.Name,
+                    Ending = ff.Ending
+                }).ToList();
                 poll.AnswerOptionsPoll = answers;
-                
+                poll.Image = images;
+
             }
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)
@@ -289,7 +300,7 @@ namespace mosPortal.Controllers
                 pollViewModel.User = poll.User;
                 pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
                 pollViewModel.RadioId = 0;
-                
+                pollViewModel.Image = poll.Image;
 
                 pollViewModels.Add(pollViewModel);
 

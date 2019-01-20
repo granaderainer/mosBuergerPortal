@@ -133,7 +133,13 @@
                 <!--<img class="img-responsive" src='' />-->
                 
                 <div class="project owl-carousel" id="carousel">
-                    
+                    <!--Hier kommen per Javascript die Bilder rein-->
+                    @foreach(var image in Model.Image) { 
+
+                        <div class="item">
+                            <img class="img-fluid" src="/File/GetImage?id=@image.Id"/>
+                        </div>
+                    }
                 </div>
 
                 <br/>
@@ -212,46 +218,47 @@
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 
-@{List<int> imageIdss = new List<int>();
+@*@{List<int> imageIdss = new List<int>();
     foreach (var image in Model.Image)
     {
+
         imageIdss.Add(image.Id);
     }
-}
+}*@
 <script type="text/javascript">
     
-    function getConcern(concernId, imageIdss) {
-        //$.get("/Home/GetConcernJson", { concernId: concernId }, function (data) {
-       var imageIds = imageIdss;
-        //var fileIds = data.fileIds;
-            console.log(imageIds);
-            if (imageIds.length > 0) {
-                $("#carousel").show();
-                for (var i = 0; i < imageIds.length; i++) {
-                    var div = '<div class="item">';
-                    var image = '<img class="img-fluid" src="/File/GetImage?id=' + imageIds[i] + '">';
-                    $("#carousel").append(div + image + "</div>");
-                }
-            }
-            //if (fileIds.length > 0) {
-            //    $("#concernModalFile").show();
-            //    $("#concernModalSpacer2").show();
-            //    for (var i = 0; i < fileIds.length; i++) {
-            //        var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
-            //        $("#concernModalFile").append(link);
-            //    }
-            //}
-            //setTimeout(function() {
-            //        $("#concernModalDiv").show();
-            //        $("#concernModalLoad").hide();
-            //    },
-            //    3000);
+    //function getConcern(concernId, imageIdss) {
+    //    $.get("/Home/GetConcernJson", { concernId: concernId }, function (data) {
+    //   var imageIds = imageIdss;
+    //    //var fileIds = data.fileIds;
+    //        console.log(imageIds);
+    //        if (imageIds.length > 0) {
+    //            $("#carousel").show();
+    //            for (var i = 0; i < imageIds.length; i++) {
+    //                var div = '<div class="item">';
+    //                var image = '<img class="img-fluid" src="/File/GetImage?id=' + imageIds[i] + '">';
+    //                $("#carousel").append(div + image + "</div>");
+    //            }
+    //        }
+    //        //if (fileIds.length > 0) {
+    //        //    $("#concernModalFile").show();
+    //        //    $("#concernModalSpacer2").show();
+    //        //    for (var i = 0; i < fileIds.length; i++) {
+    //        //        var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
+    //        //        $("#concernModalFile").append(link);
+    //        //    }
+    //        //}
+    //        //setTimeout(function() {
+    //        //        $("#concernModalDiv").show();
+    //        //        $("#concernModalLoad").hide();
+    //        //    },
+    //        //    3000);
 
-        };
-        console.log(arguments);
-    //}
+    //    };
+    //    console.log(arguments);
+    //)}
 
-    getConcern(@Model.Id, @imageIdss);
+   
 
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {

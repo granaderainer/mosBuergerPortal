@@ -24,5 +24,9 @@ namespace mosPortal.Models.ViewModels
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
         public int RadioId { get; set; }
-    }
+        
+        public ICollection<Image> Image { get; set; }
+        public ICollection<File> File { get; set; }
+        
+}
 }
