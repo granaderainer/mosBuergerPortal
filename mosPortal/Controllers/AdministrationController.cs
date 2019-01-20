@@ -390,17 +390,44 @@ namespace mosPortal.Controllers
             List<Role> roles = db.Role.ToList();
             foreach (Role role in roles)
             {
+                bool disabled = false;
                 string description = "";
-                if(role.Name.Equals("GR"))
+                switch (role.Name)
+                {
+                    case "GR":
+                        int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
+                        if (count >= 35) disabled = true;
+                        description = role.Description + "(" + count + "/35)";
+                        break;
+                    case "BM":
+                        if (db.UserRole.Where(ur => ur.RoleId == role.Id).Count() >= 1) disabled = true;
+                        description = role.Description;
+                        break;
+                    default:
+                        description = role.Description;
+                        break;
+
+                }
+                /*if(role.Name.Equals("GR"))
                 {
                     int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
+                    if (count >= 35) disabled = true;
                     description = role.Description + "(" + count + "/35)";
                 }
                 else
                 {
+                    if (role.Name.Equals("BM"))
+                {
+                    if (db.UserRole.Where(ur => ur.RoleId == role.Id).Count() >= 1) disabled = true;
                     description = role.Description;
                 }
-                rolesList.Add(new SelectListItem { Value= role.Id.ToString(), Text=description });
+                    else
+                    {
+                        description = role.Description;
+                    }
+                    
+                }*/
+                rolesList.Add(new SelectListItem { Value= role.Id.ToString(), Text=description,Disabled=disabled });
             }
             ViewData["Roles"] = rolesList;
             return View("UsersAdministrationView", users);
@@ -411,7 +438,45 @@ namespace mosPortal.Controllers
             User user = db.User.Where(u => u.Id == userIdInt).Include("Address").Include("UserRole").SingleOrDefault();
             return Json(user);
         }
-
-
+        [HttpPost]
+        public IActionResult crudUser(User user, int roleId, string operation)
+        {
+            string title = "";
+            string text = "";
+            string localCouncilDescription = "";
+            bool localCouncilFull = false;
+            bool mayorFull = false;
+            int localCouncilId = 4;
+            int mayorId = 3;
+            int result = 0;
+            User dbUser = db.User.Where(u => u.Id == user.Id).SingleOrDefault();
+            dbUser.Firstname = user.Firstname;
+            dbUser.Name = user.Name;
+            dbUser.Birthplace = user.Birthplace;
+            dbUser.Birthday = user.Birthday;
+            //dbUser.UserName = user.UserName;
+            dbUser.Email = user.Email;
+            db.Update(dbUser);
+            try
+            {
+                UserRole userRole = db.UserRole.Where(ur => ur.UserId == user.Id).SingleOrDefault();
+                userRole.RoleId = roleId;
+                db.Update(userRole);
+            }
+            catch
+            {
+                UserRole userRole = new UserRole { UserId = user.Id, RoleId = roleId };
+                db.Add(userRole);
+            }
+            result = db.SaveChanges();
+            //GR zählen
+            int count = db.UserRole.Where(ur => ur.RoleId == localCouncilId).Count();
+            localCouncilDescription = db.Role.Where(r => r.Id == localCouncilId).SingleOrDefault().Description;
+            localCouncilDescription = localCouncilDescription + "("+count+"/35)";
+            if (count >= 35) localCouncilFull = true;
+            //BM zählen
+            if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
+            return Json(new { result, user, roleId, title, text, localCouncilDescription,localCouncilFull, mayorFull });
         }
+    }
 }

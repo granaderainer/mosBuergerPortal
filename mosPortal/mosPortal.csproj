@@ -31,16 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\Administration\CreatePollAdministrationView_pollView.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Administration\CreatePollAdministrationView_old.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
     <Content Update="Views\Administration\PollAdministrationpPartialView.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
-    <Content Update="Views\Administration\PollsAdministrationView_old.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

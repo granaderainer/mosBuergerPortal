@@ -68,7 +68,7 @@ namespace mosPortal.Controllers
                     Name = model.Name,
                     UserName = model.Username,
                     Email = model.Email,
-                    Birthday = model.Birthday.ToString(),
+                    Birthday = model.Birthday,
                     Birthplace = model.Birthplace,
                     AddressId = addressCheck.Id
                 };

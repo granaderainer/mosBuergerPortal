@@ -136,7 +136,7 @@
             var date = ((data.birthday).split(" "))[0].split(".");
             var address = data.address;
             var addressHtml = "<p>"+ address.street + " " + address.number + "</br>" + address.zipCode + " " + address.city + "</br>" + address.country+"</p>";
-            console.log(addressHtml);
+            console.log("User Role Id "+data.userRole[0].roleId);
             $("#userId").val(data.id);
             $("#userFirstName").val(data.firstname);
             $("#userName").val(data.name);
@@ -144,6 +144,7 @@
             $("#userBirthDay").val(date[2]+"-"+date[1]+"-"+date[0]);
             $("#userUserName").val(data.userName);
             $("#userEmail").val(data.email);
+            $("#userRole").val(data.userRole[0].roleId).change();
             $("#userAddress").html(addressHtml);
 
 
@@ -169,13 +170,13 @@
         $("#edituser").hide();
         $("#cancelEdituser").show();
         $("#saveuser").show();
-        $("#userDescription").removeAttr('disabled');
+        //$("#userDescription").removeAttr('disabled');
         $("#userId").removeAttr('disabled');
         $("#userFirstName").removeAttr('disabled');
         $("#userName").removeAttr('disabled');
         $("#userBirthPlace").removeAttr('disabled');
         $("#userBirthDay").removeAttr('disabled');
-        $("#userUserName").removeAttr('disabled');
+        //$("#userUserName").removeAttr('disabled');
         $("#userEmail").removeAttr('disabled');
         $("#userRole").removeAttr('disabled');
     });
@@ -183,13 +184,13 @@
         $("#cancelEdituser").hide();
         $("#saveuser").hide();
 
-        $("#userDescription").attr('disabled', 'disabled');
+        //$("#userDescription").attr('disabled', 'disabled');
         $("#userId").attr('disabled', 'disabled');
         $("#userFirstName").attr('disabled', 'disabled');
         $("#userName").attr('disabled', 'disabled');
         $("#userBirthPlace").attr('disabled', 'disabled');
         $("#userBirthDay").attr('disabled', 'disabled');
-        $("#userUserName").attr('disabled', 'disabled');
+        //$("#userUserName").attr('disabled', 'disabled');
         $("#userEmail").attr('disabled', 'disabled');
         $("#userRole").attr('disabled', 'disabled');
         if ($("#selectuser")[0].selectedIndex < 0) {
@@ -201,25 +202,29 @@
         $("#newuser").show();
 
 
-        $("#userDescription").attr('disabled', 'disabled');
+        //$("#userDescription").attr('disabled', 'disabled');
     });
     $("#saveuser").click(function () {
         var userId = $("#userId").val();
+        var firstName = $("#userFirstName").val();
+        var name = $("#userName").val();
+        var userName = $("#userUserName").val();
+        var email = $("#userEmail").val();
+        var birthplace = $("#userBirthDay").val();
+        var birthday = $("#userBirthDay").val();
+        var roleId = $("#userRole").val();
+        var user = {Id: userId, Firstname: firstName, Name: name, Email: email, UserName: userName, Birthplace: birthplace, Birthday: birthday };
         var operation = "update";
-        if (userId == "") {
-            userId = 0;
-            var operation = "create";
-        }
-        var userDescription = $("#userDescription").val();
+        //var userDescription = $("#userDescription").val();
 
-        console.log(userId);
+        console.log(user);
+        console.log(roleId);
         console.log(operation);
-        console.log(userDescription);
-        cruduser(userId, userDescription, operation);
+        cruduser(user, roleId, operation);
 
 
     });
-    $("#newuser").click(function () {
+    /*$("#newuser").click(function () {
         $("#newuser").hide();
         $("#edituser").hide();
         $("#userHeader").html('<h3  class="h4">neue Kategorie</h3>');
@@ -230,7 +235,7 @@
         $("#userDescription").removeAttr('disabled');
         $("#selectuser")[0].selectedIndex = -1;
         $("#deleteuser").hide();
-    });
+    });*/
     $("#deleteuser").click(function () {
         var operation = "delete";
         var selectElement = document.getElementById("selectuser");
@@ -242,29 +247,52 @@
         cruduser(userId, userDescription, operation);
     })
 
-    function cruduser(userId, description, operation) {
-        $.post("/Administration/cruduser", { userId: userId, description: userDescription, operation: operation }, function (data) {
-
+    function cruduser(user, roleId, operation) {
+        $.post("/Administration/crudUser", { user: user,roleId: roleId, operation: operation }, function (data) {
+            console.log(data);
             if ((data.result) == 1 || (data.result) == 2) {
                 $("#cancelEdituser").hide();
                 $("#saveuser").hide();
                 $("#edituser").show();
                 $("#newuser").show();
-                $("#userDescription").attr('disabled', 'disabled');
+                $("#userId").attr('disabled', 'disabled');
+                $("#userFirstName").attr('disabled', 'disabled');
+                $("#userName").attr('disabled', 'disabled');
+                $("#userBirthPlace").attr('disabled', 'disabled');
+                $("#userBirthDay").attr('disabled', 'disabled');
+                //$("#userUserName").attr('disabled', 'disabled');
+                $("#userEmail").attr('disabled', 'disabled');
+                $("#userRole").attr('disabled', 'disabled');
 
                 var select = document.getElementById("selectuser");
-                console.log(data);
-                if ((data.result) == 2) {
-                    var index = select.selectedIndex;
-                    select.options[index].text = (data.description);
+                //if ((data.result) == 2) {
+                var index = select.selectedIndex;
+                var userString = (data.user.firstname)+" "+(data.user.name)+" ("+(data.user.userName)+")"
+                select.options[index].text = userString;
+                var value = 4;
+                $("#userRole option[value=" + value + "]").text(data.localCouncilDescription);
+                if (data.localCouncilFull == true) {
+                    $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
                 }
                 else {
+                    $("#userRole option[value=" + value + "]").removeAttr('disabled');  
+                }
+                value = 3;
+                if (data.mayorFull == true) {
+                    $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
+                }
+                else {
+                    $("#userRole option[value=" + value + "]").removeAttr('disabled');
+                }
+                
+                //}
+                /*else {
                     var option = document.createElement("option");
                     option.text = (data.description);
                     option.value = (data.userId);
                     select.add(option);
                     $("#userId").val(data.userId);
-                }
+                }*/
                 vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
             }
             else {
