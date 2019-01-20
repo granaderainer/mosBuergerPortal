@@ -51,7 +51,7 @@ namespace mosPortal.Models.ViewModels
         [Display(Name = "Hausnummer", Prompt = "Hausnummer")]
         public string Number { get; set; }
         [Required]
-        [StringLength(5, ErrorMessage = "ungültiges Format")]
+        //[StringLength(5, ErrorMessage = "ungültiges Format")]
         [Display(Name = "Postleitzahl", Prompt = "12345")]
         public int ZipCode { get; set; }
 
