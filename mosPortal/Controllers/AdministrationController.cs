@@ -8,6 +8,7 @@ using mosPortal.Models.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace mosPortal.Controllers
@@ -472,6 +473,49 @@ namespace mosPortal.Controllers
             //BM zählen
             if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
             return Json(new { result, user, roleId, title, text, localCouncilDescription,localCouncilFull, mayorFull });
+        }
+        [HttpGet]
+        public IActionResult GetRandomKey()
+        {
+
+            Randomkey key = GenerateRandomkey();
+            var dbCheck = db.Randomkey.Where(r => r.Key == key.Key).ToList();
+            if (dbCheck.Count == 0)
+            {
+                db.Randomkey.Add(key);
+                db.SaveChangesAsync();
+                return View("RandomKeyView", key);
+            }
+            else
+            {
+                GetRandomKey();
+                throw new Exception(message: "Key wird bereits verwendet ");
+            }
+            
+        }
+
+        private Randomkey GenerateRandomkey()
+        {
+            Random random = new Random();
+            string characters = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder(11);
+            for (int i = 0; i < 11; i++)
+            {
+                result.Append(characters[random.Next(characters.Length)]);
+            }
+
+            Randomkey key = new Randomkey();
+            string strresult = result.ToString();
+            key.Key = strresult;
+            return key;
+        }
+
+        public IActionResult GenerateWord(string key)
+        {
+            //word dokument
+            //key eintragen
+            //zum download returnen
+            return null;
         }
     }
 }

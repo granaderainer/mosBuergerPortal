@@ -25,6 +25,7 @@ namespace mosPortal.Data
         public virtual DbSet<File> File { get; set; }
         public virtual DbSet<Image> Image { get; set; }
         public virtual DbSet<Poll> Poll { get; set; }
+        public virtual DbSet<Randomkey> Randomkey { get; set; }
         public virtual DbSet<Role> Role { get; set; }
         public virtual DbSet<Status> Status { get; set; }
         public virtual DbSet<User> User { get; set; }
@@ -322,6 +323,24 @@ namespace mosPortal.Data
                     .HasForeignKey(d => d.LastUpdatedBy)
                     .OnDelete(DeleteBehavior.SetNull)
                     .HasConstraintName("fk_poll_User2");
+            });
+            modelBuilder.Entity<Randomkey>(entity =>
+            {
+                entity.HasIndex(e => e.Id)
+                    .HasName("Randomkey_id_uindex")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Key)
+                    .HasName("Randomkey_key_uindex")
+                    .IsUnique();
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.Key)
+                    .HasColumnName("key")
+                    .HasColumnType("varchar(11)");
             });
 
             modelBuilder.Entity<Role>(entity =>
