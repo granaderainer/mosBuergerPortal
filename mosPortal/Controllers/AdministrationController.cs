@@ -428,10 +428,12 @@ namespace mosPortal.Controllers
             ViewData["Roles"] = rolesList;
             return View("UsersAdministrationView", users);
         }
-        public IActionResult GetUser(string userId)
+        [HttpGet]
+        public IActionResult GetUser(int userId)
         {
-            int userIdInt = Convert.ToInt32(userId);
-            User user = db.User.Where(u => u.Id == userIdInt).Include("Address").Include("UserRole").SingleOrDefault();
+            //int userIdInt = Convert.ToInt32(userId);
+            User user = db.User.Where(u => u.Id == userId).Include("Address").Include("UserRole").SingleOrDefault();
+            user.Password = "";
             return Json(user);
         }
         [HttpPost]
