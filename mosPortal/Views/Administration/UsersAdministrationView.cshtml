@@ -136,7 +136,7 @@
             var date = ((data.birthday).split(" "))[0].split(".");
             var address = data.address;
             var addressHtml = "<p>"+ address.street + " " + address.number + "</br>" + address.zipCode + " " + address.city + "</br>" + address.country+"</p>";
-            console.log("User Role Id "+data.userRole[0].roleId);
+            //console.log("User Role Id "+data.userRole[0].roleId);
             $("#userId").val(data.id);
             $("#userFirstName").val(data.firstname);
             $("#userName").val(data.name);
@@ -144,7 +144,13 @@
             $("#userBirthDay").val(date[2]+"-"+date[1]+"-"+date[0]);
             $("#userUserName").val(data.userName);
             $("#userEmail").val(data.email);
-            $("#userRole").val(data.userRole[0].roleId).change();
+            if (typeof data.userRole[0] === "undefined") {
+                $("#userRole").val(2).change();
+            }
+            else {
+                $("#userRole").val(data.userRole[0].roleId).change();
+            }
+            
             $("#userAddress").html(addressHtml);
 
 
