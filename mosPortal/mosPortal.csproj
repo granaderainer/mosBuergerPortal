@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
 	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.1.4" />
+	<PackageReference Include="Syncfusion.DocIO.Net.Core" Version="16.4.0.47" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\AnschreibenEinwohner.docx" />
     <None Include="wwwroot\user_template\index.html" />
   </ItemGroup>
 
