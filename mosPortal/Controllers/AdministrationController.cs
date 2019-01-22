@@ -17,7 +17,6 @@ using Category = mosPortal.Models.Category;
 using File = mosPortal.Models.File;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
-using System.IO;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace mosPortal.Controllers
