@@ -155,7 +155,7 @@
                         {
                             <button type="button" class="btn btn-primary  col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                         }
-                        @if (concern.StatusId == 5 && ViewBag.allowToCreateConcern)
+                        @if (concern.StatusId == 5 && ViewBag.allowToCreatePoll)
                         {
                             <button id="createPollButton" type="button" class="btn btn-primary  col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
@@ -301,9 +301,9 @@
             data: JSON.stringify(sendData),
             success: function (data) {
                 console.log(data);
-                changeConcernDiv(concernId, data.concernStatusId);
+                changeConcernDiv(data.concernId, data.concernStatusId);
                 $("#createPollButton").hide();
-                if (data.result == 1) {
+                if (data.result >=2) {
                     vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
                 }
                 else {

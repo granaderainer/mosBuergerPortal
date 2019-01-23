@@ -75,7 +75,7 @@
         <div class="row">
             @foreach (Poll poll in ViewBag.CurrentPolls)
             {
-                @await Html.PartialAsync("PollAdministrationpPartialView", poll)
+                @await Html.PartialAsync("PollAdministrationPartialView", poll)
 
             }
         </div>
@@ -86,17 +86,18 @@
     $(document).ready(function () {
             $("li#linkHome").addClass("active");
 
-            var matches = [];
+        var matches = [];
             var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
-            var elems = document.getElementsByTagName("*");
-            for (var i = 0; i < elems.length; i++) {
+            var elems = document.getElementsByName("poll");
+       /*for (var i = 0; i < elems.length; i++) {
             if (elems[i].id.indexOf("pollChart_") == 0)
                 matches.push(elems[i]);
-        }
+        }*/
         //console.log(matches)
-        for (var i = 0; i < matches.length; i++) {
-            var id = matches[i].id;
-            var pollId = id[id.length - 1]
+        for (var i = 0; i < elems.length; i++) {
+            var ids = elems[i].id;
+            var pollId = ids.split(" ")[0];
+            var chartId = "pollChart " + pollId;
             //console.log(matches[i].id);
             //console.log(id[id.length - 1]);
             $.ajax({
@@ -118,7 +119,7 @@
                     console.log(data);
                     console.log(chartColors);
                     Morris.Donut({
-                        element: id,
+                        element: chartId,
                         data: data,
                         colors: chartColors
                     });

@@ -46,7 +46,7 @@ namespace mosPortal.Controllers
         }
         public async Task<IActionResult> ShowConcerns(int statusId = 0)
         {
-            bool allowToCreateConcern = false;
+            bool allowToCreatePoll = false;
             List<SelectListItem> statusList = new List<SelectListItem>();
             var user = await userManager.GetUserAsync(HttpContext.User);
             IList<string> roles = await userManager.GetRolesAsync(user);
@@ -57,7 +57,7 @@ namespace mosPortal.Controllers
             {
                 concerns = db.Concern.Where(c => c.StatusId != 4 && !(c.StatusId >= 6)).Include("LastUpdatedByUser").ToList();
                 status = db.Status.Where(s => s.Id != 4 && s.Id <= 5 ).ToList();
-                allowToCreateConcern = true;
+                allowToCreatePoll = true;
             }
             if(roles[0] == "GR")
             {
@@ -97,7 +97,7 @@ namespace mosPortal.Controllers
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
             //ViewData Variablen
-            ViewData["allowToCreateConcern"] = allowToCreateConcern;
+            ViewData["allowToCreatePoll"] = allowToCreatePoll;
             ViewData["statusList"] = statusList;
             ViewData["CategoriesList"] = categoriesList;
             return View("ConcernsAdministrationView", concerns);
@@ -145,19 +145,20 @@ namespace mosPortal.Controllers
                 return View("ConcernsAdministrationView", concerns);
             }*/
         }
-
-        
         [HttpPost]
         public async Task<IActionResult> CreatePollAsync([FromBody]CreatePollModel createPoll)
         {
-
             if(ModelState.IsValid)
             {
-                
-                Concern concern = db.Concern.Where(c => c.Id == createPoll.ConcernId).SingleOrDefault();
-                int concernStatusId = 6; //concern.StatusId;
-                concern.StatusId = concernStatusId;
-                db.Update(concern);
+                int concernStatusId = 0;
+                //Nur, wenn Umfrage aus Anliegen erstellt wird, wird das Anliegen auf Status "abgeschlossen" gesetzt.
+                if (createPoll.ConcernId != 0)
+                {
+                    Concern concern = db.Concern.Where(c => c.Id == createPoll.ConcernId).SingleOrDefault();
+                    concernStatusId = 6; //concern.StatusId;
+                    concern.StatusId = concernStatusId;
+                    db.Update(concern);
+                }
                 int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 List<int> answerOptionId = new List<int>();
                 Poll poll = new Poll
@@ -303,6 +304,7 @@ namespace mosPortal.Controllers
         }
         public async Task<IActionResult> ShowPolls()
         {
+            bool allowToCreatePoll = false;
             var user = await userManager.GetUserAsync(HttpContext.User);
             IList<string> roles = await userManager.GetRolesAsync(user);
             List<Poll> polls = db.Poll.ToList();
@@ -315,13 +317,17 @@ namespace mosPortal.Controllers
             statusList.Add(new SelectListItem { Value = "2", Text = "laufende Umfragen" });
             statusList.Add(new SelectListItem { Value = "3", Text = "beendete Umfragen" });
             categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
-            if (roles[0] == "Verwaltung")
+            if (roles[0] == "Verw")
+            {
+                allowToCreatePoll = true;
+            }
+            if (roles[0] == "GR")
             {
                 
             }
-            if (roles[0] == "Gemeinderat")
+            if (roles[0] == "BM")
             {
-                
+
             }
             if (roles[0] == "Admin")
             {
@@ -337,6 +343,7 @@ namespace mosPortal.Controllers
             }*/
             ViewData["CategoriesList"] = categoriesList;
             ViewData["StatusList"] = statusList;
+            ViewData["allowToCreatePoll"] = allowToCreatePoll;
             //ViewData["AnswerOptionsList"] = answerOptionList;
             /*foreach(Poll poll in polls)
             {

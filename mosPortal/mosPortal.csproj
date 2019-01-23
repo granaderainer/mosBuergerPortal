@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Views\Administration\PollAdministrationpPartialView.cshtml">
+    <Content Update="Views\Administration\PollAdministrationPartialView.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
   </ItemGroup>

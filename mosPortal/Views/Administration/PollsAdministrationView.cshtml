@@ -66,10 +66,13 @@
                                         </div>
                                     </div>
                                     <div class="col">
+                                        @if (ViewBag.allowToCreatePoll)
+                                        {
                                         <label class="col-sm-12 form-control-label"></label>
                                         <div class="form-group">
                                             <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
                                         </div>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -85,7 +88,7 @@
         <div class="row">
             @foreach (Poll poll in Model)
             {
-                @await Html.PartialAsync("PollAdministrationpPartialView", poll)
+                @await Html.PartialAsync("PollAdministrationPartialView", poll)
 
             }
         </div>
@@ -145,6 +148,14 @@
             console.log("Poll Id =" + pollId)
             createChart(id, pollId);
         }
+    });
+    $('#showPollModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var pollId = button.data('pollid')
+        $("#pollChartModal").empty();
+        $("#pollModalDiv").hide();
+        $("#pollModalLoad").show();
+        getPoll(pollId);
     });
 
     function createChart(id, pollId) {
@@ -227,15 +238,39 @@
 
         });
     }
-    $('#showPollModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var pollId = button.data('pollid')
-        $("#pollChartModal").empty();
-        $("#pollModalDiv").hide();
-        $("#pollModalLoad").show();
-        getPoll(pollId);
-    });
-
+    function createPoll() {
+        var answerElements = document.getElementsByName("answers");
+        var answers = [];
+        for (var i = 0; i < answerElements.length; i++) {
+            answers.push(answerElements[i].value);
+        }
+        var sendData = {
+            Title: $("#pollTitleModal").val(),
+            Text: $("#pollTextModal").val(),
+            End: $("#pollEndModal").val(),
+            NeedsLocalCouncil: document.getElementById("pollNeedsLocalCouncilModal").checked,
+            CategoryId: $("#pollSelectCategoryModal").val(),
+            ConcernId: "0",
+            Answers: answers
+        };
+        console.log(sendData);
+        $.ajax({
+            type: 'POST',
+            url: '/Administration/CreatePollAsync',
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            data: JSON.stringify(sendData),
+            success: function (data) {
+                console.log(data);
+                if (data.result == 1) {
+                    vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
+                }
+                else {
+                    vNotify.error({ text: "Die Umfrage konnte nicht erstellt werden!", title: "Erstellung fehlgeschlagen!" });
+                }
+            }
+        });
+    }
     ///Implement!!!
     $("#pollSearchButton").click(function () {
         var searchText = $("#pollSearchText").val();
