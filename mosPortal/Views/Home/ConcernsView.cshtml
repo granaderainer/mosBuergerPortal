@@ -117,11 +117,11 @@
                                                 </a>
                                                 @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                                                 {
-                                                    <a class="btn btn-primary" href="#" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="btn btn-primary" href="#" id="likeConcern @item.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary disabled" id="likeConcern @item.Id" >Like <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
                                             </p>
@@ -158,18 +158,30 @@
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
-   function disableButton(btn, concernId) {
-        if (!document.getElementById(btn.id).disabled) {
-            document.getElementById(btn.id).disabled = true;
-            document.getElementById(btn.id).setAttribute('disabled', 'disabled');
-
+    function disableButton(btn, concernId) {
+        console.log($('#' + btn.id));
+        if (btn.classList.contains('disabled') === false) {
+            btn.classList.add('disabled');
             $.get("/Home/VoteForConcernAsync",
-                { concernId: concernId },
-                function(data) {
-                    document.getElementById("likesConcern " + concernId).textContent =
-                        (data.votes) + " Likes"; // display id value which is returned from the action method
-                });
+                   { concernId: concernId },
+                   function (data) {
+                       console.log(data);
+                       document.getElementById("likesConcern " + concernId).textContent =
+                           (data.votes); // display id value which is returned from the action method
+                   });
         }
+        
+        //if ($('#'+btn.id).hasClass('disabled') === false) {
+        //    $('#' + btn.id).addClass('disabled');
+
+        //    $.get("/Home/VoteForConcernAsync",
+        //        { concernId: concernId },
+        //        function (data) {
+        //            console.log(data);
+        //            document.getElementById("likesConcern " + concernId).textContent =
+        //                (data.votes); // display id value which is returned from the action method
+        //        });
+        //}
 
     }
    $('#search').keyup(function()

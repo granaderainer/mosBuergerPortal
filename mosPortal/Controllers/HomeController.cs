@@ -273,7 +273,7 @@ namespace mosPortal.Controllers
                 }).ToList();
                 poll.AnswerOptionsPoll = answers;
                 poll.Image = images;
-
+                poll.File = files;
             }
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)

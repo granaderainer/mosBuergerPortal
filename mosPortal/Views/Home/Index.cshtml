@@ -20,17 +20,6 @@
     </div>
 </section>
 @await Html.PartialAsync("_IconPartial")
-<section class="bar background-pentagon no-mb text-md-center">
-    <div class="container">
-        <div class="heading text-center">
-            <h2>Feedback von Bürgern</h2>
-        </div>
-        <p class="lead">Viele Bürger sind bereits aktiv. Bringen auch Sie sich aktiv ein.</p>
-        <!-- Carousel Start-->
-        @await Html.PartialAsync("_TestimonialsPartial")
-        <!-- Carousel End-->
-    </div>
-</section>
 <section style="background: url(~/user_template/img/fixed-background-2.jpg) center top no-repeat; background-size: cover;" class="bar no-mb color-white text-center bg-fixed relative-positioned">
     <div class="dark-mask"></div>
     <div class="container">
@@ -46,7 +35,17 @@
     @await Html.PartialAsync("_BlogPartial", ViewBag.PollViewModels,ViewData)
     </section>
     }
-
+<section class="bar background-pentagon no-mb text-md-center">
+    <div class="container">
+        <div class="heading text-center">
+            <h2>Feedback von Bürgern</h2>
+        </div>
+        <p class="lead">Viele Bürger sind bereits aktiv. Bringen auch Sie sich aktiv ein.</p>
+        <!-- Carousel Start-->
+        @await Html.PartialAsync("_TestimonialsPartial")
+        <!-- Carousel End-->
+    </div>
+</section>
 <section class="bar bg-gray">
     <div class="container">
         <div class="heading text-center">

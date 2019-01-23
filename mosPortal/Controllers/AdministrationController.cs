@@ -501,6 +501,79 @@ namespace mosPortal.Controllers
             if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
             return Json(new { result, user, roleId, title, text, localCouncilDescription,localCouncilFull, mayorFull });
         }
+        [HttpPost]
+        public IActionResult GetRandomKey()
+        {
+
+            Randomkey key = GenerateRandomkey();
+            var dbCheck = db.Randomkey.Where(r => r.Key == key.Key).ToList();
+            if (dbCheck.Count == 0)
+            {
+                db.Randomkey.Add(key);
+                db.SaveChangesAsync();
+                return View("RandomKeyView", key);
+            }
+            else
+            {
+                GetRandomKey();
+                throw new Exception(message: "Key wird bereits verwendet ");
+            }
+
+        }
+
+        private Randomkey GenerateRandomkey()
+        {
+            Random random = new Random();
+            string characters = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder(11);
+            for (int i = 0; i < 11; i++)
+            {
+                result.Append(characters[random.Next(characters.Length)]);
+            }
+
+            Randomkey key = new Randomkey();
+            string strresult = result.ToString();
+            key.Key = strresult;
+            return key;
+        }
+
+        public IActionResult GenerateWord(string key)
+        {
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            string path = webRootPath + @"\AnschreibenEinwohner.docx";
+            WordDocument document = new WordDocument();
+            document.EnsureMinimal();
+            document.LastParagraph.AppendText(key);
+
+            MemoryStream stream = new MemoryStream();
+            document.Save(stream, FormatType.Docx);
+            stream.Position = 0;
+            return File(stream, "application/msword", "Registrierung.docx");
+            // string webRootPath = _hostingEnvironment.WebRootPath;
+            //string path = webRootPath+@"\AnschreibenEinwohner.docx";
+
+
+
+
+
+
+            //return null;
+            //Bookmark bm = doc.Bookmarks[bookmark];
+            //Range range = bm.Range;
+            //range.Text = key;
+            //doc.Bookmarks.Add(bookmark, range);
+
+
+
+        }
+
+        public IActionResult ShowKey()
+        {
+            Randomkey key = new Randomkey();
+            key.Id = -1;
+            key.Key = "XXXXXXXXXXX";
+            return View("RandomKeyView", key);
+        }
 
         /*[HttpGet]
         public IActionResult CreatePoll()
