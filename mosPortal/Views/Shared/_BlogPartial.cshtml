@@ -1,65 +1,93 @@
-﻿
+﻿@model ICollection<PollViewModel>
+@using System.Linq
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "_BlogPartial";
+    var category = "default";
+    
 }
 
 <div class="container">
     <div class="heading text-center">
-        <h2>From the blog</h2>
+        <h2>Jetzt aber schnell</h2>
     </div>
-    <p class="lead">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. <a href="blog.html">Check our blog</a></p>
+    <p class="lead">Haben Sie schon für die Umfragen abgestimmt? Diese enden demnächst. Teilen Sie Ihre Antowrt mit, um ein best mögliches Meinungsbild aller Bürger zu erreichen. </p> <hr/>
     <div class="row">
-        <div class="col-lg-3">
-            <div class="home-blog-post">
-                <div class="image">
-                    <img src="~/user_template/img/portfolio-4.jpg" alt="..." class="img-fluid">
-                    <div class="overlay d-flex align-items-center justify-content-center"><a href="#" class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> Read More</a></div>
+        @for (var j = 0; j < Model.Count; j++)
+        {
+            var item = Model.ElementAt(j);
+            <div class="col-lg-3">
+                <div class="home-blog-post">
+
+                    <div class="image">
+
+                        @if (item.Image.Count > 0)
+                        {
+                            string currentImageId = item.Image.First().Id.ToString();
+                            <img class="img-fluid" src="/File/GetImage?id=@currentImageId" />
+                        }
+                        else
+                        {
+                            <img class="img-fluid" src="/File/GetImage?id=18" />
+                        }
+
+                    </div>
+
+
+                    <p class="author-category">
+                        Von <a href="#" class="not-active">User @item.UserId</a> in
+                        <a href="#" class="not-active">
+
+                            @if (item.Category is null)
+                            {
+                                category = "Unbekannt";
+                            }
+                            else
+                            {
+                                category = item.Category.Description;
+                            }
+                            @category
+                        </a>
+                    </p>
+
                 </div>
-                <div class="text">
-                    <h4><a href="#">Fashion Now </a></h4>
-                    <p class="author-category">By <a href="#">John Snow</a> in <a href="~/user_template/blog.html">Webdesign</a></p>
-                    <p class="intro">Fifth abundantly made Give sixth hath. Cattle creature i be don't them behold green moved fowl Moved life us beast good yielding. Have bring.</p><a href="#" class="btn btn-template-outlined">Continue Reading</a>
-                </div>
+
+
+                <p class="intro">@item.Text</p>
+
+                <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                    <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                    <fieldset class="form-group">
+                        @{
+
+                            for (var i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                            {
+                                var answer = item.AnswerOptionsPoll.ElementAt(i);
+
+                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                @Html.Label(answer.AnswerOptions.Description)<br />
+                            }
+                        }
+                        <button class="btn btn-success" type="submit">
+                            <i class="fa fa-check">Abstimmen</i>
+                        </button>
+                    </fieldset>
+                </form>
+
+
+
             </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="home-blog-post">
-                <div class="image">
-                    <img src="~/user_template/img/portfolio-3.jpg" alt="..." class="img-fluid">
-                    <div class="overlay d-flex align-items-center justify-content-center"><a href="#" class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> Read More</a></div>
-                </div>
-                <div class="text">
-                    <h4><a href="#">What to do</a></h4>
-                    <p class="author-category">By <a href="#">John Snow</a> in <a href="~/user_template/blog.html">Webdesign</a></p>
-                    <p class="intro">Fifth abundantly made Give sixth hath. Cattle creature i be don't them behold green moved fowl Moved life us beast good yielding. Have bring.</p><a href="#" class="btn btn-template-outlined">Continue Reading</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="home-blog-post">
-                <div class="image">
-                    <img src="~/user_template/img/portfolio-5.jpg" alt="..." class="img-fluid">
-                    <div class="overlay d-flex align-items-center justify-content-center"><a href="#" class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> Read More</a></div>
-                </div>
-                <div class="text">
-                    <h4><a href="#">5 ways to look awesome</a></h4>
-                    <p class="author-category">By <a href="#">John Snow</a> in <a href="~/user_template/blog.html">Webdesign</a></p>
-                    <p class="intro">Fifth abundantly made Give sixth hath. Cattle creature i be don't them behold green moved fowl Moved life us beast good yielding. Have bring.</p><a href="#" class="btn btn-template-outlined">Continue Reading</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3">
-            <div class="home-blog-post">
-                <div class="image">
-                    <img src="~/user_template/img/portfolio-6.jpg" alt="..." class="img-fluid">
-                    <div class="overlay d-flex align-items-center justify-content-center"><a href="#" class="btn btn-template-outlined-white"><i class="fa fa-chain"> </i> Read More</a></div>
-                </div>
-                <div class="text">
-                    <h4><a href="#">Fashion Now </a></h4>
-                    <p class="author-category">By <a href="#">John Snow</a> in <a href="~/user_template/blog.html">Webdesign</a></p>
-                    <p class="intro">Fifth abundantly made Give sixth hath. Cattle creature i be don't them behold green moved fowl Moved life us beast good yielding. Have bring.</p><a href="#" class="btn btn-template-outlined">Continue Reading</a>
-                </div>
-            </div>
-        </div>
+
+
+        }
+
+
+
+
     </div>
+
 </div>
+

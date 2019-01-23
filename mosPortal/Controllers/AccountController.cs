@@ -45,6 +45,12 @@ namespace mosPortal.Controllers
             //TODo: Beide PW gleich --> Check
             var userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
             var addressCheck = db.Address.Where(a => a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode && a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
+            Randomkey key = db.Randomkey.Where(r => r.Key == model.Registerkey).First();
+            if (key.Id != null)
+            {
+                db.Randomkey.Remove(key);
+                db.SaveChanges();
+            }
             if (addressCheck == null)
             {
                 Address newAddress = new Address
@@ -86,6 +92,9 @@ namespace mosPortal.Controllers
                     }
                 }
             }
+
+            
+           
             ModelState.AddModelError("", "Invalid register attempt");
             return View("RegisterView" ,model);
         }

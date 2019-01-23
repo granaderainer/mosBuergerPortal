@@ -54,6 +54,9 @@ namespace mosPortal.Models.ViewModels
         //[StringLength(5, ErrorMessage = "ungültiges Format")]
         [Display(Name = "Postleitzahl", Prompt = "12345")]
         public int ZipCode { get; set; }
+        [Display(Name = "Registrierungsschlüssel", Prompt = "Registrierungsschlüssel")]
+        [StringLength(11, ErrorMessage = "Der Registrierungsschlüssel ist genau 11 Zeichen lang.", MinimumLength = 11)]
+        public string Registerkey { get; set; }
 
 
 

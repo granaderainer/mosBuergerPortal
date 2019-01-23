@@ -38,7 +38,8 @@ namespace mosPortal.Controllers
         {
             ViewData["VotesCount"] = db.UserConcern.Count();
             ViewData["VotedUserCount"] = db.UserConcern.GroupBy(uc => uc.UserId).Count();
-            return View();
+            ViewData["PollViewModels"] = ShowPollsIndex();
+            return View("Index");
         }
         //bei Schow Concern Prüfen ob man nicht den einen Concern übergeben kann => keine Weitere DB Abfrage nötig
         [AllowAnonymous]
@@ -358,6 +359,74 @@ namespace mosPortal.Controllers
         public IActionResult ShowImpressum()
         {
             throw new NotImplementedException();
+        }
+
+        public ICollection<PollViewModel> ShowPollsIndex()
+        {
+            DateTime time = DateTime.UtcNow;
+            //7 Tage dazu addieren
+            DateTime timecut = time.AddDays(7);
+            List<Poll> polls = db.Poll.Where(p => p.End > time).Where(p => p.End < timecut).Where(p => p.NeedsLocalCouncil == false).Where(p => p.Approved == true).Include("Category").ToList(); //.OrderBy(p => p.End)
+
+            foreach (Poll poll in polls)
+            {
+                List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                .Include("AnswerOptions")
+                    .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
+                    ).ToList();
+                List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
+                {
+                    Id = ii.Id
+                }).ToList();
+                List<File> files = db.File.Where(f => f.PollId == poll.Id).Select(ff => new File
+                {
+                    Id = ff.Id,
+                    Name = ff.Name,
+                    Ending = ff.Ending
+                }).ToList();
+                poll.AnswerOptionsPoll = answers;
+                poll.Image = images;
+
+            }
+            ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
+            foreach (Poll poll in polls)
+            {
+
+                PollViewModel pollViewModel = new PollViewModel();
+
+                pollViewModel.Id = poll.Id;
+                pollViewModel.Text = poll.Text;
+                if (pollViewModel.End == null)
+                {
+                    pollViewModel.End = DateTime.UtcNow;
+                }
+                else
+                {
+                    pollViewModel.End = (DateTime)poll.End;
+                }
+
+                pollViewModel.UserId = poll.UserId;
+                pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
+                pollViewModel.Approved = poll.Approved;
+                pollViewModel.CategoryId = poll.CategoryId;
+                pollViewModel.Title = poll.Title;
+                pollViewModel.Category = poll.Category;
+                pollViewModel.User = poll.User;
+                pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
+                pollViewModel.RadioId = 0;
+                pollViewModel.Image = poll.Image;
+
+                pollViewModels.Add(pollViewModel);
+
+            }
+
+            return pollViewModels;
         }
     }
 }

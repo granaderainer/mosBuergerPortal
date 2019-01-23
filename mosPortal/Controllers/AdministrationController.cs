@@ -6,9 +6,18 @@ using mosPortal.Data;
 using mosPortal.Models;
 using mosPortal.Models.ViewModels;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Category = mosPortal.Models.Category;
+using File = mosPortal.Models.File;
+using Syncfusion.DocIO;
+using Syncfusion.DocIO.DLS;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace mosPortal.Controllers
 {
@@ -17,11 +26,13 @@ namespace mosPortal.Controllers
         private dbbuergerContext db = new dbbuergerContext();
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public AdministrationController(UserManager<User> userManager, SignInManager<User> signManager)
+        public AdministrationController(UserManager<User> userManager, SignInManager<User> signManager, IHostingEnvironment hostingEnvironment)
         {
             this.userManager = userManager;
             this.signInManager = signManager;
+            _hostingEnvironment = hostingEnvironment;
         }
         public IActionResult Index()
         {
@@ -517,5 +528,78 @@ namespace mosPortal.Controllers
     List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
     return View("ConcernsAdministrationView", concerns);
 }*/
+        [HttpPost]
+        public IActionResult GetRandomKey()
+        {
+
+            Randomkey key = GenerateRandomkey();
+            var dbCheck = db.Randomkey.Where(r => r.Key == key.Key).ToList();
+            if (dbCheck.Count == 0)
+            {
+                db.Randomkey.Add(key);
+                db.SaveChangesAsync();
+                return View("RandomKeyView", key);
+            }
+            else
+            {
+                GetRandomKey();
+                throw new Exception(message: "Key wird bereits verwendet ");
+            }
+            
+        }
+
+        private Randomkey GenerateRandomkey()
+        {
+            Random random = new Random();
+            string characters = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+            StringBuilder result = new StringBuilder(11);
+            for (int i = 0; i < 11; i++)
+            {
+                result.Append(characters[random.Next(characters.Length)]);
+            }
+
+            Randomkey key = new Randomkey();
+            string strresult = result.ToString();
+            key.Key = strresult;
+            return key;
+        }
+
+        public IActionResult GenerateWord(string key)
+        {
+            string webRootPath = _hostingEnvironment.WebRootPath;
+            string path = webRootPath+@"\AnschreibenEinwohner.docx";
+            WordDocument document = new WordDocument();
+            document.EnsureMinimal();
+            document.LastParagraph.AppendText(key);
+
+            MemoryStream stream = new MemoryStream();
+            document.Save(stream, FormatType.Docx);
+            stream.Position = 0;
+            return File(stream, "application/msword", "Registrierung.docx");
+           // string webRootPath = _hostingEnvironment.WebRootPath;
+           //string path = webRootPath+@"\AnschreibenEinwohner.docx";
+
+
+
+
+
+
+           //return null;
+           //Bookmark bm = doc.Bookmarks[bookmark];
+           //Range range = bm.Range;
+           //range.Text = key;
+           //doc.Bookmarks.Add(bookmark, range);
+
+
+
+        }
+
+        public IActionResult ShowKey()
+        {
+            Randomkey key = new Randomkey();
+            key.Id = -1;
+            key.Key = "XXXXXXXXXXX";
+            return View("RandomKeyView",key);
+        }
     }
 }
