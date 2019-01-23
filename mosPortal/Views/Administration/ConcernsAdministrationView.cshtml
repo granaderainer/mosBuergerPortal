@@ -153,11 +153,11 @@
                         }
                         @if (concern.StatusId != 2)
                         {
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                            <button type="button" class="btn btn-primary  col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                         }
                         @if (concern.StatusId == 5 && ViewBag.allowToCreateConcern)
                         {
-                            <button id="createPollButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                            <button id="createPollButton" type="button" class="btn btn-primary  col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
                     </div>
                 </div>
@@ -236,6 +236,7 @@
 
     });
     $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
+        console.log("Anderer Test");
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid')
         var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
@@ -250,16 +251,17 @@
         $("#concernModalSpacer2").hide();
         $("#concernModalCommentDiv").hide();
         $("#concernModalComment").attr('disabled', 'disabled');
+        $("#concernModalStatus").removeAttr('disabled');
         getConcern(concernId, concernStatusOld);
     });
     $('#createPollModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid') // Extract info from data-* attributes
         getConcernToCreatePoll(concernId);
+        
     });
     function getConcernToCreatePoll(concernId) {
         $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-            console.log(data);
             var title = data.title;
             var text = data.text;
             var concernId = data.concernId;
@@ -311,24 +313,31 @@
         });
     }
     function getConcern(concernId, concernStatusOld) {
+        console.log("Hallo");
         $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
             $("#concernModalId").val(concernId);
             $('#concernModelStatusOld').val(concernStatusOld);
             document.getElementById("concernModalTitle").innerHTML = "<h4>" + (data.title) + "</h4>";
             document.getElementById("concernModalText").innerHTML = (data.text);
             document.getElementById("concernModalDate").innerHTML = "Erstellt am: " + (data.date);// display id value which is returned from the action method
-            var selectStatus = document.getElementById("concernModalStatus");
+            //var selectStatus = document.getElementById("concernModalStatus");
             var statuses = data.statuses;
             var fragment = document.createDocumentFragment();
-            statuses.forEach(function (status, index) {
-                var opt = document.createElement('option');
-                opt.innerHTML = status.description;
-                opt.value = status.id;
-                fragment.appendChild(opt);
-            });
             $("#concernModalStatus").empty();
-            $("#concernModalStatus").append(fragment);
-            $("#concernModalStatus").val(data.statusId);
+            if (!(statuses == null)) {
+                statuses.forEach(function (status, index) {
+                    var opt = document.createElement('option');
+                    opt.innerHTML = status.description;
+                    opt.value = status.id;
+                    fragment.appendChild(opt);
+                    $("#concernModalStatus").append(fragment);
+                    $("#concernModalStatus").val(data.statusId);
+                });
+            }
+            else {
+                $("#concernModalStatus").attr('disabled', 'disabled');
+            }
+
             var imageIds = data.imageIds;
             var fileIds = data.fileIds;
             if (imageIds.length > 0) {
@@ -369,7 +378,7 @@
             setTimeout(function () {
                 $("#concernModalDiv").show();
                 $("#concernModalLoad").hide();
-            }, 3000)
+            }, 1500)
 
         });
     }
@@ -429,7 +438,8 @@
                         var value = $(this).val();
                         if (value == statusId) {
                             display = true;
-                            break;
+                            //break;
+                            return false;
                         }
                     });
                 }
