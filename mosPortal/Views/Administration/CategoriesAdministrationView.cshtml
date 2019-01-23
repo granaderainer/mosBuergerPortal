@@ -171,7 +171,7 @@
     })
 
     function crudCategory(categoryId, description, operation) {
-        $.post("/Administration/crudCategory", { categoryId: categoryId, description: categoryDescription, operation: operation }, function (data) {
+        $.post("/Administration/crudCategory", { categoryId: categoryId, description: description, operation: operation }, function (data) {
 
             if ((data.result) == 1 || (data.result) == 2) {
                 $("#cancelEditCategory").hide();
