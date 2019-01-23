@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "ConcernsAdministrationView";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
+
 }
 <!-- Page Header-->
 <header class="page-header">
@@ -106,8 +107,13 @@
     <div class="container-fluid">
         @foreach (Concern concern in Model)
         {
+            string lastUpdatesBy = "0";
+            if (concern.LastUpdatedBy != null)
+            {
+                lastUpdatesBy = concern.LastUpdatedBy.ToString();
+            }
             <!-- Project-->
-            <div class="project" name="concern" id="@concern.Id @concern.StatusId @concern.CategoryId">
+            <div class="project" name="concern" id="@concern.Id @concern.StatusId @concern.CategoryId @lastUpdatesBy">
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
@@ -126,18 +132,30 @@
                                 <div role="progressbar" style="width: @concern.UserConcern.Count%; height: 6px;" aria-valuenow="@concern.UserConcern.Count" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
                             </div>
                         </div>
+                        @if (concern.StatusId == 3)
+                        {
+                            if (concern.LastUpdatedByUser != null)
+                            {
+                                <div class="comments"><i class="fa fa-edit"></i>@Html.Raw(concern.LastUpdatedByUser.Firstname + ", " + concern.LastUpdatedByUser.Name)</div>
+                            }
+                            else
+                            {
+                                <div class="comments"><i class="fa fa-edit"></i>kein Bearbeiter</div>
+                            }
+                        }
+
                     </div>
                     <div class="right-col col-lg-2 d-flex align-items-center">
                         @if (concern.UserConcern.Count >= 1 && concern.StatusId == 2)
                         {
                             <button type="button" class="btn btn-primary col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
-                            <button id="createPollButton" type="button" class="btn btn-primary col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                            <!--<button id="createPollButton" type="button" class="btn btn-primary col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>-->
                         }
                         @if (concern.StatusId != 2)
                         {
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                         }
-                        @if (concern.StatusId == 3 || concern.StatusId == 4)
+                        @if (concern.StatusId == 5 && ViewBag.allowToCreateConcern)
                         {
                             <button id="createPollButton" type="button" class="btn btn-primary" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
@@ -184,6 +202,10 @@
                     <hr>
                     <input type="hidden" name="concernModalId" id="concernModalId" />
                     <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld" />
+                    <div id="concernModalCommentDiv" class="form-group" style="display:none;">
+                        <label class="col-md-6 control-label">Kommentar vom Germeinderat</label>
+                        <textarea id="concernModalComment" class="form-control" disabled="disabled"></textarea>
+                    </div>
                     <div class="form-group">
                         <label class="control-label">Status</label>
                         <select name="concernModalStatus" class="form-control" id="concernModalStatus"></select>
@@ -207,6 +229,12 @@
 @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var elems;
+    $(document).ready(function () {
+        $("li#linkConcerns").addClass("active");
+        elems = document.getElementsByName("concern");
+        console.log(elems);
+
+    });
     $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid')
@@ -220,6 +248,8 @@
         $("#concernModalSpacer").hide();
         $("#concernModalFile").hide();
         $("#concernModalSpacer2").hide();
+        $("#concernModalCommentDiv").hide();
+        $("#concernModalComment").attr('disabled', 'disabled');
         getConcern(concernId, concernStatusOld);
     });
     $('#createPollModal').on('show.bs.modal', function (event) {
@@ -237,7 +267,7 @@
             $("#pollTitleModal").val(title);
             $("#pollConcernIdModal").val(concernId);
 
-            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId - 1;
+            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId; //-1 will er nicht;
             if (data.comment == null) {
                 $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat");
             }
@@ -248,7 +278,6 @@
     }
     function createPoll() {
         var answerElements = document.getElementsByName("answers");
-        console.log(answerElements);
         var answers = [];
         for (var i = 0; i < answerElements.length; i++) {
             answers.push(answerElements[i].value);
@@ -262,35 +291,24 @@
             ConcernId: $("#pollConcernIdModal").val(),
             Answers: answers
         };
-
-        console.log(sendData);
         $.ajax({
             type: 'POST',
             url: '/Administration/CreatePollAsync',
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(sendData),
-            success: function (result) {
-                console.log('Data received: ');
-                console.log(result);
-                var divConcernId = (result.concernId) + " " + (result.concernStatusId);
-                var concern = document.getElementById(divConcernId);
-                var newConcernId = (result.concernId) + " 5";
-                concern.setAttribute("id", newConcernId);
-                if (document.getElementById("concernStatusSelect").value != 0) {
-                    concern.style.display = "none";
-                    $("#createPollButton").hide();
+            success: function (data) {
+                console.log(data);
+                changeConcernDiv(concernId, data.concernStatusId);
+                $("#createPollButton").hide();
+                if (data.result == 1) {
+                    vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
+                }
+                else {
+                    vNotify.error({ text: "Die Umfrage konnte nicht erstellt werden!", title: "Erstellung fehlgeschlagen!" });
                 }
             }
         });
-        /*$.post("/Administration/CreatePollAsync", JSON.stringify(sendData), function (data) {
-            if (data.result == 1) {
-                vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
-            }
-            else {
-                vNotify.errer({ text: "Die Umfrage konnte nicht erstellt werden!", title: "Erstellung fehlgeschlagen!" });
-            }
-        });*/
     }
     function getConcern(concernId, concernStatusOld) {
         $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
@@ -341,6 +359,13 @@
                     $("#concernModalFile").append(link);
                 }
             }
+            if (data.statusId > 3) {
+                $("#concernModalCommentDiv").show();
+                $("#concernModalComment").val(data.comment);
+                if (data.statusId == 4) {
+                    $("#concernModalComment").removeAttr("disabled");
+                }
+            }
             setTimeout(function () {
                 $("#concernModalDiv").show();
                 $("#concernModalLoad").hide();
@@ -348,12 +373,6 @@
 
         });
     }
-    $(document).ready(function () {
-        $("li#linkConcerns").addClass("active");
-        elems = document.getElementsByName("concern");
-        console.log(elems);
-
-    });
     function selectedStatusChanged() {
         var select = document.getElementById("concernStatusSelect");
         var selectedStatus = select.value;
@@ -375,26 +394,53 @@
         var selectElement = document.getElementById("concernModalStatus");
         var concernElement = document.getElementById("concernModalId");
         var oldStatusElement = document.getElementById("concernModelStatusOld");
+        var comment = $("#concernModalComment").val();
         var oldStatusId = oldStatusElement.value;
         var statusId = selectElement.value;
         var concernId = concernElement.value;
         var result;
-        $.post("/Administration/ChangeConcernStatus", { concern: concernId, status: statusId }, function (data) {
+        $.post("/Administration/ChangeConcernStatus", { concern: concernId, status: statusId, comment: comment }, function (data) {
             result = (data.result);
             if (result == 1) {
                 vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' });
-                var divConcernId = concernId + " " + oldStatusId;
-                var concern = document.getElementById(divConcernId);
-                var newConcernId = concernId + " " + statusId;
-                concern.setAttribute("id", newConcernId);
-                if (document.getElementById("concernStatusSelect").value != 0) {
-                    concern.style.display = "none";
-                }
+                changeConcernDiv(concernId, statusId);
             }
             else {
                 vNotify.error({ text: 'Der Status konnte nicht geändert werden!', title: 'Statusänderung fehlgeschlagen' })
             }
         });
+    }
+    function changeConcernDiv(concernId, statusId) {
+        var concernElements = document.getElementsByName("concern");
+        elems = concernElements;
+        for (var i = 0; i < concernElements.length; i++) {
+            var ids = concernElements[i].id.split(" ")
+            if (ids[0] == concernId) {
+                if (ids.length < 4) {
+                    var newConcernId = ids[0] + " " + statusId + " " + ids[2] + " 0";
+                }
+                else {
+                    var newConcernId = ids[0] + " " + statusId + " " + ids[2] + " " + ids[3];
+                }
+                concernElements[i].setAttribute("id", newConcernId);
+                var display = false;
+                if (document.getElementById("concernStatusSelect").value == 0) {
+                    $("#concernStatusSelect option").each(function () {
+                        var value = $(this).val();
+                        if (value == statusId) {
+                            display = true;
+                            break;
+                        }
+                    });
+                }
+                if (document.getElementById("concernStatusSelect").value == statusId) {
+                    display = true;
+                }
+                if (display == false) {
+                    concernElements[i].style.display = "none";
+                }
+            }
+        }
     }
     function selectedFilterChanged() {
         var statusSelect = document.getElementById("concernStatusSelect");

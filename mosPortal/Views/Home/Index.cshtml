@@ -1,6 +1,15 @@
-﻿@{
+﻿@using System.Linq
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@inject UserManager<User> UserManager
+@inject SignInManager<User> SignInManager
+
+@{
+
     ViewData["Title"] = "Einwohnerportal Mosbach";
     ViewData["isCarousel"] = "isTrue";
+  
+
 }
 
 <section style="background: url('~/user_template/img/photogrid.jpg') center center repeat; background-size: cover;" class="bar background-white relative-positioned">
@@ -10,7 +19,7 @@
         <!-- Carousel End-->
     </div>
 </section>
-        @await Html.PartialAsync("_IconPartial")
+@await Html.PartialAsync("_IconPartial")
 <section class="bar background-pentagon no-mb text-md-center">
     <div class="container">
         <div class="heading text-center">
@@ -28,12 +37,16 @@
         <div class="icon icon-outlined icon-lg"><i class="fa fa-file-code-o"></i></div>
         <h3 class="text-uppercase">Wollen Sie weitere Informationen dazu erlangen?</h3>
         <p class="lead">Die Internetseite der großen Kreisstadt Mosbach enthält weitere Informationen zu diesem Projekt.</p>
-        <p class="text-center"><a href="https://www.mosbach.de/" class="btn btn-template-outlined-white btn-lg">Zur Internetseite der Stadt Mosbach</a></p>
+        <p class="text-center"><a href="https://www.mosbach.de/" target="_blank" class="btn btn-template-outlined-white btn-lg">Zur Internetseite der Stadt Mosbach</a></p>
     </div>
 </section>
+@if (SignInManager.IsSignedIn(User))
+    {
 <section class="bg-white bar">
-    @await Html.PartialAsync("_BlogPartial")
-</section>
+    @await Html.PartialAsync("_BlogPartial", ViewBag.PollViewModels,ViewData)
+    </section>
+    }
+
 <section class="bar bg-gray">
     <div class="container">
         <div class="heading text-center">
@@ -49,10 +62,10 @@
 <div class="get-it">
     <div class="container">
         @*<div class="row">
-            <div class="col-lg-8 text-center p-3">
-                <h3>Do you want cool website like this one?</h3>
-            </div>
-            <div class="col-lg-4 text-center p-3">   <a href="#" class="btn btn-template-outlined-white">Buy this template now</a></div>
-        </div>*@
+                <div class="col-lg-8 text-center p-3">
+                    <h3>Do you want cool website like this one?</h3>
+                </div>
+                <div class="col-lg-4 text-center p-3">   <a href="#" class="btn btn-template-outlined-white">Buy this template now</a></div>
+            </div>*@
     </div>
 </div>
