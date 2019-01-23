@@ -223,27 +223,35 @@ namespace mosPortal.Controllers
             int categoryId = concern.CategoryId;
             string comment = concern.AdminComment;
             // Auswahl der möglichen Status, die im Anliegen gesetzt werden können
-            switch (concern.StatusId)
-            {
-                case 1:
-                    statuses = db.Status.Where(s => s.Id <= (concern.StatusId +1)|| s.Id == 7).ToArray();
-                    break;
-                case 2:
-                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 4).ToArray();
-                    break;
-                case 3:
-                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
-                    break;
-                case 4:
-                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
-                    break;
-            }
             //Admin kann alle Status zuordnen
             //Möglichkeit der Reaktivierung von Anliegen
-            if(roles[0]== "Admin")
+            if (roles[0] == "Admin")
             {
                 statuses = db.Status.ToArray();
             }
+            else
+            {
+                switch (concern.StatusId)
+                {
+                    case 1:
+                        statuses = db.Status.Where(s => s.Id <= (concern.StatusId + 1) || s.Id == 7).ToArray();
+                        break;
+                    case 2:
+                        statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 4).ToArray();
+                        break;
+                    case 3:
+                        statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
+                        break;
+                    case 4:
+                        statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
+                        break;
+                    case 5:
+                        statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 6).ToArray();
+                        break;
+
+                }
+            }
+
             //Datei und Bilder ID's für Anzeige extrahieren
             int[] imageIds = new int[images.Count()];
             int[] fileIds = new int[files.Count()];
