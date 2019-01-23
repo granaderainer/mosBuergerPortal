@@ -68,6 +68,7 @@ namespace mosPortal.Controllers
             
             if (userCheck == null)
             {
+                
                 User newUser = new User
                 {
                     Firstname = model.Firstname,
@@ -76,11 +77,16 @@ namespace mosPortal.Controllers
                     Email = model.Email,
                     Birthday = model.Birthday,
                     Birthplace = model.Birthplace,
-                    AddressId = addressCheck.Id
+                    AddressId = addressCheck.Id,
+                   
+                    
                 };
+                
                 IdentityResult identityResult = await signInManager.UserManager.CreateAsync(newUser,model.Password);
+                
                 if (identityResult.Succeeded)
                 {
+                    await signInManager.UserManager.AddToRoleAsync(newUser, "User");
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return RedirectToAction("Index", "Home");

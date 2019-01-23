@@ -170,15 +170,25 @@ namespace mosPortal.Identity
         {
             Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
             UserRole userRole = null;
-            userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
-            if (userRole != null)
+            try
             {
+                userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
                 return Task.FromResult(true);
             }
-            else
+            catch (Exception e)
             {
                 return Task.FromResult(false);
+                
             }
+            
+            //if (userRole != null)
+            //{
+            //    return Task.FromResult(true);
+            //}
+            //else
+            //{
+            //    return Task.FromResult(false);
+            //}
         }
 
         public async Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
