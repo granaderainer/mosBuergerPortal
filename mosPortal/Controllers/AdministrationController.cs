@@ -35,25 +35,27 @@ namespace mosPortal.Controllers
         }
         public async Task<IActionResult> ShowConcerns(int statusId = 0)
         {
+            bool allowToCreateConcern = false;
             List<SelectListItem> statusList = new List<SelectListItem>();
             var user = await userManager.GetUserAsync(HttpContext.User);
             IList<string> roles = await userManager.GetRolesAsync(user);
             List<Concern> concerns = new List<Concern>();
             List<Status> status = new List<Status>();
             statusList.Add(new SelectListItem { Value = "0", Text = "Alle Anliegen" });
-            if (roles[0]== "Verwaltung")
+            if (roles[0]== "Verw")
             {
-                concerns = db.Concern.Where(c => c.StatusId != 4 && c.StatusId != 5).ToList();
-                status = db.Status.Where(s => s.Id != 4 && s.Id != 5).ToList();
+                concerns = db.Concern.Where(c => c.StatusId != 4 && !(c.StatusId >= 6)).Include("LastUpdatedByUser").ToList();
+                status = db.Status.Where(s => s.Id != 4 && s.Id <= 5 ).ToList();
+                allowToCreateConcern = true;
             }
-            if(roles[0] == "Gemeinderat")
+            if(roles[0] == "GR")
             {
-                concerns = db.Concern.Where(c => c.StatusId != 1 && c.StatusId != 5).ToList();
-                status = db.Status.Where(s => s.Id != 1 && s.Id != 5).ToList();
+                concerns = db.Concern.Where(c => c.StatusId != 1 && c.StatusId != 3 && !(c.StatusId >= 5)).Include("LastUpdatedByUser").ToList();
+                status = db.Status.Where(s => s.Id != 1 && s.Id != 3 && !(s.Id >= 5)).ToList();
             }
             if(roles[0] == "Admin")
             {
-                concerns = db.Concern.ToList();
+                concerns = db.Concern.Include("LastUpdatedByUser").ToList();
                 status = db.Status.ToList();
             }
             foreach (Concern concern in concerns)
@@ -71,8 +73,11 @@ namespace mosPortal.Controllers
             foreach (Status stat in status)
             {
                 statusList.Add(new SelectListItem { Value = stat.Id.ToString(), Text = stat.Description });
+                if(stat.Id == 3){
+                    statusList.Add(new SelectListItem { Value = "31", Text = stat.Description + " von mir" });
+                }
             }
-            ViewData["statusList"] = statusList;
+            
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
@@ -80,6 +85,9 @@ namespace mosPortal.Controllers
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
+            //ViewData Variablen
+            ViewData["allowToCreateConcern"] = allowToCreateConcern;
+            ViewData["statusList"] = statusList;
             ViewData["CategoriesList"] = categoriesList;
             return View("ConcernsAdministrationView", concerns);
             /*if (statusId == 0)
@@ -126,26 +134,8 @@ namespace mosPortal.Controllers
                 return View("ConcernsAdministrationView", concerns);
             }*/
         }
-        [HttpGet]
-        public IActionResult CreatePoll()
-        {
-            Poll poll = new Poll();
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<SelectListItem> answerOptionList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
-            }
-            foreach(AnswerOptions anserOption in answerOptions)
-            {
-                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
-            }
-            ViewData["CategoriesList"] = categoriesList;
-            ViewData["AnswerOptionsList"] = answerOptionList;
-            return View("CreatePollAdministrationView", poll);
-        }
+
+        
         [HttpPost]
         public async Task<IActionResult> CreatePollAsync([FromBody]CreatePollModel createPoll)
         {
@@ -154,8 +144,8 @@ namespace mosPortal.Controllers
             {
                 
                 Concern concern = db.Concern.Where(c => c.Id == createPoll.ConcernId).SingleOrDefault();
-                int concernStatusId = concern.StatusId;
-                concern.StatusId = 5;
+                int concernStatusId = 6; //concern.StatusId;
+                concern.StatusId = concernStatusId;
                 db.Update(concern);
                 int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 List<int> answerOptionId = new List<int>();
@@ -196,11 +186,9 @@ namespace mosPortal.Controllers
                     poll.Approved = false;
                 }
                 db.Add(poll);
-                //db.SaveChanges();
                 foreach(int aoId in answerOptionId)
                 {
                     db.Add(new AnswerOptionsPoll { PollId = poll.Id, AnswerOptionsId = aoId });
-                    //db.SaveChanges();
                 }
                 int result = db.SaveChanges();
                 return Json(new { result , concernStatusId, concernId = createPoll.ConcernId});
@@ -211,18 +199,41 @@ namespace mosPortal.Controllers
             }
             
         }
-        /*public IActionResult ShowConcernsLocalCouncil()
+        [HttpGet]
+        public async Task<IActionResult> GetConcernJson(int concernId)
         {
-            List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
-            return View("ConcernsAdministrationView", concerns);
-        }*/
-        public JsonResult GetConcernJson(int concernId)
-        {
+            // Variablen
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
-            Status[] statuses = db.Status.Where(s=> s.Id >= concern.StatusId).ToArray();
+            Status[] statuses = null;
             List<File> files = db.File.Where(f => f.ConcernId == concernId).ToList();
             List<Image> images = db.Image.Where(i => i.ConcernId == concernId).ToList();
-            
+            var user = await userManager.GetUserAsync(HttpContext.User);
+            IList<string> roles = await userManager.GetRolesAsync(user);
+            int categoryId = concern.CategoryId;
+            string comment = concern.AdminComment;
+            // Auswahl der möglichen Status, die im Anliegen gesetzt werden können
+            switch (concern.StatusId)
+            {
+                case 1:
+                    statuses = db.Status.Where(s => s.Id <= (concern.StatusId +1)|| s.Id == 7).ToArray();
+                    break;
+                case 2:
+                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 4).ToArray();
+                    break;
+                case 3:
+                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
+                    break;
+                case 4:
+                    statuses = db.Status.Where(s => s.Id >= concern.StatusId && s.Id <= 5).ToArray();
+                    break;
+            }
+            //Admin kann alle Status zuordnen
+            //Möglichkeit der Reaktivierung von Anliegen
+            if(roles[0]== "Admin")
+            {
+                statuses = db.Status.ToArray();
+            }
+            //Datei und Bilder ID's für Anzeige extrahieren
             int[] imageIds = new int[images.Count()];
             int[] fileIds = new int[files.Count()];
             int k = 0;
@@ -237,9 +248,7 @@ namespace mosPortal.Controllers
                 imageIds[j] = image.Id;
                 j++;
             }
-            string statusesJson = Newtonsoft.Json.JsonConvert.SerializeObject(statuses);
-            int categoryId = concern.CategoryId;
-            return Json(new { concernId, title = concern.Title, text= concern.Text,categoryId,statusId = concern.StatusId ,date = concern.Date.ToString(), statuses, imageIds, fileIds });
+            return Json(new { concernId, title = concern.Title, text= concern.Text,categoryId,statusId = concern.StatusId ,date = concern.Date.ToString(), statuses, imageIds, fileIds, comment });
         }
         /*[HttpPost]
         public async Task<IActionResult> ChangeConcernStatus(string concernModalStatus, string concernModalId)
@@ -255,17 +264,23 @@ namespace mosPortal.Controllers
 
         }*/
         [HttpPost]
-        public JsonResult ChangeConcernStatus(string status, string concern)
+        public async Task<JsonResult> ChangeConcernStatus(string status, string concern, string comment)
         {
+            int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
             int concernId = Convert.ToInt32(concern);
             int statusId = Convert.ToInt32(status);
             Concern con = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             int oldStatus = con.StatusId;
             con.StatusId = statusId;
+            if (statusId == 3)
+            {
+                con.LastUpdatedBy = userId;
+                con.LastUpdatedAt = DateTime.Now;
+            }
+            con.AdminComment = comment;
             db.Concern.Update(con);
             int result = db.SaveChanges();
             return Json(new { result });
-
         }
         public async Task<IActionResult> ShowPolls()
         {
@@ -475,5 +490,32 @@ namespace mosPortal.Controllers
             if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
             return Json(new { result, user, roleId, title, text, localCouncilDescription,localCouncilFull, mayorFull });
         }
+
+        /*[HttpGet]
+        public IActionResult CreatePoll()
+        {
+            Poll poll = new Poll();
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<SelectListItem> answerOptionList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            foreach(AnswerOptions anserOption in answerOptions)
+            {
+                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+            ViewData["AnswerOptionsList"] = answerOptionList;
+            return View("CreatePollAdministrationView", poll);
+        }*/
+
+        /*public IActionResult ShowConcernsLocalCouncil()
+{
+    List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
+    return View("ConcernsAdministrationView", concerns);
+}*/
     }
 }

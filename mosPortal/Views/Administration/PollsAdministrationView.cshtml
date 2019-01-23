@@ -230,6 +230,7 @@
     $('#showPollModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var pollId = button.data('pollid')
+        $("#pollChartModal").empty();
         $("#pollModalDiv").hide();
         $("#pollModalLoad").show();
         getPoll(pollId);
