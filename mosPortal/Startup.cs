@@ -70,8 +70,8 @@ namespace mosPortal
             });
             services.AddAuthorization(options =>
             {
-                string[] allRoles = { "Admin", "User" };
-                string[] allAdministrativeRoles = { "Admin"};
+                string[] allRoles = { "Admin", "User","BM", "GR", "Verw"};
+                string[] allAdministrativeRoles = { "Admin", "BM", "GR", "Verw"};
 
                 options.AddPolicy("AllAdministrationRoles", policy => policy.RequireRole(allAdministrativeRoles));
                 options.AddPolicy("AllRoles", policy => policy.RequireRole(allRoles));
