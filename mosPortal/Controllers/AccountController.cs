@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using mosPortal.Models;
 using mosPortal.Data;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
 
 namespace mosPortal.Controllers
 {
@@ -45,12 +46,7 @@ namespace mosPortal.Controllers
             //TODo: Beide PW gleich --> Check
             var userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
             var addressCheck = db.Address.Where(a => a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode && a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
-            Randomkey key = db.Randomkey.Where(r => r.Key == model.Registerkey).First();
-            if (key.Id != null)
-            {
-                db.Randomkey.Remove(key);
-                db.SaveChanges();
-            }
+            
             if (addressCheck == null)
             {
                 Address newAddress = new Address
@@ -86,7 +82,27 @@ namespace mosPortal.Controllers
                 
                 if (identityResult.Succeeded)
                 {
-                    await signInManager.UserManager.AddToRoleAsync(newUser, "User");
+                    Randomkey key = db.Randomkey.Where(r => r.Key == model.Registerkey).First();
+                    if (key != null)
+                    {
+                        db.Randomkey.Remove(key);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        throw new System.Exception("Registerkey is not available, maybe this key is not valid anymore");
+                    }
+
+                    //await signInManager.UserManager.AddToRoleAsync(newUser, "User"); Es wird IsInRoleAsync aufgerufen
+                    Role role = db.Role.SingleOrDefault(r => r.Name == "User");
+                    UserRole userRole = new UserRole
+                    {
+                        UserId = newUser.Id,
+                        RoleId = role.Id
+                    };
+                    db.Add(userRole);
+                    db.SaveChanges();
+                  
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         return RedirectToAction("Index", "Home");
