@@ -173,6 +173,13 @@ namespace mosPortal.Identity
             try
             {
                 userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
+                //if (userRole == null)
+                //{
+                //    userRole.RoleId = role.Id;
+                //    userRole.UserId = user.Id;
+                //    db.UserRole.Add(userRole);
+                //    db.SaveChanges();
+                //}
                 return Task.FromResult(true);
             }
             catch (Exception e)
