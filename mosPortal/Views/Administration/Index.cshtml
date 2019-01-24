@@ -82,52 +82,68 @@
     </div>
 </section>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-            $("li#linkHome").addClass("active");
+@await Html.PartialAsync("PollAdministrationView")
 
-        var matches = [];
-            var colors = ["#990066", "#66cc33","#006699",  "#ff6600", "#009999", "#cc3333", "#ffff00","663399" ];
-            var elems = document.getElementsByName("poll");
-       /*for (var i = 0; i < elems.length; i++) {
-            if (elems[i].id.indexOf("pollChart_") == 0)
-                matches.push(elems[i]);
-        }*/
-        //console.log(matches)
+<script type="text/javascript">
+    var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
+    $(document).ready(function () {
+        $("li#linkHome").addClass("active");
+        var elems = document.getElementsByName("poll");
         for (var i = 0; i < elems.length; i++) {
             var ids = elems[i].id;
             var pollId = ids.split(" ")[0];
+
             var chartId = "pollChart " + pollId;
+            var noVotesId = "pollNoVotes " + pollId;
+            createChart(chartId, pollId, noVotesId)
             //console.log(matches[i].id);
             //console.log(id[id.length - 1]);
-            $.ajax({
-                async: false,
-                type: 'GET',
-                url: '/Administration/GetPollAnswers?pollId='+pollId,
-                success: function (data) {
-                    console.log(data.length);
-                    var count = data.length;
-                    var chartColors = [];
-                    var j = 0;
-                    for (var i = 0; i < count; i++) {
-                        if (j == (colors.length - 1)) {
-                            j = 0;
-                        }
-                        chartColors.push(colors[j]);
-                        j++;
+            
+            /*$.get("/Administration/GetPollAnswers", { pollId: pollId }, function (data) {
+
+            });*/
+        }
+    });
+    function createChart(chartId, pollId, noVotesId) {
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/Administration/GetPollAnswers?pollId=' + pollId,
+            success: function (data) {
+                var count = data.length;
+                var chartColors = [];
+                var j = 0;
+                for (var i = 0; i < count; i++) {
+                    if (j == (colors.length - 1)) {
+                        j = 0;
                     }
-                    console.log(data);
-                    console.log(chartColors);
+                    chartColors.push(colors[j]);
+                    j++;
+                }
+                var answerCountNotNull = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].value == 0) {
+                        answerCountNotNull = false;
+                    }
+                    else {
+                        answerCountNotNull = true;
+                        break;
+                    }
+                }
+                if (answerCountNotNull == true) {
                     Morris.Donut({
                         element: chartId,
                         data: data,
                         colors: chartColors
                     });
+                    document.getElementById(chartId).style.display = "block";
+                    document.getElementById(noVotesId).style.display = "none";
                 }
-            });
-            /*$.get("/Administration/GetPollAnswers", { pollId: pollId }, function (data) {
-
-            });*/
-        }
-     });
+                else {
+                    document.getElementById(chartId).style.display = "none";
+                    document.getElementById(noVotesId).style.display = "block";
+                }
+            }
+        });
+    }
 </script>
