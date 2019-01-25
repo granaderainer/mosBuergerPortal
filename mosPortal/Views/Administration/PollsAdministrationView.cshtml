@@ -68,10 +68,10 @@
                                     <div class="col">
                                         @if (ViewBag.allowToCreatePoll)
                                         {
-                                        <label class="col-sm-12 form-control-label"></label>
-                                        <div class="form-group">
-                                            <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
-                                        </div>
+                                            <label class="col-sm-12 form-control-label"></label>
+                                            <div class="form-group">
+                                                <button type="button" data-toggle="modal" data-target="#createPollModal" class="btn btn-primary">Umfrage Erstellen </button>
+                                            </div>
                                         }
                                     </div>
                                 </div>
@@ -95,40 +95,41 @@
     </div>
 </section>
 <!-- Modal -->
-<div class="modal fade" id="showPollModal" tabindex="-1" role="dialog" aria-labelledby="showPollModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Umfrage anzeigen</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div id="pollModalDiv" style="display:none;">
-                    <div id="pollModalTitle"></div>
-                    <hr>
-                    <div id="pollModalText"></div>
-                    <hr>
-                    <div id="pollModalEnd"></div>
-                    <hr>
-                    <input type="hidden" name="pollModalId" id="pollModalId" />
-                    <div id="pollModalVotes"></div>
-                    <div id="pollChartModal" style="height: 400px;"></div>
+@await Html.PartialAsync("PollAdministrationView")
+@*<div class="modal fade" id="showPollModal" tabindex="-1" role="dialog" aria-labelledby="showPollModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Umfrage anzeigen</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">&times;</button>
                 </div>
-                <div id="pollModalLoad">
-                    <div class="text-center">
-                        <span class="fa fa-spinner fa-spin fa-3x"></span>
+                <div class="modal-body">
+                    <div id="pollModalDiv" style="display:none;">
+                        <div id="pollModalTitle"></div>
+                        <hr>
+                        <div id="pollModalText"></div>
+                        <hr>
+                        <div id="pollModalEnd"></div>
+                        <hr>
+                        <input type="hidden" name="pollModalId" id="pollModalId" />
+                        <div id="pollModalVotes"></div>
+                        <div id="pollChartModal" style="height: 400px;"></div>
+                    </div>
+                    <div id="pollModalLoad">
+                        <div class="text-center">
+                            <span class="fa fa-spinner fa-spin fa-3x"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-                <button id="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changepollStatus()">Speichern</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                    <button id="submitModal" type="submit" class="btn btn-primary" data-dismiss="modal" onclick="changepollStatus()">Speichern</button>
 
+                </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Modal-->
+    <!-- Modal-->*@
 <!-- Modal Form-->
 @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
@@ -138,33 +139,25 @@
 
     $(document).ready(function () {
         pollElems = document.getElementsByName("poll");
-        console.log(elems);
         $('li#linkPolls').addClass('active');
-        
+
         var elems = document.getElementsByName("pollChart");
         for (var i = 0; i < elems.length; i++) {
             var id = elems[i].id;
             var pollId = (id.split(" "))[1];
             console.log("Poll Id =" + pollId)
-            createChart(id, pollId);
+            var noVotesId = "pollNoVotes " + pollId;
+            createChart(id, pollId, noVotesId);
         }
     });
-    $('#showPollModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var pollId = button.data('pollid')
-        $("#pollChartModal").empty();
-        $("#pollModalDiv").hide();
-        $("#pollModalLoad").show();
-        getPoll(pollId);
-    });
 
-    function createChart(id, pollId) {
+    function createChart(chartId, pollId, noVotesId) {
         $.ajax({
             async: false,
             type: 'GET',
             url: '/Administration/GetPollAnswers?pollId=' + pollId,
             success: function (data) {
-                //console.log(data.length);
+                console.log(data);
                 var count = data.length;
                 var chartColors = [];
                 var j = 0;
@@ -175,13 +168,29 @@
                     chartColors.push(colors[j]);
                     j++;
                 }
-                //console.log(data);
-                //console.log(chartColors);
-                Morris.Donut({
-                    element: id,
-                    data: data,
-                    colors: chartColors
-                });
+                var answerCountNotNull = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].value == 0) {
+                        answerCountNotNull = false;
+                    }
+                    else {
+                        answerCountNotNull = true;
+                        break;
+                    }
+                }
+                if (answerCountNotNull == true) {
+                    Morris.Donut({
+                        element: chartId,
+                        data: data,
+                        colors: chartColors
+                    });
+                    document.getElementById(chartId).style.display = "block";
+                    document.getElementById(noVotesId).style.display = "none";
+                }
+                else {
+                    document.getElementById(chartId).style.display = "none";
+                    document.getElementById(noVotesId).style.display = "block";
+                }
             }
         });
     }
@@ -219,25 +228,7 @@
             pollElems[i].style.display = display;
         }
     }
-    function getPoll(pollId) {
-        $.get("/Administration/GetPollJson", { pollId: pollId }, function (data) {
-            console.log(data);
-            $("#pollModalDiv").show();
-            $("#pollModalLoad").hide();
-            $("#pollModalId").val(pollId);
-            $("#pollModalTitle").html("<h4>" + (data.title) + "</h4>");
-            $("#pollModalText").html(data.text);
-            $("#pollModalEnd").html("Läuft am " + (data.end) + " ab.");
-            $("#pollModalVotes").html("Es haben "+ (data.votes) +"Einwohner abgestimmt!");
-            var id = $("#pollChartModal").attr('id');
-            createChart(id, pollId);
-            setTimeout(function () {
-                $("#pollModalDiv").show();
-                $("#pollModalLoad").hide();
-            }, 3000)
 
-        });
-    }
     function createPoll() {
         var answerElements = document.getElementsByName("answers");
         var answers = [];
