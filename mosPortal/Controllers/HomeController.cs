@@ -48,7 +48,7 @@ namespace mosPortal.Controllers
           
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
-
+            
             ViewData["Categories"] = categories;
             foreach (Category category in categories)
             {
@@ -100,7 +100,7 @@ namespace mosPortal.Controllers
             Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             List<File> files = db.File.Where(f => f.ConcernId == concernId).ToList();
             List<Image> images = db.Image.Where(i => i.ConcernId == concernId).ToList();
-
+            
             int[] imageIds = new int[images.Count()];
             int[] fileIds = new int[files.Count()];
             int k = 0;
@@ -137,6 +137,12 @@ namespace mosPortal.Controllers
             await db.SaveChangesAsync();
             int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
             return Json(new { votes = votes});
+        }
+
+        public async Task<JsonResult> GetCommentsCount(int concernId)
+        {
+            int count = db.Comment.Where(c => c.ConcernId == concernId).Count();
+            return Json(new { comments = count });
         }
 
         [Authorize(Policy = "AllRoles")]

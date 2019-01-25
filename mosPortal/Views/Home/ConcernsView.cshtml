@@ -76,7 +76,7 @@
         <div class="col-md-9">
             @foreach (var item in Model)
             {
-                <div id="content">
+               <div id="content">
                     <div class="container">
                         <div class="row box Pollbox shadow">
                             <div id="blog-listing-medium">
@@ -91,20 +91,20 @@
                                         </div>
                                         <div class="col-md-8">
                                             <h2 class="h3 mt-0">
-                                                <a href="post.htmls" class="not-active">@item.Title</a>
+                                                <a href="#" class="not-active">@item.Title</a>
                                             </h2>
                                             <div class="d-flex flex-wrap justify-content-between text-xs">
                                                 <p class="author-category">Kategorie <a href="#" class="not-active">@item.Category.Description</a></p>
                                                 <div class="not-active">
                                                     <p class="date-comments">
                                                         <a href="blog-post.html">
-                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <!-- Muss noch angepasst werden--> @item.Comment.Count() Kommentare</a>
+                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <p id="countcomments"></p><!-- Muss noch angepasst werden-->  Kommentare</a>
                                                     </p>
                                                 </div>
                                             </div>
                                             
                                             <br>
-                                            <p class="read-more text-right">
+                                            <p class="text-right">
                                                 <a>
                                                     @if (item.UserConcern.Count() == 1)
                                                     {
@@ -117,11 +117,11 @@
                                                 </a>
                                                 @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                                                 {
-                                                    <a class="btn btn-primary" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="btn btn-primary disabled" id="likeConcern @item.Id" >Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id" >Like <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
                                             </p>
@@ -138,12 +138,12 @@
 
             <!-- Pager new -->
             <ul class="pager d-flex align-items-center justify-content-between list-unstyled">
-                <li class="previous">
+                @*<li class="previous">
                     <a href="#" class="btn btn-template-outlined">← Older</a>
                 </li>
                 <li class="next disabled">
                     <a href="#" class="btn btn-template-outlined">Newer →</a>
-                </li>
+                </li>*@
             </ul>
 
         </div>
@@ -158,19 +158,32 @@
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
+
+    //function getComments(itemid) {
+    //    //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
+    //    $.get("/Home/VoteForConcernAsync",
+    //        { concernId: concernId },
+    //        function(data) {
+    //            console.log(data);
+    //            document.getElementById("likesConcern " + concernId).textContent =
+    //                (data.votes); // display id value which is returned from the action method
+    //        });
+    //    $("#countcomments").write()
+    //}
+
     function disableButton(btn, concernId) {
         console.log($('#' + btn.id));
         if (btn.classList.contains('disabled') === false) {
             btn.classList.add('disabled');
             $.get("/Home/VoteForConcernAsync",
-                   { concernId: concernId },
-                   function (data) {
-                       console.log(data);
-                       document.getElementById("likesConcern " + concernId).textContent =
-                           (data.votes); // display id value which is returned from the action method
-                   });
+                { concernId: concernId },
+                function(data) {
+                    console.log(data);
+                    document.getElementById("likesConcern " + concernId).textContent =
+                        (data.votes); // display id value which is returned from the action method
+                });
         }
-        
+
         //if ($('#'+btn.id).hasClass('disabled') === false) {
         //    $('#' + btn.id).addClass('disabled');
 
@@ -184,11 +197,11 @@
         //}
 
     }
-   $('#search').keyup(function()
-   {
-       
-       //Das soll ausgeführt werden
-   });
+
+    $('#search').keyup(function() {
+
+        //Das soll ausgeführt werden
+    });
 
 
 </script>
