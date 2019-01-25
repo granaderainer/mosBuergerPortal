@@ -29,7 +29,8 @@ namespace mosPortal.Models.ViewModels
         [Display(Name = "Geburtstag")]
         public DateTime Birthday { get; set; }
         [Required]
-        [StringLength(100, ErrorMessage = "Das {0} muss min. {2} und max. {1} Zeichen lang sein.", MinimumLength = 6)]
+        [StringLength(100, ErrorMessage = "Das {0} muss min. {2} und max. {1} Zeichen lang sein.", MinimumLength = 8)]
+        [RegularExpression(@"^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z]).+$",ErrorMessage = "Passwort muss aus Großbuchstaben, Kleinbuchstaben, sowie Zahlen und Sonderzeichen bestehen.")]
         [DataType(DataType.Password)]
         [Display(Name = "Passwort", Prompt = "Passwort")]
         public string Password { get; set; }

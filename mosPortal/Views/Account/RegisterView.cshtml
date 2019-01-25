@@ -1,4 +1,7 @@
-﻿@model mosPortal.Models.ViewModels.RegisterViewModel
+﻿@using Microsoft.AspNetCore.Identity.UI.Pages
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Http2
+@model mosPortal.Models.ViewModels.RegisterViewModel
 @{
     ViewData["Title"] = "Registrieren";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -18,7 +21,7 @@
                         <li class="nav-item"><a asp-action="ShowConcerns" asp-controller="Home" class="nav-link active"><i class="fa fa-list"></i> Anliegen</a></li>
                         <li class="nav-item"><a asp-action="ShowConcerns" asp-controller="Home" class="nav-link"><i class="fa fa-question-circle"></i> Umfragen</a></li>
                         <li class="nav-item"><a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="nav-link"><i class="fa fa-user"></i> Bereits Registriert?</a></li>
-                       
+                        
                     </ul>
                 </div>
             </div>
@@ -31,7 +34,7 @@
                 </div>
                 <div class="box mt-0">
 
-                    
+                    @*@Context.Response.StatusCode*@
                         <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
                             <div class="row">
                                 <div class="col-md-6">
