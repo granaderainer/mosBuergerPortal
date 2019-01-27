@@ -62,12 +62,12 @@
                 <div class="panel-body">
                     <h4>Alle Kategorien</h4>
                     <ul class="nav nav-pills flex-column text-sm">
-                        <li class="nav-item">
-                            <a href="text.html" class="nav-link">Straßen</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="contact.html" class="nav-link">Öffentliche Einrichtungen</a>
-                        </li>
+                        @foreach (var varCategory in categories)
+                        { 
+                            <li class="nav-item">
+                                <a href="text.html" class="nav-link">@varCategory.Description</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>
