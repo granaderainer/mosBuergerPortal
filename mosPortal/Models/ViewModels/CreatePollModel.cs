@@ -14,5 +14,8 @@ namespace mosPortal.Models.ViewModels
         public string[] Answers { get; set; }
         public int ConcernId { get; set; }
         public int CategoryId { get; set; }
+
+        public int[] ImageIds { get; set; }
+        public int[] FileIds { get; set; }
     }
 }

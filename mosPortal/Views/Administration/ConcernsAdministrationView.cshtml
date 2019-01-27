@@ -229,6 +229,10 @@
 @await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var elems;
+    var fileIds;
+    var imageIds;
+    var deletedFileIds = [];
+    var deletedImageIds = [];
     $(document).ready(function () {
         $("li#linkConcerns").addClass("active");
         elems = document.getElementsByName("concern");
@@ -265,6 +269,12 @@
             var title = data.title;
             var text = data.text;
             var concernId = data.concernId;
+            fileIds = [];
+            imageIds = [];
+            fileIds = data.fileIds;
+            imageIds = data.imageIds;
+            console.log(imageIds);
+            console.log(fileIds);
             $("#pollTextModal").val(text);
             $("#pollTitleModal").val(title);
             $("#pollConcernIdModal").val(concernId);
@@ -276,6 +286,27 @@
             else {
                 $("#pollCommentModal").val(data.comment);
             }
+            //$("#pollFile").show();
+            //$("#pollFileHeader").show();
+            
+            if (fileIds.length > 0) {
+                $("#pollFile").show();
+                $("#pollFileHeader").show();
+                for (var i = 0; i < fileIds.length; i++) {
+                    var link = '<div id="file' + fileIds[i] + '"><a onclick="deleteFileFromPoll(\'file\', \'' + fileIds[i] + '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '</a></br></div >';
+                    //var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
+                    $("#pollFile").append(link);
+                }
+            }
+            if (imageIds.length > 0) {
+                $("#pollFile").show();
+                $("#pollFileHeader").show();
+                for (var i = 0; i < imageIds.length; i++) {
+                    var link = '<div id="image' + imageIds[i] + '"><a onclick="deleteFileFromPoll(\'image\', \'' + imageIds[i] + '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetImage?id=' + imageIds[i] + '">Bild ' + (i + 1) +'</a></br></div >';
+                    //var link = '<a target="_blank" href="/File/GetImage?id=' + imageIds[i] + '">Bild ' + (i + 1)+'</a>';
+                    $("#pollFile").append(link);
+                }
+            }
         });
     }
     function createPoll() {
@@ -284,6 +315,32 @@
         for (var i = 0; i < answerElements.length; i++) {
             answers.push(answerElements[i].value);
         }
+        var pollImageIds = [];
+        var pollFileIds = [];
+        if (deletedImageIds > 0) {
+            for (var i = 0; i < deletedImageIds.length; i++) {
+                for (var j = 0; j > imageIds.length; i++) {
+                    if (imageIds[j] != deletedImageIds[i]) {
+                        pollImageIds.push(imageIds[j]);
+                    }
+                }
+            }
+        }
+        else {
+            pollImageIds = imageIds;
+        }
+        if (deletedFileIds > 0) {
+            for (var i = 0; i < deletedFileIds.length; i++) {
+                for (var j = 0; j > fileIds.length; i++) {
+                    if (fileIds[j] != deletedFileIds[i]) {
+                        pollImageIds.push(fileIds[j]);
+                    }
+                }
+            }
+        }
+        else {
+            pollFileIds = fileIds;
+        }
         var sendData = {
             Title: $("#pollTitleModal").val(),
             Text: $("#pollTextModal").val(),
@@ -291,7 +348,9 @@
             NeedsLocalCouncil: document.getElementById("pollNeedsLocalCouncilModal").checked,
             CategoryId: $("#pollSelectCategoryModal").val(),
             ConcernId: $("#pollConcernIdModal").val(),
-            Answers: answers
+            Answers: answers,
+            FileIds: pollFileIds,
+            ImageIds: pollImageIds
         };
         $.ajax({
             type: 'POST',
@@ -484,6 +543,18 @@
                 }
             }
             elems[i].style.display = display;
+        }
+    }
+    function deleteFileFromPoll(fileType, id) {
+        console.log("Ja");
+        fileDiv = "#" + fileType+id;
+        console.log(fileDiv);
+        $(fileDiv).hide();
+        if (fileType == "file") {
+            deletedFileIds.push(id);
+        }
+        else {
+            deletedImageIds.push(id)
         }
     }
 </script>
