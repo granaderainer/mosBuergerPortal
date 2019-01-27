@@ -202,6 +202,18 @@ namespace mosPortal.Controllers
                 {
                     db.Add(new AnswerOptionsPoll { PollId = poll.Id, AnswerOptionsId = aoId });
                 }
+                foreach(int fileId in createPoll.FileIds)
+                {
+                    File file = db.File.Where(f => f.Id == fileId).SingleOrDefault();
+                    file.PollId = poll.Id;
+                    db.Update(file);
+                }
+                foreach(int imageId in createPoll.ImageIds)
+                {
+                    Image image = db.Image.Where(i => i.Id == imageId).SingleOrDefault();
+                    image.PollId = poll.Id;
+                    db.Update(image);
+                }
                 int result = db.SaveChanges();
                 return Json(new { result , concernStatusId, concernId = createPoll.ConcernId});
             }
