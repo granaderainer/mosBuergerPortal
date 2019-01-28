@@ -58,16 +58,8 @@ namespace mosPortal.Controllers
             List<Concern> concerns = db.Concern
                             .Where(c=> c.StatusId == 2 || c.StatusId == 3)
                             .Include("Category")
-                            .Where(c=>c.CategoryId == c.Category.Id)
-                            .Select (x => new Concern
-                                      {
-                                          Id =x.Id,
-                                          Text= x.Text,
-                                          Title = x.Title,
-                                          Date = x.Date,
-                                          Category = x.Category,
-                                          UserId= x.UserId
-                                      }).ToList();
+                            .Include("Comment")
+                            .ToList();
             foreach (Concern concern in concerns)
             {
                 List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();

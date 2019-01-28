@@ -61,14 +61,29 @@
                 <!-- Blog Categories Well -->
                 <div class="panel-body">
                     <h4>Alle Kategorien</h4>
-                    <ul class="nav nav-pills flex-column text-sm">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Kategorien</label>
+                        </div>
+                        <select class="custom-select" id="selectCategory" onchange="selectCategory()">
+                            <option value="0" selected>Alle</option>
+                            @foreach (var varCategory in categories)
+                            {
+                                <option value="@varCategory.Id">@varCategory.Description</option>
+
+
+                            }
+                 
+                        </select>
+                    </div>
+                    @*<ul class="nav nav-pills flex-column text-sm">
                         @foreach (var varCategory in categories)
                         { 
                             <li class="nav-item">
-                                <a href="text.html" class="nav-link">@varCategory.Description</a>
+                                <a onclick="" class="nav-link">@varCategory.Description</a>
                             </li>
                         }
-                    </ul>
+                    </ul>*@
                 </div>
             </div>
         </div>
@@ -76,7 +91,7 @@
         <div class="col-md-9">
             @foreach (var item in Model)
             {
-               <div id="content">
+               <div id="@item.Id @item.Category.Id" name="concern">
                     <div class="container">
                         <div class="row box Pollbox shadow">
                             <div id="blog-listing-medium">
@@ -171,9 +186,29 @@
         $("#countcomments").write();
     }
 
+    var concernElements = [];
+    $(document).ready(function() {
+        concernElements = document.getElementsByName("concern");
+    });
+    function selectCategory() {
+        var selectedCategory = $('#selectCategory').val();
+        console.log('selectedCategory'+selectedCategory);
+        for(var i = 0;i<concernElements.length;i++) {
+            var categoryid = concernElements[i].id.split(' ')[1];
+            console.log('categoryid' + categoryid);
+            console.log('concernElements' + concernElements[i]);
+            if (categoryid == selectedCategory) {
+                concernElements[i].style.display = "block";
+            } else {
+                concernElements[i].style.display = "none";
+            }
+            if (selectedCategory == 0) {
+                concernElements[i].style.display = "block";
+            }
+        }
+    }
 
-       
-    //$(document).ready(function getComments(itemid) {
+        //function getComments(itemid) {
            
     //    var elems = document.getElementById.contains("countcomments");
     //    for (var i = 0; i < elems.length; i++) {
@@ -234,6 +269,25 @@
             });
         }
 
+    function showCategory() {
+        var selectElement = document.getElementById("selectCategory");
+        var index = selectElement.selectedIndex;
+        var categoryId = selectElement.options[index].value;
+        var categoryDescription = selectElement.options[index].text;
+
+        $("#categoryId").val(categoryId)
+        $("#categoryDescription").val(categoryDescription)
+        $("#categoryHeader").html('<h3  class="h4">Kategorie anzeigen</h3>');
+        $("#editCategory").show();
+        $("#cancelEditCategory").hide();
+        $("#saveCategory").hide();
+        $("#categoryDescription").attr('disabled', 'disabled');
+        $("#deleteCategory").show();
+        console.log(categoryId);
+        console.log(categoryDescription);
+        console.log(index);
+
+    }
 
     function disableButton(btn, concernId) {
         console.log($('#' + btn.id));
