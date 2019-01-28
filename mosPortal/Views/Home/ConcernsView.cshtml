@@ -98,7 +98,7 @@
                                                 <div class="not-active">
                                                     <p class="date-comments">
                                                         <a href="blog-post.html">
-                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <p id="countcomments"></p><!-- Muss noch angepasst werden-->  Kommentare</a>
+                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <p id="countcomments @item.Id"></p><!-- Muss noch angepasst werden-->  Kommentare</a>
                                                     </p>
                                                 </div>
                                             </div>
@@ -159,17 +159,81 @@
 
 <script type="text/javascript">
 
-    //function getComments(itemid) {
-    //    //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
-    //    $.get("/Home/VoteForConcernAsync",
-    //        { concernId: concernId },
-    //        function(data) {
-    //            console.log(data);
-    //            document.getElementById("likesConcern " + concernId).textContent =
-    //                (data.votes); // display id value which is returned from the action method
-    //        });
-    //    $("#countcomments").write()
-    //}
+    function getComments(itemid) {
+        //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
+        $.get("/Home/VoteForConcernAsync",
+            { concernId: concernId },
+            function (data) {
+                console.log(data);
+                document.getElementById("likesConcern " + concernId).textContent =
+                    (data.votes); // display id value which is returned from the action method
+            });
+        $("#countcomments").write();
+    }
+
+
+       
+    //$(document).ready(function getComments(itemid) {
+           
+    //    var elems = document.getElementById.contains("countcomments");
+    //    for (var i = 0; i < elems.length; i++) {
+    //        var ids = elems[i].id;
+    //    var pollId = ids.split(" ")[0];
+
+    //    var chartId = "pollChart " + pollId;
+    //    var noVotesId = "pollNoVotes " + pollId;
+    //    createChart(chartId, pollId, noVotesId)
+        //console.log(matches[i].id);
+        //console.log(id[id.length - 1]);
+
+            /*$.get("/Administration/GetPollAnswers", {pollId: pollId }, function (data) {
+
+        });*/
+//    }
+//});
+    function getComments(itemid) {
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: '/Home/GetCommentsCount?concernId=' + itemid,
+                success: function (data) {
+                    //var count = data.length;
+                    //var chartColors = [];
+                    //var j = 0;
+                    //for (var i = 0; i < count; i++) {
+                    //    if (j == (colors.length - 1)) {
+                    //        j = 0;
+                    //    }
+                    //    chartColors.push(colors[j]);
+                    //    j++;
+                    //}
+                    //var answerCountNotNull = false;
+                    //for (var i = 0; i < data.length; i++) {
+                    //    if (data[i].value == 0) {
+                    //        answerCountNotNull = false;
+                    //    }
+                    //    else {
+                    //        answerCountNotNull = true;
+                    //        break;
+                    //    }
+                    //}
+                    //if (answerCountNotNull == true) {
+                    //    Morris.Donut({
+                    //        element: chartId,
+                    //        data: data,
+                    //        colors: chartColors
+                    //    });
+                    //    document.getElementById(chartId).style.display = "block";
+                    //    document.getElementById(noVotesId).style.display = "none";
+                    //}
+                    //else {
+                    //    document.getElementById(chartId).style.display = "none";
+                    //    document.getElementById(noVotesId).style.display = "block";
+                    //}
+                }
+            });
+        }
+
 
     function disableButton(btn, concernId) {
         console.log($('#' + btn.id));
@@ -184,18 +248,7 @@
                 });
         }
 
-        //if ($('#'+btn.id).hasClass('disabled') === false) {
-        //    $('#' + btn.id).addClass('disabled');
-
-        //    $.get("/Home/VoteForConcernAsync",
-        //        { concernId: concernId },
-        //        function (data) {
-        //            console.log(data);
-        //            document.getElementById("likesConcern " + concernId).textContent =
-        //                (data.votes); // display id value which is returned from the action method
-        //        });
-        //}
-
+       
     }
 
     $('#search').keyup(function() {
