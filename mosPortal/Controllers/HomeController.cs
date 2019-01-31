@@ -246,7 +246,16 @@ namespace mosPortal.Controllers
             DateTime time = DateTime.UtcNow;
 
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
-            
+
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+
+            ViewData["Categories"] = categories;
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
             foreach (Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)

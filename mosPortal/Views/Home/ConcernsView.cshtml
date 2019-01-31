@@ -7,6 +7,7 @@
     ViewData["Title"] = "ConcernsView";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var categories = ViewData["Categories"] as IEnumerable<Category>;
+    
 }
 
 <div id="heading-breadcrumbs">
@@ -113,8 +114,14 @@
                                                 <div class="not-active">
                                                     <p class="date-comments">
                                                         <a href="blog-post.html">
-                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <p id="countcomments @item.Id"></p><!-- Muss noch angepasst werden-->  Kommentare</a>
-                                                    </p>
+                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")
+                                                        </a><a href="blog-post.html"><i class="fa fa-comment-o"></i>
+                                                     @if (item.Comment.Count == 1)
+                                                    {
+                                                        <span> @item.Comment.Count Kommentar</span> }
+                                                    else
+                                                     { <span>@item.Comment.Count Kommentare</span>}</a></p>
+                                                    
                                                 </div>
                                             </div>
                                             
@@ -132,11 +139,11 @@
                                                 </a>
                                                 @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                                                 {
-                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id" >Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id" >Vote <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
                                             </p>

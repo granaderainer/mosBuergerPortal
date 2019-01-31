@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = "ShowPolls";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = ViewData["Categories"] as IEnumerable<Category>;
     var category = "default";
 }
 
@@ -35,6 +36,21 @@
                         <h3 class="h4 panel-title">Umfragen</h3>
                     </div>
                     <div class="panel-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="inputGroupSelect01">Kategorien</label>
+                            </div>
+                            <select class="custom-select" id="selectCategory" onchange="selectCategory()">
+                                <option value="0" selected>Alle</option>
+                                @foreach (var varCategory in categories)
+                                {
+                                    <option value="@varCategory.Id">@varCategory.Description</option>
+
+
+                                }
+                 
+                            </select>
+                        </div>
                         <ul class="nav nav-pills flex-column text-sm">
                             <li class="nav-item">
                                 <a href="text.html" class="nav-link">Alle Umfragen</a>
@@ -57,87 +73,90 @@
                         <div id="blog-listing-big" class="col-md-9">
                             @for (var j = 0; j < Model.Count; j++)
                             {
+
                                 var item = Model.ElementAt(j);
-                                <div class="shadow">
-                                    <section class="post box Pollbox">
-                                        <h2>@item.Title</h2>
-                                        <div class="row">
-                                            <div class="col-sm-6">
-                                                <p class="author-category">
-                                                    Von <a href="#" class="not-active">User @item.UserId</a> in
-                                                    <a href="#" class="not-active">
-                                                        @if (item.Category is null)
-                                                        {
-                                                            category = "Unbekannt";
-                                                        }
-                                                        else
-                                                        {
-                                                            category = item.Category.Description;
-                                                        }
-                                                        @category
-                                                    </a>
-                                                </p>
+                                <div id="@item.Id @item.Category.Id" name="poll">
+                                    <div class="shadow">
+                                        <section class="post box Pollbox">
+                                            <h2>@item.Title</h2>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <p class="author-category">
+                                                        Von <a href="#" class="not-active">User @item.UserId</a> in
+                                                        <a href="#" class="not-active">
+                                                            @if (item.Category is null)
+                                                            {
+                                                                category = "Unbekannt";
+                                                            }
+                                                            else
+                                                            {
+                                                                category = item.Category.Description;
+                                                            }
+                                                            @category
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <p class="date-comments">
+                                                        <i class="fa fa-calendar-o"></i>@item.End.ToString("dd/MM/yyyy")
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div class="col-sm-6 text-right">
-                                                <p class="date-comments">
-                                                    <i class="fa fa-calendar-o"></i>@item.End.ToString("dd/MM/yyyy")
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <p class="intro">@item.Text</p>
-                                        <div class="project owl-carousel" id="carousel">
-                                            @{
-                                                if (item.Image != null)
-                                                {
-                                                    foreach (var image in item.Image)
-                                                    {
-                                                       <div class="item">
-                                                            <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
-                                                        </div>
-                                                    }
-                                                }
-                                                if (item.File != null)
-                                                {
-                                                   
-                                                    foreach (var file in item.File)
-                                                    {
-                                                        <div class="">
-                                                            <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
-                                                        </div>
-                                                        
-                                                    }
-                                                }
-
-                                                else { }
-
-                                            }
-                                        </div>
-                                        <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                                            <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
-                                            <fieldset class="form-group">
+                                            <p class="intro">@item.Text</p>
+                                            <div class="project owl-carousel" id="carousel">
                                                 @{
-
-                                                    for (var i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                                                    if (item.Image != null)
                                                     {
-                                                        var answer = item.AnswerOptionsPoll.ElementAt(i);
-
-
-                                                        //Radiobuttons IDs vergeben
-                                                        //Submitbuttons Auswahl des Radiobuttons zum Controller geben
-                                                        //value ist ID aus der Description in AnswerOptions
-
-                                                        @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                                        @Html.Label(answer.AnswerOptions.Description)<br/>
+                                                        foreach (var image in item.Image)
+                                                        {
+                                                            <div class="item">
+                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
+                                                            </div>
+                                                        }
                                                     }
+                                                    if (item.File != null)
+                                                    {
+
+                                                        foreach (var file in item.File)
+                                                        {
+                                                            <div class="">
+                                                                <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
+                                                            </div>
+
+                                                        }
+                                                    }
+
+                                                    else { }
+
                                                 }
-                                                <button class="btn btn-success" type="submit">
-                                                    <i class="fa fa-check">Abstimmen</i>
-                                                </button>
-                                            </fieldset>
-                                        </form>
+                                            </div>
+                                            <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
+                                                <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                                                <fieldset class="form-group">
+                                                    @{
+
+                                                        for (var i = 0; i < item.AnswerOptionsPoll.Count; i++)
+                                                        {
+                                                            var answer = item.AnswerOptionsPoll.ElementAt(i);
 
 
-                                    </section>
+                                                            //Radiobuttons IDs vergeben
+                                                            //Submitbuttons Auswahl des Radiobuttons zum Controller geben
+                                                            //value ist ID aus der Description in AnswerOptions
+
+                                                            @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                                            @Html.Label(answer.AnswerOptions.Description)<br />
+                                                        }
+                                                    }
+                                                    <button class="btn btn-success" type="submit">
+                                                        <i class="fa fa-check">Abstimmen</i>
+                                                    </button>
+                                                </fieldset>
+                                            </form>
+
+
+                                        </section>
+                                    </div>
                                 </div>
                             }
                         </div>
@@ -148,4 +167,27 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    var concernElements = [];
+    $(document).ready(function () {
+        concernElements = document.getElementsByName("poll");
+    });
+    function selectCategory() {
+        var selectedCategory = $('#selectCategory').val();
+        console.log('selectedCategory' + selectedCategory);
+        for (var i = 0; i < concernElements.length; i++) {
+            var categoryid = concernElements[i].id.split(' ')[1];
+            console.log('categoryid' + categoryid);
+            console.log('concernElements' + concernElements[i]);
+            if (categoryid == selectedCategory) {
+                concernElements[i].style.display = "block";
+            } else {
+                concernElements[i].style.display = "none";
+            }
+            if (selectedCategory == 0) {
+                concernElements[i].style.display = "block";
+            }
+        }
+    }
+</script>
 
