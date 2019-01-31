@@ -148,16 +148,19 @@
                 <br/>
                 <!-- Post Content -->
                 <p>@Model.Text</p>
+                <div class="progress mb-2">
+                    <div role="progressbar" id="progressbar @Model.Id" style="width: @Model.UserConcern.Count()%;" aria-valuenow=@Model.UserConcern.Count() aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-primary"></div>
+                </div>
                 <div class="row">
                     <span class="col-6 text-left">
-                        <span class="badge badge-primary text-white badge-pill">@Model.UserConcern.Count()</span>
+                        <span id="likesConcern @Model.Id" class="badge badge-primary text-white badge-pill">@Model.UserConcern.Count()</span>
                         @if (Model.UserConcern.Count() == 1)
                         {
-                            <span id="likesConcern @Model.Id" class="badge"> Abstimmung</span>
+                            <span  class="badge"> Abstimmung</span>
                         }
                         else
                         {
-                            <span id="likesConcern @Model.Id" class="badge"> Abstimmungen</span>
+                            <span  class="badge"> Abstimmungen</span>
                         }
 
 
@@ -166,11 +169,11 @@
 
                         @if (SignInManager.IsSignedIn(User) && Model.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                         {
-                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
+                            <a class="btn btn-primary text-white"  id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
                         }
                         else
                         {
-                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Vote <i class="fa fa-thumbs-up"></i></a>
+                            <a class="btn btn-primary disabled text-white"  id="likeConcern @Model.Id" disabled>Vote <i class="fa fa-thumbs-up"></i></a>
                         }
                     </div>
                 </div>
@@ -221,47 +224,9 @@
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 
-@*@{List<int> imageIdss = new List<int>();
-    foreach (var image in Model.Image)
-    {
 
-        imageIdss.Add(image.Id);
-    }
-}*@
 <script type="text/javascript">
     
-    //function getConcern(concernId, imageIdss) {
-    //    $.get("/Home/GetConcernJson", { concernId: concernId }, function (data) {
-    //   var imageIds = imageIdss;
-    //    //var fileIds = data.fileIds;
-    //        console.log(imageIds);
-    //        if (imageIds.length > 0) {
-    //            $("#carousel").show();
-    //            for (var i = 0; i < imageIds.length; i++) {
-    //                var div = '<div class="item">';
-    //                var image = '<img class="img-fluid" src="/File/GetImage?id=' + imageIds[i] + '">';
-    //                $("#carousel").append(div + image + "</div>");
-    //            }
-    //        }
-    //        //if (fileIds.length > 0) {
-    //        //    $("#concernModalFile").show();
-    //        //    $("#concernModalSpacer2").show();
-    //        //    for (var i = 0; i < fileIds.length; i++) {
-    //        //        var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
-    //        //        $("#concernModalFile").append(link);
-    //        //    }
-    //        //}
-    //        //setTimeout(function() {
-    //        //        $("#concernModalDiv").show();
-    //        //        $("#concernModalLoad").hide();
-    //        //    },
-    //        //    3000);
-
-    //    };
-    //    console.log(arguments);
-    //)}
-
-   
 
     function disableButton(btn, concernId) {
         if (!document.getElementById(btn.id).disabled) {
@@ -272,25 +237,14 @@
                 { concernId: concernId },
                 function(data) {
                     document.getElementById("likesConcern " + concernId).textContent =
-                        (data.votes) + " Likes"; // display id value which is returned from the action method
+                        (data.votes); // display id value which is returned from the action method
+                    var progressbar = document.getElementById("progressbar " + concernId);
+                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes + '%');
                 });
         }
 
     }
-    //var full = location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '');
-    //$("#ItemPreview").attr("src", "https://"+location.hostname + (location.port ? ':' + location.port : "/Image/GetImage?concernId=" + concernId);
-
-
-
-     @*<div class="project owl-carousel" id="carousel">
-              <div class="item">
-                    <img class="img-fluid" id="ItemPreview" src='@Url.Action("GetConcernTitleImage", "File", new {concernId = Model.Id.ToString()})'/>
-              </div>
-              <div class="item">
-                    <img src="img/main-slider2.jpg" alt="" class="img-fluid">
-              </div>
-        </div>*@
-    
+   
 
     
 </script>

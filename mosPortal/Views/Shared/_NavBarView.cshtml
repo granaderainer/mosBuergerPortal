@@ -28,6 +28,9 @@
                     <li class="nav-item dropdown menu-large" id="NavPoll">
                         <a asp-area="" asp-controller="Home" asp-action="ShowPolls">Umfragen <b class="caret"></b></a>
                     </li>
+                    <li class="nav-item dropdown menu-large" id="NavAdmin">
+                        <a asp-area="" asp-controller="Home" asp-action="ShowPollResults">Ergebnisse <b class="caret"></b></a>
+                    </li>
                     @if (SignInManager.IsSignedIn(User))
                     {
                         
@@ -35,7 +38,8 @@
                         {
                             <li class="nav-item dropdown menu-large" id="NavAdmin">
                                 <a asp-area="" asp-controller="Administration" asp-action="Index">Verwaltung <b class="caret"></b></a>
-                            </li>
+                            </li> 
+                           
                         }
 
                     }

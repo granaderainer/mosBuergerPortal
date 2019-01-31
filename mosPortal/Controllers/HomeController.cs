@@ -435,5 +435,10 @@ namespace mosPortal.Controllers
 
             return pollViewModels;
         }
+
+        public IActionResult ShowPollResults()
+        {
+            return null;
+        }
     }
 }
