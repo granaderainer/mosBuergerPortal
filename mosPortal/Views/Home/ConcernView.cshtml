@@ -89,16 +89,19 @@
 
                 <hr>
                 <!-- Blog Categories Well -->
-                <div class="panel-heading">
-                    <h3 class="h4 panel-title">Alle Kategorien</h3>
+                <div class="panel panel-default sidebar-menu">
+                    <div class="panel-heading">
+                        <h3 class="h4 panel-title">Anliegen</h3>
+                    </div>
                     <div class="panel-body">
                         <ul class="nav nav-pills flex-column text-sm">
                             <li class="nav-item">
-                                <a href="text.html" class="nav-link">Alle Umfragen</a>
+                                <a asp-controller="Home" asp-action="Index" class="nav-link">Home</a>
                             </li>
                             <li class="nav-item">
-                                <a href="contact.html" class="nav-link">Endende Umfragen</a>
+                                <a asp-controller="Home" asp-action="ShowConcerns" class="nav-link">Alle Anliegen</a>
                             </li>
+
                         </ul>
                     </div>
                 </div>
@@ -111,10 +114,10 @@
             <section class="post" id="post">
                 <h2>@Model.Title</h2>
                 <div class="row">
-                    <div class="col-sm-4">
+                    <div class="col-sm-5">
                         <p class="author-category">Von <a class="not-active" href="">User @Model.UserId</a> in <a class="not-active" href=""> @Model.Category.Description</a></p>
                     </div>
-                    <div class="col-sm-8  text-right">
+                    <div class="col-sm-7  text-right">
                         <div class=""></div>
                         @*<p class="date-comments"><a class="not-active" href=""><i class="fa fa-clock-o"></i> Erstellt am @Model.Date.ToString("dd/MM/yyyy")</a><a class="not-active" href=""><i class="fa fa-comment-o"></i> @Model.Comment.Count Kommentare</a></p>*@
                         <p class="date-comments small">
@@ -163,11 +166,11 @@
 
                         @if (SignInManager.IsSignedIn(User) && Model.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                         {
-                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" onclick="disableButton(this, @Model.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
                         }
                         else
                         {
-                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Like <i class="fa fa-thumbs-up"></i></a>
+                            <a class="btn btn-primary" href="#" id="likeConcern @Model.Id" disabled>Vote <i class="fa fa-thumbs-up"></i></a>
                         }
                     </div>
                 </div>

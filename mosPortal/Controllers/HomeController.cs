@@ -58,16 +58,8 @@ namespace mosPortal.Controllers
             List<Concern> concerns = db.Concern
                             .Where(c=> c.StatusId == 2 || c.StatusId == 3)
                             .Include("Category")
-                            .Where(c=>c.CategoryId == c.Category.Id)
-                            .Select (x => new Concern
-                                      {
-                                          Id =x.Id,
-                                          Text= x.Text,
-                                          Title = x.Title,
-                                          Date = x.Date,
-                                          Category = x.Category,
-                                          UserId= x.UserId
-                                      }).ToList();
+                            .Include("Comment")
+                            .ToList();
             foreach (Concern concern in concerns)
             {
                 List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
@@ -254,7 +246,16 @@ namespace mosPortal.Controllers
             DateTime time = DateTime.UtcNow;
 
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
-            
+
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+
+            ViewData["Categories"] = categories;
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
             foreach (Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)

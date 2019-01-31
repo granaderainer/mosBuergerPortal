@@ -7,6 +7,7 @@
     ViewData["Title"] = "ConcernsView";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var categories = ViewData["Categories"] as IEnumerable<Category>;
+    
 }
 
 <div id="heading-breadcrumbs">
@@ -16,7 +17,7 @@
                 @if (SignInManager.IsSignedIn(User))
                 {
                     <span class="input-group-btn">
-                        <a class="btn btn-primary" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
+                        <a class="btn btn-primary text-white" id="createNewConcern" data-toggle="modal" data-target="#createConcernModal"><i class="fa fa-plus-square"></i> Neues Anliegen</a>
                     </span>
                 }
             </div>
@@ -61,14 +62,29 @@
                 <!-- Blog Categories Well -->
                 <div class="panel-body">
                     <h4>Alle Kategorien</h4>
-                    <ul class="nav nav-pills flex-column text-sm">
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Kategorien</label>
+                        </div>
+                        <select class="custom-select" id="selectCategory" onchange="selectCategory()">
+                            <option value="0" selected>Alle</option>
+                            @foreach (var varCategory in categories)
+                            {
+                                <option value="@varCategory.Id">@varCategory.Description</option>
+
+
+                            }
+                 
+                        </select>
+                    </div>
+                    @*<ul class="nav nav-pills flex-column text-sm">
                         @foreach (var varCategory in categories)
                         { 
                             <li class="nav-item">
-                                <a href="text.html" class="nav-link">@varCategory.Description</a>
+                                <a onclick="" class="nav-link">@varCategory.Description</a>
                             </li>
                         }
-                    </ul>
+                    </ul>*@
                 </div>
             </div>
         </div>
@@ -76,7 +92,7 @@
         <div class="col-md-9">
             @foreach (var item in Model)
             {
-               <div id="content">
+               <div id="@item.Id @item.Category.Id" name="concern">
                     <div class="container">
                         <div class="row box Pollbox shadow">
                             <div id="blog-listing-medium">
@@ -98,8 +114,14 @@
                                                 <div class="not-active">
                                                     <p class="date-comments">
                                                         <a href="blog-post.html">
-                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")</a><a href="blog-post.html"><i class="fa fa-comment-o"></i> <p id="countcomments"></p><!-- Muss noch angepasst werden-->  Kommentare</a>
-                                                    </p>
+                                                            <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")
+                                                        </a><a href="blog-post.html"><i class="fa fa-comment-o"></i>
+                                                     @if (item.Comment.Count == 1)
+                                                    {
+                                                        <span> @item.Comment.Count Kommentar</span> }
+                                                    else
+                                                     { <span>@item.Comment.Count Kommentare</span>}</a></p>
+                                                    
                                                 </div>
                                             </div>
                                             
@@ -117,11 +139,11 @@
                                                 </a>
                                                 @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
                                                 {
-                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 else
                                                 {
-                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id" >Like <i class="fa fa-thumbs-up"></i></a>
+                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id" >Vote <i class="fa fa-thumbs-up"></i></a>
                                                 }
                                                 <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
                                             </p>
@@ -159,17 +181,120 @@
 
 <script type="text/javascript">
 
-    //function getComments(itemid) {
-    //    //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
-    //    $.get("/Home/VoteForConcernAsync",
-    //        { concernId: concernId },
-    //        function(data) {
-    //            console.log(data);
-    //            document.getElementById("likesConcern " + concernId).textContent =
-    //                (data.votes); // display id value which is returned from the action method
-    //        });
-    //    $("#countcomments").write()
-    //}
+    function getComments(itemid) {
+        //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
+        $.get("/Home/VoteForConcernAsync",
+            { concernId: concernId },
+            function (data) {
+                console.log(data);
+                document.getElementById("likesConcern " + concernId).textContent =
+                    (data.votes); // display id value which is returned from the action method
+            });
+        $("#countcomments").write();
+    }
+
+    var concernElements = [];
+    $(document).ready(function() {
+        concernElements = document.getElementsByName("concern");
+    });
+    function selectCategory() {
+        var selectedCategory = $('#selectCategory').val();
+        console.log('selectedCategory'+selectedCategory);
+        for(var i = 0;i<concernElements.length;i++) {
+            var categoryid = concernElements[i].id.split(' ')[1];
+            console.log('categoryid' + categoryid);
+            console.log('concernElements' + concernElements[i]);
+            if (categoryid == selectedCategory) {
+                concernElements[i].style.display = "block";
+            } else {
+                concernElements[i].style.display = "none";
+            }
+            if (selectedCategory == 0) {
+                concernElements[i].style.display = "block";
+            }
+        }
+    }
+
+        //function getComments(itemid) {
+           
+    //    var elems = document.getElementById.contains("countcomments");
+    //    for (var i = 0; i < elems.length; i++) {
+    //        var ids = elems[i].id;
+    //    var pollId = ids.split(" ")[0];
+
+    //    var chartId = "pollChart " + pollId;
+    //    var noVotesId = "pollNoVotes " + pollId;
+    //    createChart(chartId, pollId, noVotesId)
+        //console.log(matches[i].id);
+        //console.log(id[id.length - 1]);
+
+            /*$.get("/Administration/GetPollAnswers", {pollId: pollId }, function (data) {
+
+        });*/
+//    }
+//});
+    function getComments(itemid) {
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: '/Home/GetCommentsCount?concernId=' + itemid,
+                success: function (data) {
+                    //var count = data.length;
+                    //var chartColors = [];
+                    //var j = 0;
+                    //for (var i = 0; i < count; i++) {
+                    //    if (j == (colors.length - 1)) {
+                    //        j = 0;
+                    //    }
+                    //    chartColors.push(colors[j]);
+                    //    j++;
+                    //}
+                    //var answerCountNotNull = false;
+                    //for (var i = 0; i < data.length; i++) {
+                    //    if (data[i].value == 0) {
+                    //        answerCountNotNull = false;
+                    //    }
+                    //    else {
+                    //        answerCountNotNull = true;
+                    //        break;
+                    //    }
+                    //}
+                    //if (answerCountNotNull == true) {
+                    //    Morris.Donut({
+                    //        element: chartId,
+                    //        data: data,
+                    //        colors: chartColors
+                    //    });
+                    //    document.getElementById(chartId).style.display = "block";
+                    //    document.getElementById(noVotesId).style.display = "none";
+                    //}
+                    //else {
+                    //    document.getElementById(chartId).style.display = "none";
+                    //    document.getElementById(noVotesId).style.display = "block";
+                    //}
+                }
+            });
+        }
+
+    function showCategory() {
+        var selectElement = document.getElementById("selectCategory");
+        var index = selectElement.selectedIndex;
+        var categoryId = selectElement.options[index].value;
+        var categoryDescription = selectElement.options[index].text;
+
+        $("#categoryId").val(categoryId)
+        $("#categoryDescription").val(categoryDescription)
+        $("#categoryHeader").html('<h3  class="h4">Kategorie anzeigen</h3>');
+        $("#editCategory").show();
+        $("#cancelEditCategory").hide();
+        $("#saveCategory").hide();
+        $("#categoryDescription").attr('disabled', 'disabled');
+        $("#deleteCategory").show();
+        console.log(categoryId);
+        console.log(categoryDescription);
+        console.log(index);
+
+    }
 
     function disableButton(btn, concernId) {
         console.log($('#' + btn.id));
@@ -184,18 +309,7 @@
                 });
         }
 
-        //if ($('#'+btn.id).hasClass('disabled') === false) {
-        //    $('#' + btn.id).addClass('disabled');
-
-        //    $.get("/Home/VoteForConcernAsync",
-        //        { concernId: concernId },
-        //        function (data) {
-        //            console.log(data);
-        //            document.getElementById("likesConcern " + concernId).textContent =
-        //                (data.votes); // display id value which is returned from the action method
-        //        });
-        //}
-
+       
     }
 
     $('#search').keyup(function() {
