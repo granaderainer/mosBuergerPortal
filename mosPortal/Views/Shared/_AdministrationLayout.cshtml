@@ -13,7 +13,21 @@
         IList<String> roles = await UserManager.GetRolesAsync(user);
         if (roles != null)
         {
-            role = roles[0];
+            switch(roles[0])
+            {
+                case "Admin":
+                    role = "Administrator";
+                    break;
+                case "GR":
+                    role = "Gemeinderat";
+                    break;
+                case "Verw":
+                    role = "Verwaltung";
+                    break;
+                default:
+                    role = "SuperUser";
+                    break;
+            }
         }
         else
         {
@@ -25,9 +39,6 @@
         fullUserName = "Heinz Günther";
         role = "SuperUser";
     }
-
-
-
 }
 
 <!DOCTYPE html>
@@ -48,7 +59,7 @@
     <!-- Google fonts - Poppins -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="~/admin_template/css/style.default.css" id="theme-stylesheet">
+    <link rel="stylesheet" href="~/admin_template/css/style.blue.css" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="~/admin_template/css/custom.css">
     <!-- Morris Charts CSS -->
@@ -80,7 +91,7 @@
     <div class="page">
         <!-- Main Navbar-->
         <header class="header">
-            <nav class="navbar">
+            <nav id="navbar" class="navbar">
                 <div class="container-fluid">
                     <div class="navbar-holder d-flex align-items-center justify-content-between">
                         <!-- Navbar Header-->
@@ -209,7 +220,7 @@
                     </li>
                 </ul>
             </nav>
-            <div class="content-inner pre-scrollable">
+            <div class="content-inner">
 
                 @RenderBody()
 
