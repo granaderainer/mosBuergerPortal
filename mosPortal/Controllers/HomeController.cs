@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -244,7 +245,7 @@ namespace mosPortal.Controllers
         {
             //int pollId = -1;
             DateTime time = DateTime.UtcNow;
-
+            DateTime time6month = DateTime.UtcNow.AddMonths(6);
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
 
             List<SelectListItem> categoriesList = new List<SelectListItem>();
@@ -438,7 +439,89 @@ namespace mosPortal.Controllers
 
         public IActionResult ShowPollResults()
         {
-            return null;
+            DateTime time = DateTime.UtcNow;
+            //DateTime time3 = DateTime.UtcNow.AddMonths(3);
+            //DateTime time6month = DateTime.UtcNow.AddMonths(6);
+            List<Poll> polls = db.Poll.Where(p => p.End < time).Where(p => p.NeedsLocalCouncil == false).Where(p => p.Approved == true).Include("Category").ToList();
+            //List<Poll> polls = db.Poll.Where(p => p.End < time && DbFunctions.TruncateTime(p.ResignLastDate) >= DbFunctions.TruncateTime(time3)).Where(p => p.NeedsLocalCouncil == false).Where(p => p.Approved == true).Include("Category").ToList();
+            
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+            //Ugly Bridge because of timecheck 3 Month
+            for (int i=0; i<polls.Count;i++)
+            {
+                DateTime time3 = (DateTime)polls[i].End;
+                time3=time3.AddMonths(3);
+                if (time > time3)
+                {
+                    polls.Remove(polls[i]);
+                } 
+            }
+            ViewData["Categories"] = categories;
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+            foreach (Poll poll in polls)
+            {
+                List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                .Include("AnswerOptions")
+                    .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
+                    ).ToList();
+                List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
+                {
+                    Id = ii.Id
+                }).ToList();
+                List<File> files = db.File.Where(f => f.PollId == poll.Id).Select(ff => new File
+                {
+                    Id = ff.Id,
+                    Name = ff.Name,
+                    Ending = ff.Ending
+                }).ToList();
+                poll.AnswerOptionsPoll = answers;
+                poll.Image = images;
+                poll.File = files;
+            }
+            ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
+            foreach (Poll poll in polls)
+            {
+
+                PollViewModel pollViewModel = new PollViewModel();
+
+                pollViewModel.Id = poll.Id;
+                pollViewModel.Text = poll.Text;
+                if (pollViewModel.End == null)
+                {
+                    pollViewModel.End = DateTime.UtcNow;
+                }
+                else
+                {
+                    pollViewModel.End = (DateTime)poll.End;
+                }
+
+                pollViewModel.UserId = poll.UserId;
+                pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
+                pollViewModel.Approved = poll.Approved;
+                pollViewModel.CategoryId = poll.CategoryId;
+                pollViewModel.Title = poll.Title;
+                pollViewModel.Category = poll.Category;
+                pollViewModel.User = poll.User;
+                pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
+                pollViewModel.RadioId = 0;
+                pollViewModel.Image = poll.Image;
+
+                pollViewModels.Add(pollViewModel);
+
+            }
+            return View("PollResultsView", pollViewModels);
+            
         }
     }
 }

@@ -1,0 +1,242 @@
+﻿@model ICollection<PollViewModel>
+@using System.Linq
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@{
+    ViewData["Title"] = "PollResultsView"; ;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = ViewData["Categories"] as IEnumerable<Category>;
+    var category = "default";
+}
+
+<div id="heading-breadcrumbs">
+    <div class="container">
+        <div class="row d-flex align-items-center flex-wrap">
+            <div class="col-md-7">
+                <h1 class="h2">Umfragen</h1>
+            </div>
+            <div class="col-md-5">
+                <ul class="breadcrumb d-flex justify-content-end">
+                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item active">Umfragen</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="content">
+    <div class="container">
+        <div class="row bar">
+            <div class="col-md-3">
+                <!-- PAGES MENU -->
+                <div class="panel panel-default sidebar-menu">
+                    <div class="panel-heading">
+                        <h3 class="h4 panel-title">Umfragen</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <label class="input-group-text" for="inputGroupSelect01">Kategorien</label>
+                            </div>
+                            <select class="custom-select" id="selectCategory" onchange="selectCategory()">
+                                <option value="0" selected>Alle</option>
+                                @foreach (var varCategory in categories)
+                                {
+                                    <option value="@varCategory.Id">@varCategory.Description</option>
+
+
+                                }
+
+                            </select>
+                        </div>
+                        <ul class="nav nav-pills flex-column text-sm">
+                            <li class="nav-item">
+                                <a href="text.html" class="nav-link">Alle Umfragen</a>
+                            </li>@*Alle Polls*@
+                            <li class="nav-item">
+                                <a href="contact.html" class="nav-link">Endende Umfragen</a>
+                            </li>@*Polls die ablaufen*@
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <section>
+                    <div id="text-page">
+                        <p class="lead">Hier können Sie sich die Ergebnisse von beendeten Umfragen ansehen.</p>
+                        <h1>Umfragenergebnisse der Gemeinde Mosbach</h1>
+
+
+                        <div id="blog-listing-big" class="col-md-9">
+                            @for (var j = 0; j < Model.Count; j++)
+                            {
+
+                                var item = Model.ElementAt(j);
+                                <div id="@item.Id @item.Category.Id" name="poll">
+                                    <div class="shadow">
+                                        <section class="post box Pollbox">
+                                            <h2>@item.Title</h2>
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <p class="author-category">
+                                                        Von <a href="#" class="not-active">User @item.UserId</a> in
+                                                        <a href="#" class="not-active">
+                                                            @if (item.Category is null)
+                                                            {
+                                                                category = "Unbekannt";
+                                                            }
+                                                            else
+                                                            {
+                                                                category = item.Category.Description;
+                                                            }
+                                                            @category
+                                                        </a>
+                                                    </p>
+                                                </div>
+                                                <div class="col-sm-6 text-right">
+                                                    <p class="date-comments">
+                                                        <i class="fa fa-calendar-o"></i>@item.End.ToString("dd/MM/yyyy")
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <p class="intro">@item.Text</p>
+                                            <div class="project owl-carousel" id="carousel">
+                                                @{
+                                                    if (item.Image != null)
+                                                    {
+                                                        foreach (var image in item.Image)
+                                                        {
+                                                            <div class="item">
+                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
+                                                            </div>
+                                                        }
+                                                    }
+                                                    if (item.File != null)
+                                                    {
+
+                                                        foreach (var file in item.File)
+                                                        {
+                                                            <div class="">
+                                                                <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
+                                                            </div>
+
+                                                        }
+                                                    }
+
+                                                    else { }
+
+                                                }
+                                            </div>
+                                            <dl class="dl-horizontal">
+                                                
+                                            </dl>
+                                            <div name="pollChart" id="pollChart @item.Id" style="height: 250px;"></div>
+                                            <div class="text-center" name="pollNoVotes" id="pollNoVotes @item.Id" style="height: 250px; display:none;">
+                                                <h3>Es hat noch niemand für diese Umfrage abgestimmt</h3>
+                                            </div>
+
+
+                                        </section>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var concernElements = [];
+    $(document).ready(function () {
+        concernElements = document.getElementsByName("poll");
+    });
+    function selectCategory() {
+        var selectedCategory = $('#selectCategory').val();
+        console.log('selectedCategory' + selectedCategory);
+        for (var i = 0; i < concernElements.length; i++) {
+            var categoryid = concernElements[i].id.split(' ')[1];
+            console.log('categoryid' + categoryid);
+            console.log('concernElements' + concernElements[i]);
+            if (categoryid == selectedCategory) {
+                concernElements[i].style.display = "block";
+            } else {
+                concernElements[i].style.display = "none";
+            }
+            if (selectedCategory == 0) {
+                concernElements[i].style.display = "block";
+            }
+        }
+    }
+
+        var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
+    $(document).ready(function () {
+            $("li#linkHome").addClass("active");
+        var elems = document.getElementsByName("poll");
+        for (var i = 0; i < elems.length; i++) {
+            var ids = elems[i].id;
+        var pollId = ids.split(" ")[0];
+
+        var chartId = "pollChart " + pollId;
+        var noVotesId = "pollNoVotes " + pollId;
+        createChart(chartId, pollId, noVotesId)
+        //console.log(matches[i].id);
+        //console.log(id[id.length - 1]);
+
+            /*$.get("/Administration/GetPollAnswers", {pollId: pollId }, function (data) {
+
+        });*/
+    }
+});
+    function createChart(chartId, pollId, noVotesId) {
+            $.ajax({
+                async: false,
+                type: 'GET',
+                url: '/Administration/GetPollAnswers?pollId=' + pollId,
+                success: function (data) {
+                    var count = data.length;
+                    var chartColors = [];
+                    var j = 0;
+                    for (var i = 0; i < count; i++) {
+                        if (j == (colors.length - 1)) {
+                            j = 0;
+                        }
+                        chartColors.push(colors[j]);
+                        j++;
+                    }
+                    var answerCountNotNull = false;
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].value == 0) {
+                            answerCountNotNull = false;
+                        }
+                        else {
+                            answerCountNotNull = true;
+                            break;
+                        }
+                    }
+                    if (answerCountNotNull == true) {
+                        Morris.Donut({
+                            element: chartId,
+                            data: data,
+                            colors: chartColors
+                        });
+                        document.getElementById(chartId).style.display = "block";
+                        document.getElementById(noVotesId).style.display = "none";
+                    }
+                    else {
+                        document.getElementById(chartId).style.display = "none";
+                        document.getElementById(noVotesId).style.display = "block";
+                    }
+                }
+            });
+        }
+
+</script>
+
+
+
