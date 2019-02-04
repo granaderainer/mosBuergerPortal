@@ -23,11 +23,13 @@ namespace mosPortal.Controllers
 {
     public class AdministrationController : Controller
     {
+        //Attribute der Klasse AdministrationController
         private dbbuergerContext db = new dbbuergerContext();
         private SignInManager<User> signInManager;
         private UserManager<User> userManager;
         private readonly IHostingEnvironment _hostingEnvironment;
 
+        //Konstruktor
         public AdministrationController(UserManager<User> userManager, SignInManager<User> signManager, IHostingEnvironment hostingEnvironment)
         {
             this.userManager = userManager;
@@ -202,17 +204,23 @@ namespace mosPortal.Controllers
                 {
                     db.Add(new AnswerOptionsPoll { PollId = poll.Id, AnswerOptionsId = aoId });
                 }
-                foreach(int fileId in createPoll.FileIds)
+                if (createPoll.FileIds != null)
                 {
-                    File file = db.File.Where(f => f.Id == fileId).SingleOrDefault();
-                    file.PollId = poll.Id;
-                    db.Update(file);
+                    foreach (int fileId in createPoll.FileIds)
+                    {
+                        File file = db.File.Where(f => f.Id == fileId).SingleOrDefault();
+                        file.PollId = poll.Id;
+                        db.Update(file);
+                    }
                 }
-                foreach(int imageId in createPoll.ImageIds)
+                if (createPoll.FileIds != null)
                 {
-                    Image image = db.Image.Where(i => i.Id == imageId).SingleOrDefault();
-                    image.PollId = poll.Id;
-                    db.Update(image);
+                    foreach (int imageId in createPoll.ImageIds)
+                    {
+                        Image image = db.Image.Where(i => i.Id == imageId).SingleOrDefault();
+                        image.PollId = poll.Id;
+                        db.Update(image);
+                    }
                 }
                 int result = db.SaveChanges();
                 return Json(new { result , concernStatusId, concernId = createPoll.ConcernId});
@@ -296,7 +304,7 @@ namespace mosPortal.Controllers
 
         }*/
         [HttpPost]
-        public async Task<JsonResult> ChangeConcernStatus(string status, string concern, string comment)
+        public async Task<IActionResult> ChangeConcernStatus(string status, string concern, string comment)
         {
             int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
             int concernId = Convert.ToInt32(concern);
@@ -316,53 +324,59 @@ namespace mosPortal.Controllers
         }
         public async Task<IActionResult> ShowPolls()
         {
+            //benötigte Veriablen und Listen
             bool allowToCreatePoll = false;
             var user = await userManager.GetUserAsync(HttpContext.User);
             IList<string> roles = await userManager.GetRolesAsync(user);
-            List<Poll> polls = db.Poll.ToList();
+            List<Poll> polls = null;
             List<SelectListItem> categoriesList = new List<SelectListItem>();
-            //List<SelectListItem> answerOptionList = new List<SelectListItem>();
             List<SelectListItem> statusList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
+            //Status Liste für Filter füllen
             statusList.Add(new SelectListItem { Value = "0", Text = "Alle Umfragen" });
             statusList.Add(new SelectListItem { Value = "2", Text = "laufende Umfragen" });
             statusList.Add(new SelectListItem { Value = "3", Text = "beendete Umfragen" });
             categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
+            //Rollenspezifische Variablen füllen
             if (roles[0] == "Verw")
             {
                 allowToCreatePoll = true;
+                db.Poll.Where(p=>p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
             }
-            if (roles[0] == "GR")
+            if (roles[0] == "BM" || roles[0] == "GR")
             {
-                
-            }
-            if (roles[0] == "BM")
-            {
-
+                db.Poll.Where(p => p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
             }
             if (roles[0] == "Admin")
             {
-                statusList.Add(new SelectListItem { Value = "5", Text = "abgeschlossene Umfragen" });
+                db.Poll.OrderByDescending(p => p.End).ToList();
+                statusList.Add(new SelectListItem { Value = "6", Text = "abgeschlossene Umfragen" });
             }
             foreach (Category category in categories)
             {
                 categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
-            /*foreach (AnswerOptions anserOption in answerOptions)
+            //Status der Umfragen ändern, falls nötig
+            foreach (Poll poll in polls)
             {
-                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
-            }*/
+                if(poll.End <= DateTime.Today.AddMonths(-1))
+                {
+                    poll.StatusId = 6;
+                    db.Update(poll);
+                    continue;
+                }
+                if (poll.End <= DateTime.Today)
+                {
+                    poll.StatusId = 3;
+                    db.Update(poll);
+                }
+            }
+            //Zusätzliche Variablen für das Rendern der Ansicht füllen
             ViewData["CategoriesList"] = categoriesList;
             ViewData["StatusList"] = statusList;
             ViewData["allowToCreatePoll"] = allowToCreatePoll;
-            //ViewData["AnswerOptionsList"] = answerOptionList;
-            /*foreach(Poll poll in polls)
-            {
-                List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
-                poll.AnswerOptionsPoll = answerOptionsPolls;
-            }*/
-
+            db.SaveChanges();
             return View("PollsAdministrationView", polls );
         }
         [HttpGet]
@@ -387,7 +401,7 @@ namespace mosPortal.Controllers
             poll.AnswerOptionsPoll = answerOptionsPolls;
             return View("PollAdministrationView", poll);
         }*/
-        public JsonResult GetPollAnswers(int pollId)
+        public IActionResult GetPollAnswers(int pollId)
         {
             int id = pollId;
             Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
