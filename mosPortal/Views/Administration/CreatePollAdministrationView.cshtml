@@ -37,7 +37,7 @@
                         <select id="pollSelectCategoryModal" class="form-control" asp-items="ViewBag.CategoriesList"></select>
 
                     </div>
-                    <div class="form-group">
+                    <div id="pollCommentFormModal" class="form-group">
                         <label class="col-md-6 control-label">Kommentar vom Germeinderat</label>
                         <textarea id="pollCommentModal" class="form-control" disabled="disabled"></textarea>
                     </div>
@@ -77,7 +77,15 @@
         var date = new Date();
         var minDate = new Date(date.setMonth(date.getMonth() + 1));
         var maxDate = new Date(date.setMonth(date.getMonth() + 6));
+        var minDay = minDate.getDate();
+        var maxDay = maxDate.getDate();
         var minMonth = (minDate.getMonth() + 1);
+        if (minDay < 10) {
+            minDay = "0" + minDay;
+        }
+        if (maxDay < 10) {
+            maxDay = "0" + maxDay;
+        }
         var minMonthString = "-";
         if (minMonth < 10) {
             minMonthString = minMonthString + "0" + minMonth;
@@ -87,8 +95,8 @@
         if (maxMonth < 10) {
             maxMonthString = maxMonthString + "0" + maxMonth;
         }
-        var minDateString = minDate.getFullYear() + minMonthString + "-" + minDate.getDate();
-        var maxDateString = maxDate.getFullYear() + maxMonthString + "-" + maxDate.getDate();
+        var minDateString = minDate.getFullYear() + minMonthString + "-" + minDay;
+        var maxDateString = maxDate.getFullYear() + maxMonthString + "-" + maxDay;
         document.getElementById("pollEndModal").setAttribute("min", minDateString);
         document.getElementById("pollEndModal").setAttribute("max", maxDateString);
         document.getElementById("pollEndModal").setAttribute("value", minDateString);

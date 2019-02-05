@@ -135,8 +135,6 @@
 <script type="text/javascript">
     var pollElems = [];
     var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
-
-
     $(document).ready(function () {
         pollElems = document.getElementsByName("poll");
         $('li#linkPolls').addClass('active');
@@ -150,7 +148,14 @@
             createChart(id, pollId, noVotesId);
         }
     });
-
+    $('#createPollModal').on('show.bs.modal', function (event) {
+        $("#pollFile").hide();
+        $("#pollFileHeader").hide();
+        $("#pollCommentFormModal").hide();
+        $("#pollTextModal").val("");
+        $("#pollTitleModal").val("");
+        $("#pollConcernIdModal").val(0);
+    });
     function createChart(chartId, pollId, noVotesId) {
         $.ajax({
             async: false,
@@ -228,7 +233,6 @@
             pollElems[i].style.display = display;
         }
     }
-
     function createPoll() {
         var answerElements = document.getElementsByName("answers");
         var answers = [];

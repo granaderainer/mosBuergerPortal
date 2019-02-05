@@ -262,8 +262,8 @@
     $('#createPollModal').on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget) // Button that triggered the modal
         var concernId = button.data('concernid') // Extract info from data-* attributes
+        $("#pollFile").empty();
         getConcernToCreatePoll(concernId);
-        
     });
     function getConcernToCreatePoll(concernId) {
         $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
