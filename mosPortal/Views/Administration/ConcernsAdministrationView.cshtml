@@ -148,16 +148,17 @@
                     <div class="right-col col-lg-2 d-flex align-items-center">
                         @if (concern.UserConcern.Count >= 1 && concern.StatusId == 2)
                         {
-                            <button type="button" class="btn btn-primary col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                            @*style="font-size: 0.65em;"*@
+                            <button type="button" class="btn btn-primary col-6 mr-1 " data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                             <!--<button id="createPollButton" type="button" class="btn btn-primary col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>-->
                         }
                         @if (concern.StatusId != 2)
                         {
-                            <button type="button" class="btn btn-primary  col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
+                            <button type="button" class="btn btn-primary col-6 mr-1" data-toggle="modal" data-target="#changeConcernStatusModal" data-concernid="@concern.Id" data-concernstatusold="@concern.StatusId">Bearbeiten</button>
                         }
                         @if (concern.StatusId == 5 && ViewBag.allowToCreatePoll)
                         {
-                            <button id="createPollButton" type="button" class="btn btn-primary  col-6" data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
+                            <button id="createPollButton" type="button" class="btn btn-primary col-6 " data-toggle="modal" data-target="#createPollModal" data-concernid="@concern.Id">Umfrage</button>
                         }
                     </div>
                 </div>
