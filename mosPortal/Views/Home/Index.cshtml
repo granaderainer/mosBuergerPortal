@@ -8,12 +8,13 @@
 
     ViewData["Title"] = "Einwohnerportal Mosbach";
     ViewData["isCarousel"] = "isTrue";
-    ViewData["register"] = false;
-    ViewData["login"] = true;
+    //ViewData["register"] = false;
+    //ViewData["login"] = true;
 
 }
-@if ((bool)ViewData["register"])
+@if ((bool)ViewBag.register)
 {
+   
     <script type="text/javascript">
         vNotify.success({
             text: 'Erfolgreich registriert',
@@ -22,7 +23,7 @@
     </script>
 
 }
-@if ((bool) ViewData["login"])
+@if ((bool)ViewBag.login)
 {
    <script type="text/javascript">
         $(document).ready(function() {

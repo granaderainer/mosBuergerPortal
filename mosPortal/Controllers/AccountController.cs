@@ -95,6 +95,8 @@ namespace mosPortal.Controllers
                 
                 if (identityResult.Succeeded)
                 {
+                    
+                    bool register = false;
                     //await signInManager.UserManager.AddToRoleAsync(newUser, "User"); Es wird IsInRoleAsync aufgerufen
                     Role role = db.Role.SingleOrDefault(r => r.Name == "User");
                     UserRole userRole = new UserRole
@@ -107,14 +109,14 @@ namespace mosPortal.Controllers
                   
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
-                        ViewData["register"] = true;
+                        register = true;
                         return RedirectToAction("Index", "Home");
                         //return Redirect(returnUrl);
                     }
                     else
                     {
-                        ViewData["register"] = false;
-                        return RedirectToAction("Index", "Home");
+                        register = false;
+                        return RedirectToAction("Index", "Home", new { register});
                     }
                 }
             }
@@ -127,6 +129,8 @@ namespace mosPortal.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
+
+            bool login = false;
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Username,
@@ -140,8 +144,8 @@ namespace mosPortal.Controllers
                     }
                     else
                     {
-                        ViewData["login"] = true;
-                        return RedirectToAction("Index", "Home");
+                        login = true;
+                        return RedirectToAction("Index", "Home", new { login});
                     }
                 }
             }
