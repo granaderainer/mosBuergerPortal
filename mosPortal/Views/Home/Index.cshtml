@@ -8,63 +8,84 @@
 
     ViewData["Title"] = "Einwohnerportal Mosbach";
     ViewData["isCarousel"] = "isTrue";
-  
+    ViewData["register"] = false;
+    ViewData["login"] = true;
 
 }
+@if ((bool)ViewData["register"])
+{
+    <script type="text/javascript">
+        vNotify.success({
+            text: 'Erfolgreich registriert',
+            title: 'Sie sind nun registriert.'
+        });
+    </script>
 
-<section style="background: url('~/user_template/img/photogrid.jpg') center center repeat; background-size: cover;" class="bar background-white relative-positioned">
-    <div class="container">
-        <!-- Carousel Start-->
-        @await Html.PartialAsync("_CarouselPartial")
-        <!-- Carousel End-->
-    </div>
-</section>
-@await Html.PartialAsync("_IconPartial")
-<section style="background: url(/admin_template/img/group/backgroundindexbridge.jpg) center top no-repeat; background-size: cover;  opacity: 0.8; filter: alpha(opacity=50);" class="bar no-mb color-white text-center bg-fixed relative-positioned">
-    <div class="dark-mask"></div>
-    <div class="container">
-        <div class="icon icon-outlined icon-lg"><i class="fa fa-info-circle"></i>@*<img class="img-fluid" src="admin_template/img/group/logoMosbachtrans.png">*@</div>
-        <h3 class="text-uppercase">Wollen Sie weitere Informationen dazu erlangen?</h3>
-        <p class="lead">Die Internetseite der großen Kreisstadt Mosbach enthält weitere Informationen zu diesem Projekt.</p>
-        <p class="text-center"><a href="https://www.mosbach.de/" target="_blank" class="btn btn-template-outlined-white btn-lg">Zur Internetseite der Stadt Mosbach</a></p>
-    </div>
-</section>
-@if (SignInManager.IsSignedIn(User))
-    {
-<section class="bg-white bar">
-    @await Html.PartialAsync("_BlogPartial", ViewBag.PollViewModels,ViewData)
+}
+@if ((bool) ViewData["login"])
+{
+   <script type="text/javascript">
+        $(document).ready(function() {
+            vNotify.success({
+                text: 'Erfolgreich angemeldet',
+                title: 'Sie sind nun angemeldet.'
+            });
+        });
+    </script>
+}
+    <section style="background: url('~/user_template/img/photogrid.jpg') center center repeat; background-size: cover;" class="bar background-white relative-positioned">
+        <div class="container">
+            <!-- Carousel Start-->
+            @await Html.PartialAsync("_CarouselPartial")
+            <!-- Carousel End-->
+        </div>
     </section>
+    @await Html.PartialAsync("_IconPartial")
+    <section style="background: url(/admin_template/img/group/backgroundindexbridge.jpg) center top no-repeat; background-size: cover;  opacity: 0.8; filter: alpha(opacity=50);" class="bar no-mb color-white text-center bg-fixed relative-positioned">
+        <div class="dark-mask"></div>
+        <div class="container">
+            <div class="icon icon-outlined icon-lg"><i class="fa fa-info-circle"></i>@*<img class="img-fluid" src="admin_template/img/group/logoMosbachtrans.png">*@</div>
+            <h3 class="text-uppercase">Wollen Sie weitere Informationen dazu erlangen?</h3>
+            <p class="lead">Die Internetseite der großen Kreisstadt Mosbach enthält weitere Informationen zu diesem Projekt.</p>
+            <p class="text-center"><a href="https://www.mosbach.de/" target="_blank" class="btn btn-template-outlined-white btn-lg">Zur Internetseite der Stadt Mosbach</a></p>
+        </div>
+    </section>
+    @if (SignInManager.IsSignedIn(User))
+    {
+        <section class="bg-white bar">
+            @await Html.PartialAsync("_BlogPartial", ViewBag.PollViewModels, ViewData)
+        </section>
     }
-<section class="bar background-pentagon no-mb text-md-center">
-    <div class="container">
-        <div class="heading text-center">
-            <h2>Feedback von Bürgern</h2>
+    <section class="bar background-pentagon no-mb text-md-center">
+        <div class="container">
+            <div class="heading text-center">
+                <h2>Feedback von Bürgern</h2>
+            </div>
+            <p class="lead">Viele Bürger sind bereits aktiv. Bringen auch Sie sich aktiv ein.</p>
+            <!-- Carousel Start-->
+            @await Html.PartialAsync("_TestimonialsPartial")
+            <!-- Carousel End-->
         </div>
-        <p class="lead">Viele Bürger sind bereits aktiv. Bringen auch Sie sich aktiv ein.</p>
-        <!-- Carousel Start-->
-        @await Html.PartialAsync("_TestimonialsPartial")
-        <!-- Carousel End-->
-    </div>
-</section>
-<section class="bar bg-gray">
-    <div class="container">
-        <div class="heading text-center">
-            <h2>Sponsor</h2>
+    </section>
+    <section class="bar bg-gray">
+        <div class="container">
+            <div class="heading text-center">
+                <h2>Sponsor</h2>
+            </div>
+            <ul class="list-unstyled owl-carousel customers no-mb">
+                <li class="item"><img src="~/admin_template/img/group/DHBWLogo.png" alt="" class="img-fluid"></li>
+                <li class="item"><img src="~/admin_template/img/group/logoMosbachtrans.png" alt="" class="img-fluid"></li>
+            </ul>
         </div>
-        <ul class="list-unstyled owl-carousel customers no-mb">
-            <li class="item"><img src="~/admin_template/img/group/DHBWLogo.png" alt="" class="img-fluid"></li>
-            <li class="item"><img src="~/admin_template/img/group/logoMosbachtrans.png" alt="" class="img-fluid"></li>
-        </ul>
+    </section>
+    <!-- GET IT-->
+    <div class="get-it">
+        <div class="container">
+            @*<div class="row">
+                    <div class="col-lg-8 text-center p-3">
+                        <h3>Do you want cool website like this one?</h3>
+                    </div>
+                    <div class="col-lg-4 text-center p-3">   <a href="#" class="btn btn-template-outlined-white">Buy this template now</a></div>
+                </div>*@
+        </div>
     </div>
-</section>
-<!-- GET IT-->
-<div class="get-it">
-    <div class="container">
-        @*<div class="row">
-                <div class="col-lg-8 text-center p-3">
-                    <h3>Do you want cool website like this one?</h3>
-                </div>
-                <div class="col-lg-4 text-center p-3">   <a href="#" class="btn btn-template-outlined-white">Buy this template now</a></div>
-            </div>*@
-    </div>
-</div>

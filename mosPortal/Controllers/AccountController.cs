@@ -107,11 +107,13 @@ namespace mosPortal.Controllers
                   
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
+                        ViewData["register"] = true;
                         return RedirectToAction("Index", "Home");
                         //return Redirect(returnUrl);
                     }
                     else
                     {
+                        ViewData["register"] = false;
                         return RedirectToAction("Index", "Home");
                     }
                 }
@@ -138,6 +140,7 @@ namespace mosPortal.Controllers
                     }
                     else
                     {
+                        ViewData["login"] = true;
                         return RedirectToAction("Index", "Home");
                     }
                 }
