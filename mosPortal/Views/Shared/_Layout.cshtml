@@ -1,6 +1,7 @@
 ﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Security.Claims
 @{
+    ViewData["admin"] = false;
 }
 <!DOCTYPE html>
 <html>
@@ -64,7 +65,7 @@
 <body>
     <div id="all">
         <!-- Top bar-->
-        @await Html.PartialAsync("_TopBarPartial")
+        @await Html.PartialAsync("_TopBarPartial",ViewData["admin"])
         <!-- Top bar end-->
         <!-- Login modal end-->
         <!-- Navbar Start-->
