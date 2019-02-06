@@ -269,15 +269,14 @@ namespace mosPortal.Controllers
         }
 
         
-        public IActionResult ShowPolls()
+        public async Task<IActionResult> ShowPolls()
         {
             DateTime time = DateTime.UtcNow;
             DateTime time6month = DateTime.UtcNow.AddMonths(6);
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
-
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
-
+            var user = await userManager.GetUserAsync(HttpContext.User); 
             ViewData["Categories"] = categories;
             foreach (Category category in categories)
             {
@@ -313,7 +312,9 @@ namespace mosPortal.Controllers
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)
             {
+
                 
+
                 PollViewModel pollViewModel = new PollViewModel();
 
                 pollViewModel.Id = poll.Id;
@@ -337,9 +338,24 @@ namespace mosPortal.Controllers
                 pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
                 pollViewModel.RadioId = 0;
                 pollViewModel.Image = poll.Image;
-
+                pollViewModel.userAnswerOptionsPollId = 0;
+                if (user != null)
+                {
+                    UserAnswerOptionsPoll userAnswerOptionsPoll = null;
+                    //List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).ToList();
+                    foreach (AnswerOptionsPoll aop in poll.AnswerOptionsPoll)
+                    {
+                        userAnswerOptionsPoll = db.UserAnswerOptionsPoll.Where(uaop => uaop.UserId == user.Id && uaop.AnswerOptionsPollId == aop.Id).SingleOrDefault();
+                        if(userAnswerOptionsPoll !=null){
+                            break;
+                        }
+                    }
+                    if(userAnswerOptionsPoll != null)
+                    {
+                        pollViewModel.userAnswerOptionsPollId = userAnswerOptionsPoll.AnswerOptionsPollId;
+                    }
+                }
                 pollViewModels.Add(pollViewModel);
-
             }
 
             return View("PollsView",pollViewModels);
@@ -387,7 +403,7 @@ namespace mosPortal.Controllers
                 db.SaveChanges();
             }
 
-            return ShowPolls();
+            return await ShowPolls();
         }
 
 

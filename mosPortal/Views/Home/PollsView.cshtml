@@ -145,9 +145,20 @@
                                                             //value ist ID aus der Description in AnswerOptions
 
                                                             @*@Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                                            @Html.Label(answer.AnswerOptions.Description)<br />*@
-                                                            @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.Id)<span> </span>
-                                                            @Html.Label(answer.AnswerOptions.Description)<br />
+                @Html.Label(answer.AnswerOptions.Description)<br />*@
+                                                            if (item.userAnswerOptionsPollId == answer.Id)
+                                                            {
+                                                                <input id="RadioId" name="RadioId" type="radio" value="@answer.Id" checked>
+                                                                <span> </span>
+                                                                @Html.Label(answer.AnswerOptions.Description)<br />
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.Id)<span> </span>
+                                                                @Html.Label(answer.AnswerOptions.Description)<br />
+
+                                                            }
+
                                                         }
                                                     }
                                                     <button class="btn btn-success" type="submit">
