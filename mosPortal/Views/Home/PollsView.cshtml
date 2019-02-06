@@ -144,7 +144,9 @@
                                                             //Submitbuttons Auswahl des Radiobuttons zum Controller geben
                                                             //value ist ID aus der Description in AnswerOptions
 
-                                                            @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                                            @*@Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
+                                                            @Html.Label(answer.AnswerOptions.Description)<br />*@
+                                                            @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.Id)<span> </span>
                                                             @Html.Label(answer.AnswerOptions.Description)<br />
                                                         }
                                                     }

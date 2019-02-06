@@ -36,8 +36,10 @@ namespace mosPortal.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index()
+        public IActionResult Index( bool register = false, bool login = false)
         {
+            ViewData["register"] = register;
+            ViewData["login"] = login;
             ViewData["VotesCount"] = db.UserConcern.Count();
             ViewData["VotedUserCount"] = db.UserConcern.GroupBy(uc => uc.UserId).Count();
             ViewData["PollViewModels"] = ShowPollsIndex();
@@ -354,9 +356,9 @@ namespace mosPortal.Controllers
                 var pollId = poll.Id;
                 var user = await userManager.GetUserAsync(HttpContext.User);
 
-
-                var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId)
-                    .Where(aop => aop.AnswerOptionsId == selectedRadio);
+                var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.Id == selectedRadio);
+                //var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId)
+                    //.Where(aop => aop.AnswerOptionsId == selectedRadio);
 
                 var selectedAnswerOptionsPollId = -1;
                 selectedAnswerOptionsPollId = matchEntry.First().Id;
