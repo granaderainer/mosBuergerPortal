@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Mapping;
 using System.Data.Entity.SqlServer;
 using System.Diagnostics;
 using System.IO;
@@ -46,6 +47,7 @@ namespace mosPortal.Controllers
         [AllowAnonymous]
         public IActionResult ShowConcerns()
         {
+            DateTime time6 = DateTime.UtcNow.AddMonths(-6);
           
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
@@ -61,10 +63,24 @@ namespace mosPortal.Controllers
                             .Include("Category")
                             .Include("Comment")
                             .ToList();
+            List<Concern> concernsRemoveList = new List<Concern>();
             foreach (Concern concern in concerns)
             {
                 List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
                 concern.UserConcern = userConcerns;
+                if (time6 > concern.Date && concern.StatusId == 2 && concern.UserConcern.Count < 100)
+                {
+                    concern.StatusId = 6;
+                    db.Concern.Update(concern);
+                    concernsRemoveList.Add(concern);
+
+                }
+                
+            }
+            db.SaveChangesAsync();
+            foreach (Concern c in concernsRemoveList)
+            {
+                concerns.Remove(c);
             }
             return View("ConcernsView",concerns);
         }
@@ -84,7 +100,17 @@ namespace mosPortal.Controllers
             concern.Comment = comments;
             concern.Category = category;
             concern.Image = images;
-            
+
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+
+            ViewData["Categories"] = categories;
+            foreach (Category c in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = c.Id.ToString(), Text = c.Description });
+            }
+            ViewData["CategoriesList"] = categoriesList;
+
             return View("ConcernView", concern);
         }
 
@@ -243,7 +269,6 @@ namespace mosPortal.Controllers
         
         public IActionResult ShowPolls()
         {
-            //int pollId = -1;
             DateTime time = DateTime.UtcNow;
             DateTime time6month = DateTime.UtcNow.AddMonths(6);
             List<Poll> polls = db.Poll.Where(p => p.End>time).Where(p=> p.NeedsLocalCouncil == false).Where(p=> p.Approved == true).Include("Category").ToList();
@@ -366,15 +391,18 @@ namespace mosPortal.Controllers
 
         public IActionResult ShowImpressum()
         {
-            throw new NotImplementedException();
+            return View("_Impressum");
+        }
+        public IActionResult ShowDSGVO()
+        {
+            return View("_Datenschutzerklaerung");
         }
 
         public ICollection<PollViewModel> ShowPollsIndex()
         {
             DateTime time = DateTime.UtcNow;
             //7 Tage dazu addieren
-            DateTime timecut = time.AddDays(7);
-            List<Poll> polls = db.Poll.Where(p => p.End > time).Where(p => p.End < timecut).Where(p => p.NeedsLocalCouncil == false).Where(p => p.Approved == true).Include("Category").ToList(); //.OrderBy(p => p.End)
+            List<Poll> polls = db.Poll.Where(p => p.StatusId == 2).Where(p => p.End>time).Include("Category").OrderBy(p => p.End).Take(4).ToList(); //.OrderBy(p => p.End)
 
             foreach (Poll poll in polls)
             {

@@ -5,14 +5,14 @@
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
-    
-         
-     
+
+
+
     ViewData["Title"] = "ConcernView";
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["ConcernId"] = Model.Id;
-   
-    
+    var categories = ViewData["Categories"] as IEnumerable<Category>;
+
 
 }
 
@@ -226,6 +226,25 @@
 
 
 <script type="text/javascript">
+    function showCategory() {
+        var selectElement = document.getElementById("selectCategory");
+        var index = selectElement.selectedIndex;
+        var categoryId = selectElement.options[index].value;
+        var categoryDescription = selectElement.options[index].text;
+
+        $("#categoryId").val(categoryId)
+        $("#categoryDescription").val(categoryDescription)
+        $("#categoryHeader").html('<h3  class="h4">Kategorie anzeigen</h3>');
+        $("#editCategory").show();
+        $("#cancelEditCategory").hide();
+        $("#saveCategory").hide();
+        $("#categoryDescription").attr('disabled', 'disabled');
+        $("#deleteCategory").show();
+        console.log(categoryId);
+        console.log(categoryDescription);
+        console.log(index);
+
+    }
     
 
     function disableButton(btn, concernId) {
@@ -244,7 +263,7 @@
         }
 
     }
-   
+
 
     
 </script>
