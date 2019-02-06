@@ -342,15 +342,15 @@ namespace mosPortal.Controllers
             if (roles[0] == "Verw")
             {
                 allowToCreatePoll = true;
-                db.Poll.Where(p=>p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
+                polls = db.Poll.Where(p=>p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
             }
             if (roles[0] == "BM" || roles[0] == "GR")
             {
-                db.Poll.Where(p => p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
+                polls = db.Poll.Where(p => p.End >= DateTime.Today.AddMonths(-1)).OrderByDescending(p => p.End).ToList();
             }
             if (roles[0] == "Admin")
             {
-                db.Poll.OrderByDescending(p => p.End).ToList();
+                polls=db.Poll.OrderByDescending(p => p.End).ToList();
                 statusList.Add(new SelectListItem { Value = "6", Text = "abgeschlossene Umfragen" });
             }
             foreach (Category category in categories)
