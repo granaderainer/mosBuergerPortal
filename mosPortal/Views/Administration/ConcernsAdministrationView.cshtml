@@ -471,11 +471,21 @@
         $.post("/Administration/ChangeConcernStatus", { concern: concernId, status: statusId, comment: comment }, function (data) {
             result = (data.result);
             if (result == 1) {
-                vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' });
+                vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' },
+                    {
+                        z_index: 2147483647
+                        
+            });
                 changeConcernDiv(concernId, statusId);
             }
             else {
-                vNotify.error({ text: 'Der Status konnte nicht geändert werden!', title: 'Statusänderung fehlgeschlagen' })
+                vNotify.error({
+                    text: 'Der Status konnte nicht geändert werden!',
+                    title: 'Statusänderung fehlgeschlagen'
+                },
+                    {
+                        z_index: 2147483647  
+                    });
             }
         });
     }

@@ -56,7 +56,8 @@ var vNotify = (function() {
     var frag = document.createDocumentFragment();
 
     var item = document.createElement('div');
-    item.classList.add('vnotify-item');
+      item.classList.add('vnotify-item');
+      item.classList.add('zvnotify');
     item.classList.add(params.notifyClass);
     item.style.opacity = 0;
 
