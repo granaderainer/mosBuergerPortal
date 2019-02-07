@@ -56,7 +56,7 @@
                                 <a href="text.html" class="nav-link">Alle Umfragen</a>
                             </li>@*Alle Polls*@
                             <li class="nav-item">
-                                <a href="contact.html" class="nav-link">Endende Umfragen</a>
+                                <a href="#" class="nav-link" onclick="sortdesc()">Endende Umfragen</a>
                             </li>@*Polls die ablaufen*@
 
                         </ul>
@@ -98,7 +98,7 @@
                                                 </div>
                                                 <div class="col-sm-6 text-right">
                                                     <p class="date-comments">
-                                                        <i class="fa fa-calendar-o"></i>@item.End.ToString("dd/MM/yyyy")
+                                                        <i class="fa fa-calendar-o"></i><span id="@item.Id @item.End.ToString("dd/MM/yyyy")" name="dates">@item.End.ToString("dd/MM/yyyy")</span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -182,16 +182,22 @@
 </div>
 <script type="text/javascript">
     var concernElements = [];
-    $(document).ready(function () {
+    var allDates = [];
+   $(document).ready(function () {
         concernElements = document.getElementsByName("poll");
+        console.log(concernElements);
+        allDates = document.getElementsByName("dates");
+        console.log(allDates);
+
+      
     });
     function selectCategory() {
         var selectedCategory = $('#selectCategory').val();
         console.log('selectedCategory' + selectedCategory);
         for (var i = 0; i < concernElements.length; i++) {
             var categoryid = concernElements[i].id.split(' ')[1];
-            console.log('categoryid' + categoryid);
-            console.log('concernElements' + concernElements[i]);
+            console.log('categoryid ' + categoryid);
+            console.log('concernElements ' + concernElements[i]);
             if (categoryid == selectedCategory) {
                 concernElements[i].style.display = "block";
             } else {
@@ -202,5 +208,17 @@
             }
         }
     }
+
+    function sortdesc() {
+       
+        for (var i = 0; i < concernElements.length; i++) {
+            var pollid = concernElements[i].id.split(' ')[0];
+            var pollDate = concernElements[i].id.split(' ')[1];
+            console.log(pollDate);
+            
+
+        }
+        console.log(pollanddate);
+       }
 </script>
 
