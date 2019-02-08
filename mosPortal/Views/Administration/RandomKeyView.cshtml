@@ -29,16 +29,16 @@
                     <div class="card-header">Hier können Registrierungsschlüssel generiert werden.</div>
                     <div class="card-body">
                         <form asp-controller="Administration" asp-action="GetRandomKey">
-                            <label title="Registrierungsschlüssel"/>
+                            <label title="Registrierungsschlüssel" />
 
-                            <i class="fa fa-lock mr-3"></i><input type="text" class="mr-3" maxlength="11" minlength="11" value="@Model.Key" readonly/>
+                            <i class="fa fa-lock mr-3"></i><input type="text" class="mr-3" maxlength="11" minlength="11" value="@Model.Key" readonly />
 
-                            <input class="btn btn-danger m-2" type="submit" value="Generieren"/>
+                            <input class="btn btn-danger m-2" type="submit" value="Generieren" />
                         </form>
                     </div>
                     <div class="card-footer">
                         <form asp-controller="Administration" asp-action="GenerateWord" method="post" role="form">
-                            <input asp-for="@Model.Key" value="@Model.Key" type="hidden"/>
+                            <input asp-for="@Model.Key" value="@Model.Key" type="hidden" />
 
 
                             <button type="submit" class="btn btn-primary w-100">Download</button>
@@ -52,3 +52,13 @@
         </div>
     </div>
 </section>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('li#linkRandomKey').addClass('active');
+        $('#linkAdministration').attr({
+            'aria-expanded': true,
+            'class': ""
+        });
+        $('#exampledropdownDropdown').addClass("show");
+    });
+</script>

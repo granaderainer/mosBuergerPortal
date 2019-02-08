@@ -186,7 +186,7 @@
                 <li id="linkPolls">
                     <a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a>
                 </li>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "admin")).Succeeded)
+            @if (roles[0] == "Admin")
             {
                 <li>
                     <a id="linkAdministration" href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
@@ -197,7 +197,7 @@
                         <li id="linkCategoriesCRUD">
                             <a asp-controller="Administration" asp-action="ShowCategories">Kategorie verwalten</a>
                         </li>
-                        <li>
+                        <li id="linkRandomKey">
                             <a asp-controller="Administration" asp-action="ShowKey">Registrierungsschlüssel</a>
                         </li>
                     </ul>

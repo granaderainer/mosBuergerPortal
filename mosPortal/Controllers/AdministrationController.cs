@@ -19,6 +19,7 @@ using File = mosPortal.Models.File;
 
 namespace mosPortal.Controllers
 {
+    [Authorize(Policy = "AllAdministrationRoles")]
     public class AdministrationController : Controller
     {
         private readonly IHostingEnvironment _hostingEnvironment;
@@ -99,10 +100,10 @@ namespace mosPortal.Controllers
             foreach (Status stat in status)
             {
                 statusList.Add(new SelectListItem {Value = stat.Id.ToString(), Text = stat.Description});
-                if (stat.Id == 3)
+                /*if (stat.Id == 3)
                 {
                     statusList.Add(new SelectListItem {Value = "31", Text = stat.Description + " von mir"});
-                }
+                }*/
             }
 
             List<SelectListItem> categoriesList = new List<SelectListItem>();
@@ -161,7 +162,6 @@ namespace mosPortal.Controllers
                     {
                         answerOption = new AnswerOptions {Description = answer};
                         db.Add(answerOption);
-                        //db.SaveChanges();
                         answerOptionId.Add(answerOption.Id);
                     }
                 }
@@ -273,19 +273,6 @@ namespace mosPortal.Controllers
             });
         }
 
-        /*[HttpPost]
-        public async Task<IActionResult> ChangeConcernStatus(string concernModalStatus, string concernModalId)
-        {
-            int concernId = Convert.ToInt32(concernModalId);
-            int statusId = Convert.ToInt32(concernModalStatus);
-            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
-            int oldStatus = concern.StatusId;
-            concern.StatusId = statusId;
-            db.Concern.Update(concern);
-            db.SaveChanges();
-            return await this.ShowConcerns(oldStatus);
-
-        }*/
         [HttpPost]
         public async Task<IActionResult> ChangeConcernStatus(string status, string concern, string comment)
         {
@@ -389,14 +376,6 @@ namespace mosPortal.Controllers
             return Json(new {title = poll.Title, text = poll.Text, end = poll.End, votes});
         }
 
-        /*public IActionResult ShowPoll()
-        {
-            int id = 2;
-            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
-            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
-            poll.AnswerOptionsPoll = answerOptionsPolls;
-            return View("PollAdministrationView", poll);
-        }*/
         public IActionResult GetPollAnswers(int pollId)
         {
             int id = pollId;
@@ -414,7 +393,7 @@ namespace mosPortal.Controllers
 
             return poll.getAnswers();
         }
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ShowCategories()
         {
             List<Category> categories = db.Category.ToList();
@@ -422,7 +401,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult crudCategory(string categoryId, string description, string operation)
         {
             Category category = new Category();
@@ -468,7 +447,7 @@ namespace mosPortal.Controllers
 
             return Json(new {result, title, text, description, categoryId = categoryIdInt});
         }
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult ShowUsers()
         {
             List<User> users = db.User.Include("UserRole").ToList();
@@ -502,6 +481,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetUser(int userId)
         {
             //int userIdInt = Convert.ToInt32(userId);
@@ -511,7 +491,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult crudUser(User user, int roleId, string operation)
         {
             string title = "";
@@ -554,7 +534,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "admin")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetRandomKey()
         {
             Randomkey key = GenerateRandomkey();
@@ -608,7 +588,7 @@ namespace mosPortal.Controllers
             //range.Text = key;
             //doc.Bookmarks.Add(bookmark, range);
         }
-
+        [Authorize(Roles = "Admin")]
         public IActionResult ShowKey()
         {
             Randomkey key = new Randomkey();
