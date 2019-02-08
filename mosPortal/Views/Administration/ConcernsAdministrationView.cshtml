@@ -1,8 +1,7 @@
-﻿@model IEnumerable<mosPortal.Models.Concern>
+﻿@model IEnumerable<Concern>
 @{
     ViewData["Title"] = "ConcernsAdministrationView";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
-
 }
 <!-- Page Header-->
 <header class="page-header">
@@ -12,8 +11,10 @@
 </header>
 <div class="container-fluid breadcrumb-holder" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
     <ul class="breadcrumb" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
-        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
-        <li class="breadcrumb-item active">Anliegen            </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-controller="Administration">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Anliegen </li>
     </ul>
 </div>
 
@@ -56,8 +57,12 @@
                 <div class="card">
                     <div class="card-close">
                         <div class="dropdown">
-                            <button type="button" id="closeCard3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard3" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                            <button type="button" id="closeCard3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <div aria-labelledby="closeCard3" class="dropdown-menu dropdown-menu-right has-shadow">
+                                <a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
+                            </div>
                         </div>
                     </div>
                     <div class="card-header d-flex align-items-center">
@@ -81,7 +86,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label class="col-sm-12 form-control-label">Suche</label>
-                                    <input id="concernSearchText" class="col-lg-12" />
+                                    <input id="concernSearchText" class="col-lg-12"/>
 
                                 </div>
                             </div>
@@ -105,9 +110,9 @@
 <!-- Projects Section-->
 <section class="projects no-padding-top">
     <div class="container-fluid">
-        @foreach (Concern concern in Model)
+        @foreach (var concern in Model)
         {
-            string lastUpdatesBy = "0";
+            var lastUpdatesBy = "0";
             if (concern.LastUpdatedBy != null)
             {
                 lastUpdatesBy = concern.LastUpdatedBy.ToString();
@@ -117,26 +122,32 @@
                 <div class="row bg-white has-shadow">
                     <div class="left-col col-lg-6 d-flex align-items-center justify-content-between">
                         <div class="project-title d-flex align-items-center">
-                            <div class="image has-shadow"><img src="@Url.Action("GetConcernTitleImage", "File", new { concernId = concern.Id})" style="max-height:100%; max-width:100%;   margin-left: auto; margin-right: auto;" alt="..." class="img-fluid"></div>
+                            <div class="image has-shadow">
+                                <img src="@Url.Action("GetConcernTitleImage", "File", new {concernId = concern.Id})" style="margin-left: auto; margin-right: auto; max-height: 100%; max-width: 100%;" alt="..." class="img-fluid">
+                            </div>
                             <div class="text">
                                 <h3 class="h4">@Html.DisplayFor(modelItem => concern.Title)</h3><small> @Html.DisplayFor(modelItem => concern.Text)</small>
                             </div>
                         </div>
                     </div>
                     <div class="right-col col-lg-4 d-flex align-items-center">
-                        <div class="time"><i class="fa fa-clock-o"></i>@concern.Date.ToString("dd.MM.yy")</div>
-                        <div class="comments"><i class="fa fa-comment-o"></i>@Html.DisplayFor(modelItem => concern.Comment.Count)</div>
-                        <div class="comments"><i class="fa fa-thumbs-o-up"></i>@Html.DisplayFor(modelItem => concern.UserConcern.Count)</div>
+                        <div class="time">
+                            <i class="fa fa-clock-o"></i>@concern.Date.ToString("dd.MM.yy")</div>
+                        <div class="comments">
+                            <i class="fa fa-comment-o"></i>@Html.DisplayFor(modelItem => concern.Comment.Count)</div>
+                        <div class="comments">
+                            <i class="fa fa-thumbs-o-up"></i>@Html.DisplayFor(modelItem => concern.UserConcern.Count)</div>
                         <div class="project-progress">
                             <div class="progress">
-                                <div role="progressbar" style="width: @concern.UserConcern.Count%; height: 6px;" aria-valuenow="@concern.UserConcern.Count" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
+                                <div role="progressbar" style="height: 6px; width: @concern.UserConcern.Count%;" aria-valuenow="@concern.UserConcern.Count" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
                             </div>
                         </div>
                         @if (concern.StatusId == 3)
                         {
                             if (concern.LastUpdatedByUser != null)
                             {
-                                <div class="comments"><i class="fa fa-edit"></i>@Html.Raw(concern.LastUpdatedByUser.Firstname + ", " + concern.LastUpdatedByUser.Name)</div>
+                                <div class="comments">
+                                    <i class="fa fa-edit"></i>@Html.Raw(concern.LastUpdatedByUser.Firstname + ", " + concern.LastUpdatedByUser.Name)</div>
                             }
                             else
                             {
@@ -176,12 +187,12 @@
             </div>
 
             <div class="modal-body">
-                <div id="concernModalDiv" style="display:none;">
+                <div id="concernModalDiv" style="display: none;">
                     <div id="concernModalTitle"></div>
                     <hr>
                     <div id="concernModalCarousel" class="carousel slide" data-ride="carousel" style="display: none;">
                         <ol id="concernModalCarouselOl" class="carousel-indicators"></ol>
-                        <div id="concernModalCarouselItemDiv" class="carousel-inner" style=" width:100%; height: 500px !important;">
+                        <div id="concernModalCarouselItemDiv" class="carousel-inner" style="height: 500px !important; width: 100%;">
                         </div>
                         <a class="carousel-control-prev" href="#concernModalCarousel" role="button" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -192,18 +203,18 @@
                             <span class="sr-only">Next</span>
                         </a>
                     </div>
-                    <hr id="concernModalSpacer" style="display:none;">
-                    <div id="concernModalFile" style="display:none;">
+                    <hr id="concernModalSpacer" style="display: none;">
+                    <div id="concernModalFile" style="display: none;">
 
                     </div>
-                    <hr id="concernModalSpacer2" style="display:none;">
+                    <hr id="concernModalSpacer2" style="display: none;">
                     <div id="concernModalText"></div>
                     <hr>
                     <div id="concernModalDate"></div>
                     <hr>
-                    <input type="hidden" name="concernModalId" id="concernModalId" />
-                    <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld" />
-                    <div id="concernModalCommentDiv" class="form-group" style="display:none;">
+                    <input type="hidden" name="concernModalId" id="concernModalId"/>
+                    <input type="hidden" name="concernModelStatusOld" id="concernModelStatusOld"/>
+                    <div id="concernModalCommentDiv" class="form-group" style="display: none;">
                         <label class="col-md-6 control-label">Kommentar vom Germeinderat</label>
                         <textarea id="concernModalComment" class="form-control" disabled="disabled"></textarea>
                     </div>
@@ -227,89 +238,110 @@
     </div>
 </div>
 <!-- Modal-->
-@await Html.PartialAsync("CreatePollAdministrationView", new Poll { }, new ViewDataDictionary(ViewData))
+@await Html.PartialAsync("CreatePollAdministrationView", new Poll(), new ViewDataDictionary(ViewData))
 <script type="text/javascript">
     var elems;
     var fileIds;
     var imageIds;
     var deletedFileIds = [];
     var deletedImageIds = [];
-    $(document).ready(function () {
+    $(document).ready(function() {
         $("li#linkConcerns").addClass("active");
         elems = document.getElementsByName("concern");
         console.log(elems);
 
     });
-    $('#changeConcernStatusModal').on('show.bs.modal', function (event) {
-        console.log("Anderer Test");
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var concernId = button.data('concernid')
-        var concernStatusOld = button.data('concernstatusold')// Extract info from data-* attributes
-        $("#concernModalDiv").hide();
-        $("#concernModalLoad").show();
-        $("#concernModalCarouselItemDiv").empty();
-        $("ol#concernModalCarouselOl").empty();
-        $("#concernModalFile").empty();
-        $("#concernModalCarousel").hide();
-        $("#concernModalSpacer").hide();
-        $("#concernModalFile").hide();
-        $("#concernModalSpacer2").hide();
-        $("#concernModalCommentDiv").hide();
-        $("#concernModalComment").attr('disabled', 'disabled');
-        $("#concernModalStatus").removeAttr('disabled');
-        getConcern(concernId, concernStatusOld);
-    });
-    $('#createPollModal').on('show.bs.modal', function (event) {
-        var button = $(event.relatedTarget) // Button that triggered the modal
-        var concernId = button.data('concernid') // Extract info from data-* attributes
-        $("#pollFile").empty();
-        getConcernToCreatePoll(concernId);
-    });
-    function getConcernToCreatePoll(concernId) {
-        $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-            var title = data.title;
-            var text = data.text;
-            var concernId = data.concernId;
-            fileIds = [];
-            imageIds = [];
-            fileIds = data.fileIds;
-            imageIds = data.imageIds;
-            console.log(imageIds);
-            console.log(fileIds);
-            $("#pollTextModal").val(text);
-            $("#pollTitleModal").val(title);
-            $("#pollConcernIdModal").val(concernId);
-
-            document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId; //-1 will er nicht;
-            if (data.comment == null) {
-                $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat");
-            }
-            else {
-                $("#pollCommentModal").val(data.comment);
-            }
-            //$("#pollFile").show();
-            //$("#pollFileHeader").show();
-            
-            if (fileIds.length > 0) {
-                $("#pollFile").show();
-                $("#pollFileHeader").show();
-                for (var i = 0; i < fileIds.length; i++) {
-                    var link = '<div id="file' + fileIds[i] + '"><a onclick="deleteFileFromPoll(\'file\', \'' + fileIds[i] + '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '</a></br></div >';
-                    //var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
-                    $("#pollFile").append(link);
-                }
-            }
-            if (imageIds.length > 0) {
-                $("#pollFile").show();
-                $("#pollFileHeader").show();
-                for (var i = 0; i < imageIds.length; i++) {
-                    var link = '<div id="image' + imageIds[i] + '"><a onclick="deleteFileFromPoll(\'image\', \'' + imageIds[i] + '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetImage?id=' + imageIds[i] + '">Bild ' + (i + 1) +'</a></br></div >';
-                    //var link = '<a target="_blank" href="/File/GetImage?id=' + imageIds[i] + '">Bild ' + (i + 1)+'</a>';
-                    $("#pollFile").append(link);
-                }
-            }
+    $('#changeConcernStatusModal').on('show.bs.modal',
+        function(event) {
+            console.log("Anderer Test");
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var concernId = button.data('concernid');
+            var concernStatusOld = button.data('concernstatusold'); // Extract info from data-* attributes
+            $("#concernModalDiv").hide();
+            $("#concernModalLoad").show();
+            $("#concernModalCarouselItemDiv").empty();
+            $("ol#concernModalCarouselOl").empty();
+            $("#concernModalFile").empty();
+            $("#concernModalCarousel").hide();
+            $("#concernModalSpacer").hide();
+            $("#concernModalFile").hide();
+            $("#concernModalSpacer2").hide();
+            $("#concernModalCommentDiv").hide();
+            $("#concernModalComment").attr('disabled', 'disabled');
+            $("#concernModalStatus").removeAttr('disabled');
+            getConcern(concernId, concernStatusOld);
         });
+    $('#createPollModal').on('show.bs.modal',
+        function(event) {
+            var button = $(event.relatedTarget); // Button that triggered the modal
+            var concernId = button.data('concernid'); // Extract info from data-* attributes
+            $("#pollFile").empty();
+            getConcernToCreatePoll(concernId);
+        });
+
+    function getConcernToCreatePoll(concernId) {
+        $.get("/Administration/GetConcernJson",
+            { concernId: concernId },
+            function(data) {
+                var title = data.title;
+                var text = data.text;
+                var concernId = data.concernId;
+                fileIds = [];
+                imageIds = [];
+                fileIds = data.fileIds;
+                imageIds = data.imageIds;
+                console.log(imageIds);
+                console.log(fileIds);
+                $("#pollTextModal").val(text);
+                $("#pollTitleModal").val(title);
+                $("#pollConcernIdModal").val(concernId);
+
+                document.getElementById("pollSelectCategoryModal").selectedIndex = data.categoryId; //-1 will er nicht;
+                if (data.comment == null) {
+                    $("#pollCommentModal").val("Kein Kommentar vom Gemeinderat");
+                } else {
+                    $("#pollCommentModal").val(data.comment);
+                }
+                //$("#pollFile").show();
+                //$("#pollFileHeader").show();
+
+                if (fileIds.length > 0) {
+                    $("#pollFile").show();
+                    $("#pollFileHeader").show();
+                    for (var i = 0; i < fileIds.length; i++) {
+                        var link = '<div id="file' +
+                            fileIds[i] +
+                            '"><a onclick="deleteFileFromPoll(\'file\', \'' +
+                            fileIds[i] +
+                            '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetFile?id=' +
+                            fileIds[i] +
+                            '">Dokument ' +
+                            (i + 1) +
+                            '</a></br></div >';
+                        //var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i + 1) + '.pdf</a>';
+                        $("#pollFile").append(link);
+                    }
+                }
+                if (imageIds.length > 0) {
+                    $("#pollFile").show();
+                    $("#pollFileHeader").show();
+                    for (var i = 0; i < imageIds.length; i++) {
+                        var link = '<div id="image' +
+                            imageIds[i] +
+                            '"><a onclick="deleteFileFromPoll(\'image\', \'' +
+                            imageIds[i] +
+                            '\')"><i class="fa fa-times"></i></a><a target="_blank" href="/File/GetImage?id=' +
+                            imageIds[i] +
+                            '">Bild ' +
+                            (i + 1) +
+                            '</a></br></div >';
+                        //var link = '<a target="_blank" href="/File/GetImage?id=' + imageIds[i] + '">Bild ' + (i + 1)+'</a>';
+                        $("#pollFile").append(link);
+                    }
+                }
+            });
     }
+
     function createPoll() {
         var answerElements = document.getElementsByName("answers");
         var answers = [];
@@ -326,8 +358,7 @@
                     }
                 }
             }
-        }
-        else {
+        } else {
             pollImageIds = imageIds;
         }
         if (deletedFileIds > 0) {
@@ -338,8 +369,7 @@
                     }
                 }
             }
-        }
-        else {
+        } else {
             pollFileIds = fileIds;
         }
         var sendData = {
@@ -359,89 +389,103 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(sendData),
-            success: function (data) {
+            success: function(data) {
                 console.log(data);
                 changeConcernDiv(data.concernId, data.concernStatusId);
                 $("#createPollButton").hide();
-                if (data.result >=2) {
+                if (data.result >= 2) {
                     vNotify.success({ text: "Die Umfrage wurde erfolgreich erstellt!", title: "Umfrage erstellt" });
-                }
-                else {
-                    vNotify.error({ text: "Die Umfrage konnte nicht erstellt werden!", title: "Erstellung fehlgeschlagen!" });
+                } else {
+                    vNotify.error({
+                        text: "Die Umfrage konnte nicht erstellt werden!",
+                        title: "Erstellung fehlgeschlagen!"
+                    });
                 }
             }
         });
     }
+
     function getConcern(concernId, concernStatusOld) {
         console.log("Hallo");
-        $.get("/Administration/GetConcernJson", { concernId: concernId }, function (data) {
-            $("#concernModalId").val(concernId);
-            $('#concernModelStatusOld').val(concernStatusOld);
-            document.getElementById("concernModalTitle").innerHTML = "<h4>" + (data.title) + "</h4>";
-            document.getElementById("concernModalText").innerHTML = (data.text);
-            document.getElementById("concernModalDate").innerHTML = "Erstellt am: " + (data.date);// display id value which is returned from the action method
-            //var selectStatus = document.getElementById("concernModalStatus");
-            var statuses = data.statuses;
-            var fragment = document.createDocumentFragment();
-            $("#concernModalStatus").empty();
-            if (!(statuses == null)) {
-                statuses.forEach(function (status, index) {
-                    var opt = document.createElement('option');
-                    opt.innerHTML = status.description;
-                    opt.value = status.id;
-                    fragment.appendChild(opt);
-                    $("#concernModalStatus").append(fragment);
-                    $("#concernModalStatus").val(data.statusId);
-                });
-            }
-            else {
-                $("#concernModalStatus").attr('disabled', 'disabled');
-            }
+        $.get("/Administration/GetConcernJson",
+            { concernId: concernId },
+            function(data) {
+                $("#concernModalId").val(concernId);
+                $('#concernModelStatusOld').val(concernStatusOld);
+                document.getElementById("concernModalTitle").innerHTML = "<h4>" + (data.title) + "</h4>";
+                document.getElementById("concernModalText").innerHTML = (data.text);
+                document.getElementById("concernModalDate").innerHTML =
+                    "Erstellt am: " + (data.date); // display id value which is returned from the action method
+                //var selectStatus = document.getElementById("concernModalStatus");
+                var statuses = data.statuses;
+                var fragment = document.createDocumentFragment();
+                $("#concernModalStatus").empty();
+                if (!(statuses == null)) {
+                    statuses.forEach(function(status, index) {
+                        var opt = document.createElement('option');
+                        opt.innerHTML = status.description;
+                        opt.value = status.id;
+                        fragment.appendChild(opt);
+                        $("#concernModalStatus").append(fragment);
+                        $("#concernModalStatus").val(data.statusId);
+                    });
+                } else {
+                    $("#concernModalStatus").attr('disabled', 'disabled');
+                }
 
-            var imageIds = data.imageIds;
-            var fileIds = data.fileIds;
-            if (imageIds.length > 0) {
-                $("#concernModalCarousel").show();
-                $("#concernModalSpacer").show();
-                for (var i = 0; i < imageIds.length; i++) {
-                    var li = "";
-                    var div = "";
-                    if (i == 0) {
-                        li = '<li data-target="#concernModalCarousel" data-slide-to="' + i + '" class="active"></li>';
-                        div = '<div class="carousel-item active">';
-                    }
-                    else {
-                        li = '<li data-target="#concernModalCarousel" data-slide-to="' + i + '" class="active"></li>';
-                        div = '<div class="carousel-item">'
-                    }
-                    $("ol#concernModalCarouselOl").append(li);
-                    
-                    var image = '<img class="d-block w-100" src="/File/GetImage?id=' + imageIds[i] + '">';
-                    $("#concernModalCarouselItemDiv").append(div + image + "</div>");
-                }
-            }
-            if (fileIds.length > 0) {
-                $("#concernModalFile").show();
-                $("#concernModalSpacer2").show();
-                for (var i = 0; i < fileIds.length; i++) {
-                    var link = '<a target="_blank" href="/File/GetFile?id=' + fileIds[i] + '">Dokument ' + (i+1) + '.pdf</a>';
-                    $("#concernModalFile").append(link);
-                }
-            }
-            if (data.statusId > 3) {
-                $("#concernModalCommentDiv").show();
-                $("#concernModalComment").val(data.comment);
-                if (data.statusId == 4) {
-                    $("#concernModalComment").removeAttr("disabled");
-                }
-            }
-            setTimeout(function () {
-                $("#concernModalDiv").show();
-                $("#concernModalLoad").hide();
-            }, 1500)
+                var imageIds = data.imageIds;
+                var fileIds = data.fileIds;
+                if (imageIds.length > 0) {
+                    $("#concernModalCarousel").show();
+                    $("#concernModalSpacer").show();
+                    for (var i = 0; i < imageIds.length; i++) {
+                        var li = "";
+                        var div = "";
+                        if (i == 0) {
+                            li = '<li data-target="#concernModalCarousel" data-slide-to="' +
+                                i +
+                                '" class="active"></li>';
+                            div = '<div class="carousel-item active">';
+                        } else {
+                            li = '<li data-target="#concernModalCarousel" data-slide-to="' +
+                                i +
+                                '" class="active"></li>';
+                            div = '<div class="carousel-item">';
+                        }
+                        $("ol#concernModalCarouselOl").append(li);
 
-        });
+                        var image = '<img class="d-block w-100" src="/File/GetImage?id=' + imageIds[i] + '">';
+                        $("#concernModalCarouselItemDiv").append(div + image + "</div>");
+                    }
+                }
+                if (fileIds.length > 0) {
+                    $("#concernModalFile").show();
+                    $("#concernModalSpacer2").show();
+                    for (var i = 0; i < fileIds.length; i++) {
+                        var link = '<a target="_blank" href="/File/GetFile?id=' +
+                            fileIds[i] +
+                            '">Dokument ' +
+                            (i + 1) +
+                            '.pdf</a>';
+                        $("#concernModalFile").append(link);
+                    }
+                }
+                if (data.statusId > 3) {
+                    $("#concernModalCommentDiv").show();
+                    $("#concernModalComment").val(data.comment);
+                    if (data.statusId == 4) {
+                        $("#concernModalComment").removeAttr("disabled");
+                    }
+                }
+                setTimeout(function() {
+                        $("#concernModalDiv").show();
+                        $("#concernModalLoad").hide();
+                    },
+                    1500);
+
+            });
     }
+
     function selectedStatusChanged() {
         var select = document.getElementById("concernStatusSelect");
         var selectedStatus = select.value;
@@ -450,8 +494,7 @@
             var ids = id.split(" ");
             if (ids[1] != selectedStatus) {
                 elems[i].style.display = "none";
-            }
-            else {
+            } else {
                 elems[i].style.display = "block";
             }
             if (selectedStatus == 0) {
@@ -459,6 +502,7 @@
             }
         }
     }
+
     function changeConcernStatus() {
         var selectElement = document.getElementById("concernModalStatus");
         var concernElement = document.getElementById("concernModalId");
@@ -468,36 +512,37 @@
         var statusId = selectElement.value;
         var concernId = concernElement.value;
         var result;
-        $.post("/Administration/ChangeConcernStatus", { concern: concernId, status: statusId, comment: comment }, function (data) {
-            result = (data.result);
-            if (result == 1) {
-                vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' });
-                changeConcernDiv(concernId, statusId);
-            }
-            else {
-                vNotify.error({
-                    text: 'Der Status konnte nicht geändert werden!',
-                    title: 'Statusänderung fehlgeschlagen'
-                });
-            }
-        });
+        $.post("/Administration/ChangeConcernStatus",
+            { concern: concernId, status: statusId, comment: comment },
+            function(data) {
+                result = (data.result);
+                if (result == 1) {
+                    vNotify.success({ text: 'Der Status wurde erfolgreich geändert!', title: 'Status geändert' });
+                    changeConcernDiv(concernId, statusId);
+                } else {
+                    vNotify.error({
+                        text: 'Der Status konnte nicht geändert werden!',
+                        title: 'Statusänderung fehlgeschlagen'
+                    });
+                }
+            });
     }
+
     function changeConcernDiv(concernId, statusId) {
         var concernElements = document.getElementsByName("concern");
         elems = concernElements;
         for (var i = 0; i < concernElements.length; i++) {
-            var ids = concernElements[i].id.split(" ")
+            var ids = concernElements[i].id.split(" ");
             if (ids[0] == concernId) {
                 if (ids.length < 4) {
                     var newConcernId = ids[0] + " " + statusId + " " + ids[2] + " 0";
-                }
-                else {
+                } else {
                     var newConcernId = ids[0] + " " + statusId + " " + ids[2] + " " + ids[3];
                 }
                 concernElements[i].setAttribute("id", newConcernId);
                 var display = false;
                 if (document.getElementById("concernStatusSelect").value == 0) {
-                    $("#concernStatusSelect option").each(function () {
+                    $("#concernStatusSelect option").each(function() {
                         var value = $(this).val();
                         if (value == statusId) {
                             display = true;
@@ -515,6 +560,7 @@
             }
         }
     }
+
     function selectedFilterChanged() {
         var statusSelect = document.getElementById("concernStatusSelect");
         var selectedStatus = statusSelect.value;
@@ -528,8 +574,7 @@
 
             if (ids[1] != selectedStatus) {
                 display = "none";
-            }
-            else {
+            } else {
                 display = "block";
             }
             if (selectedStatus == 0) {
@@ -538,8 +583,7 @@
             if (display != "none") {
                 if (ids[2] != selectedCategory) {
                     display = "none";
-                }
-                else {
+                } else {
                     display = "block";
                 }
                 if (selectedCategory == 0) {
@@ -549,16 +593,16 @@
             elems[i].style.display = display;
         }
     }
+
     function deleteFileFromPoll(fileType, id) {
         console.log("Ja");
-        fileDiv = "#" + fileType+id;
+        fileDiv = "#" + fileType + id;
         console.log(fileDiv);
         $(fileDiv).hide();
         if (fileType == "file") {
             deletedFileIds.push(id);
-        }
-        else {
-            deletedImageIds.push(id)
+        } else {
+            deletedImageIds.push(id);
         }
     }
 </script>

@@ -1,6 +1,5 @@
-﻿@model ICollection<PollViewModel>
-@using System.Linq
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
+@model ICollection<PollViewModel>
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
@@ -19,7 +18,9 @@
             </div>
             <div class="col-md-5">
                 <ul class="breadcrumb d-flex justify-content-end">
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" asp-controller="Home">Home</a>
+                    </li>
                     <li class="breadcrumb-item active">Umfragen</li>
                 </ul>
             </div>
@@ -45,10 +46,8 @@
                                 @foreach (var varCategory in categories)
                                 {
                                     <option value="@varCategory.Id">@varCategory.Description</option>
-
-
                                 }
-                 
+
                             </select>
                         </div>
                         <ul class="nav nav-pills flex-column text-sm">
@@ -73,7 +72,6 @@
                         <div id="blog-listing-big" class="col-md-9">
                             @for (var j = 0; j < Model.Count; j++)
                             {
-
                                 var item = Model.ElementAt(j);
                                 <div id="@item.Id @item.Category.Id" name="poll">
                                     <div class="shadow">
@@ -110,28 +108,24 @@
                                                         foreach (var image in item.Image)
                                                         {
                                                             <div class="item">
-                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
+                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id"/>
                                                             </div>
                                                         }
                                                     }
                                                     if (item.File != null)
                                                     {
-
                                                         foreach (var file in item.File)
                                                         {
                                                             <div class="">
                                                                 <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
                                                             </div>
-
                                                         }
                                                     }
-
-                                                    else { }
-
+                                                
                                                 }
                                             </div>
                                             <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                                                <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                                                <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
                                                 <fieldset class="form-group">
                                                     @{
 
@@ -150,15 +144,13 @@
                                                             {
                                                                 <input id="RadioId" name="RadioId" type="radio" value="@answer.Id" checked>
                                                                 <span> </span>
-                                                                @Html.Label(answer.AnswerOptions.Description)<br />
+                                                                @Html.Label(answer.AnswerOptions.Description)<br/>
                                                             }
                                                             else
                                                             {
                                                                 @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.Id)<span> </span>
-                                                                @Html.Label(answer.AnswerOptions.Description)<br />
-
+                                                                @Html.Label(answer.AnswerOptions.Description)<br/>
                                                             }
-
                                                         }
                                                     }
                                                     <button class="btn btn-success" type="submit">
@@ -183,14 +175,15 @@
 <script type="text/javascript">
     var concernElements = [];
     var allDates = [];
-   $(document).ready(function () {
+    $(document).ready(function() {
         concernElements = document.getElementsByName("poll");
         console.log(concernElements);
         allDates = document.getElementsByName("dates");
         console.log(allDates);
 
-      
+
     });
+
     function selectCategory() {
         var selectedCategory = $('#selectCategory').val();
         console.log('selectedCategory' + selectedCategory);
@@ -210,15 +203,14 @@
     }
 
     function sortdesc() {
-       
+
         for (var i = 0; i < concernElements.length; i++) {
             var pollid = concernElements[i].id.split(' ')[0];
             var pollDate = concernElements[i].id.split(' ')[1];
             console.log(pollDate);
-            
+
 
         }
         console.log(pollanddate);
-       }
+    }
 </script>
-

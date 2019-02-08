@@ -1,4 +1,4 @@
-﻿@model IEnumerable<mosPortal.Models.User>
+﻿@model IEnumerable<User>
 @{
     ViewData["Title"] = "UsersAdministrationView";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
@@ -11,8 +11,10 @@
 </header>
 <div class="breadcrumb-holder container-fluid" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
     <ul class="breadcrumb" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
-        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
-        <li class="breadcrumb-item active">Benutzer verwalten           </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-controller="Administration">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Benutzer verwalten </li>
     </ul>
 </div>
 <section class="forms">
@@ -32,7 +34,7 @@
                         <div class="form-group">
                             <label class="form-control-label">Durch klicken User auswählen</label>
                             <select id="selectuser" multiple="" class="form-control" onchange="showuser()">
-                                @foreach (User user in Model)
+                                @foreach (var user in Model)
                                 {
                                     <option value="@user.Id">@user.Firstname @user.Name (@user.UserName)</option>
                                 }
@@ -50,8 +52,12 @@
                 <div class="card">
                     <div class="card-close">
                         <div class="dropdown">
-                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow">
+                                <a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
+                            </div>
                         </div>
                     </div>
                     <div id="userHeader" class="card-header d-flex align-items-center">
@@ -113,7 +119,7 @@
 </section>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('li#linkUsersCRUD').addClass('active');
         $('#linkAdministration').attr({
             'aria-expanded': true,
@@ -121,6 +127,7 @@
         });
         $('#exampledropdownDropdown').addClass("show");
     });
+
     function searchUserInSelect() {
 
     }
@@ -131,30 +138,41 @@
         var userId = selectElement.options[index].value;
         $("#userHeader").html('<h3  class="h4">User anzeigen</h3>');
 
-        $.get("/Administration/GetUser", { userId: userId }, function (data) {
-            console.log(data);
-            var date = ((data.birthday).split(" "))[0].split(".");
-            var address = data.address;
-            var addressHtml = "<p>"+ address.street + " " + address.number + "</br>" + address.zipCode + " " + address.city + "</br>" + address.country+"</p>";
-            //console.log("User Role Id "+data.userRole[0].roleId);
-            $("#userId").val(data.id);
-            $("#userFirstName").val(data.firstname);
-            $("#userName").val(data.name);
-            $("#userBirthPlace").val(data.birthplace);
-            $("#userBirthDay").val(date[2]+"-"+date[1]+"-"+date[0]);
-            $("#userUserName").val(data.userName);
-            $("#userEmail").val(data.email);
-            if (typeof data.userRole[0] === "undefined") {
-                $("#userRole").val(2).change();
-            }
-            else {
-                $("#userRole").val(data.userRole[0].roleId).change();
-            }
-            
-            $("#userAddress").html(addressHtml);
+        $.get("/Administration/GetUser",
+            { userId: userId },
+            function(data) {
+                console.log(data);
+                var date = ((data.birthday).split(" "))[0].split(".");
+                var address = data.address;
+                var addressHtml = "<p>" +
+                    address.street +
+                    " " +
+                    address.number +
+                    "</br>" +
+                    address.zipCode +
+                    " " +
+                    address.city +
+                    "</br>" +
+                    address.country +
+                    "</p>";
+                //console.log("User Role Id "+data.userRole[0].roleId);
+                $("#userId").val(data.id);
+                $("#userFirstName").val(data.firstname);
+                $("#userName").val(data.name);
+                $("#userBirthPlace").val(data.birthplace);
+                $("#userBirthDay").val(date[2] + "-" + date[1] + "-" + date[0]);
+                $("#userUserName").val(data.userName);
+                $("#userEmail").val(data.email);
+                if (typeof data.userRole[0] === "undefined") {
+                    $("#userRole").val(2).change();
+                } else {
+                    $("#userRole").val(data.userRole[0].roleId).change();
+                }
+
+                $("#userAddress").html(addressHtml);
 
 
-        });
+            });
         $("#edituser").show();
         $("#cancelEdituser").hide();
         $("#saveuser").hide();
@@ -171,8 +189,8 @@
         console.log(userDescription);
         console.log(index);*/
     }
-    
-    $("#edituser").click(function () {
+
+    $("#edituser").click(function() {
         $("#edituser").hide();
         $("#cancelEdituser").show();
         $("#saveuser").show();
@@ -186,7 +204,7 @@
         $("#userEmail").removeAttr('disabled');
         $("#userRole").removeAttr('disabled');
     });
-    $("#cancelEdituser").click(function () {
+    $("#cancelEdituser").click(function() {
         $("#cancelEdituser").hide();
         $("#saveuser").hide();
 
@@ -201,8 +219,7 @@
         $("#userRole").attr('disabled', 'disabled');
         if ($("#selectuser")[0].selectedIndex < 0) {
             $("#edituser").hide();
-        }
-        else {
+        } else {
             $("#edituser").show();
         }
         $("#newuser").show();
@@ -210,7 +227,7 @@
 
         //$("#userDescription").attr('disabled', 'disabled');
     });
-    $("#saveuser").click(function () {
+    $("#saveuser").click(function() {
         var userId = $("#userId").val();
         var firstName = $("#userFirstName").val();
         var name = $("#userName").val();
@@ -219,7 +236,15 @@
         var birthplace = $("#userBirthDay").val();
         var birthday = $("#userBirthDay").val();
         var roleId = $("#userRole").val();
-        var user = {Id: userId, Firstname: firstName, Name: name, Email: email, UserName: userName, Birthplace: birthplace, Birthday: birthday };
+        var user = {
+            Id: userId,
+            Firstname: firstName,
+            Name: name,
+            Email: email,
+            UserName: userName,
+            Birthplace: birthplace,
+            Birthday: birthday
+        };
         var operation = "update";
         //var userDescription = $("#userDescription").val();
 
@@ -242,7 +267,7 @@
         $("#selectuser")[0].selectedIndex = -1;
         $("#deleteuser").hide();
     });*/
-    $("#deleteuser").click(function () {
+    $("#deleteuser").click(function() {
         var operation = "delete";
         var selectElement = document.getElementById("selectuser");
         var index = selectElement.selectedIndex;
@@ -251,61 +276,59 @@
 
 
         cruduser(userId, userDescription, operation);
-    })
+    });
 
     function cruduser(user, roleId, operation) {
-        $.post("/Administration/crudUser", { user: user,roleId: roleId, operation: operation }, function (data) {
-            console.log(data);
-            if ((data.result) == 1 || (data.result) == 2) {
-                $("#cancelEdituser").hide();
-                $("#saveuser").hide();
-                $("#edituser").show();
-                $("#newuser").show();
-                $("#userId").attr('disabled', 'disabled');
-                $("#userFirstName").attr('disabled', 'disabled');
-                $("#userName").attr('disabled', 'disabled');
-                $("#userBirthPlace").attr('disabled', 'disabled');
-                $("#userBirthDay").attr('disabled', 'disabled');
-                //$("#userUserName").attr('disabled', 'disabled');
-                $("#userEmail").attr('disabled', 'disabled');
-                $("#userRole").attr('disabled', 'disabled');
+        $.post("/Administration/crudUser",
+            { user: user, roleId: roleId, operation: operation },
+            function(data) {
+                console.log(data);
+                if ((data.result) == 1 || (data.result) == 2) {
+                    $("#cancelEdituser").hide();
+                    $("#saveuser").hide();
+                    $("#edituser").show();
+                    $("#newuser").show();
+                    $("#userId").attr('disabled', 'disabled');
+                    $("#userFirstName").attr('disabled', 'disabled');
+                    $("#userName").attr('disabled', 'disabled');
+                    $("#userBirthPlace").attr('disabled', 'disabled');
+                    $("#userBirthDay").attr('disabled', 'disabled');
+                    //$("#userUserName").attr('disabled', 'disabled');
+                    $("#userEmail").attr('disabled', 'disabled');
+                    $("#userRole").attr('disabled', 'disabled');
 
-                var select = document.getElementById("selectuser");
-                //if ((data.result) == 2) {
-                var index = select.selectedIndex;
-                var userString = (data.user.firstname)+" "+(data.user.name)+" ("+(data.user.userName)+")"
-                select.options[index].text = userString;
-                var value = 4;
-                $("#userRole option[value=" + value + "]").text(data.localCouncilDescription);
-                if (data.localCouncilFull == true) {
-                    $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
-                }
-                else {
-                    $("#userRole option[value=" + value + "]").removeAttr('disabled');  
-                }
-                value = 3;
-                if (data.mayorFull == true) {
-                    $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
-                }
-                else {
-                    $("#userRole option[value=" + value + "]").removeAttr('disabled');
-                }
-                
-                //}
-                /*else {
-                    var option = document.createElement("option");
-                    option.text = (data.description);
-                    option.value = (data.userId);
-                    select.add(option);
-                    $("#userId").val(data.userId);
-                }*/
-                vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
-            }
-            else {
-                vNotify.error({ title: (data.title), text: (data.text), position: positionOption.topRight });
-            }
+                    var select = document.getElementById("selectuser");
+                    //if ((data.result) == 2) {
+                    var index = select.selectedIndex;
+                    var userString = (data.user.firstname) + " " + (data.user.name) + " (" + (data.user.userName) + ")";
+                    select.options[index].text = userString;
+                    var value = 4;
+                    $("#userRole option[value=" + value + "]").text(data.localCouncilDescription);
+                    if (data.localCouncilFull == true) {
+                        $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
+                    } else {
+                        $("#userRole option[value=" + value + "]").removeAttr('disabled');
+                    }
+                    value = 3;
+                    if (data.mayorFull == true) {
+                        $("#userRole option[value=" + value + "]").attr('disabled', 'disabled');
+                    } else {
+                        $("#userRole option[value=" + value + "]").removeAttr('disabled');
+                    }
 
-        });
+                    //}
+                    /*else {
+                        var option = document.createElement("option");
+                        option.text = (data.description);
+                        option.value = (data.userId);
+                        select.add(option);
+                        $("#userId").val(data.userId);
+                    }*/
+                    vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
+                } else {
+                    vNotify.error({ title: (data.title), text: (data.text), position: positionOption.topRight });
+                }
+
+            });
     }
 </script>
-

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+
 namespace mosPortal.Models.ViewModels
 {
     public class PollViewModel
@@ -24,9 +21,8 @@ namespace mosPortal.Models.ViewModels
         public User User { get; set; }
         public ICollection<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
         public int RadioId { get; set; }
-        public int userAnswerOptionsPollId {get; set; }
+        public int userAnswerOptionsPollId { get; set; }
         public ICollection<Image> Image { get; set; }
         public ICollection<File> File { get; set; }
-        
-}
+    }
 }

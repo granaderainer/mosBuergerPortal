@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace mosPortal.Models
+﻿namespace mosPortal.Models
 {
-    public partial class File
+    public class File
     {
         public int Id { get; set; }
         public byte[] File1 { get; set; }

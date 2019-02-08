@@ -1,5 +1,5 @@
-﻿@model IEnumerable<Concern>
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
+@model IEnumerable<Concern>
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
@@ -7,7 +7,6 @@
     ViewData["Title"] = "ConcernsView";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var categories = ViewData["Categories"] as IEnumerable<Category>;
-    
 }
 
 <div id="heading-breadcrumbs">
@@ -71,10 +70,8 @@
                             @foreach (var varCategory in categories)
                             {
                                 <option value="@varCategory.Id">@varCategory.Description</option>
-
-
                             }
-                 
+
                         </select>
                     </div>
                     @*<ul class="nav nav-pills flex-column text-sm">
@@ -92,7 +89,7 @@
         <div class="col-md-9">
             @foreach (var item in Model)
             {
-               <div id="@item.Id @item.Category.Id" name="concern">
+                <div id="@item.Id @item.Category.Id" name="concern">
                     <div class="container">
                         <div class="row box Pollbox shadow">
                             <div id="blog-listing-medium">
@@ -115,42 +112,49 @@
                                                     <p class="date-comments">
                                                         <a href="blog-post.html">
                                                             <i class="fa fa-calendar-o"></i> @item.Date.ToString("dd/MM/yyyy")
-                                                        </a><a href="blog-post.html"><i class="fa fa-comment-o"></i>
-                                                     @if (item.Comment.Count == 1)
-                                                    {
-                                                        <span> @item.Comment.Count Kommentar</span> }
-                                                    else
-                                                     { <span>@item.Comment.Count Kommentare</span>}</a></p>
-                                                    
+                                                        </a>
+                                                        <a href="blog-post.html">
+                                                            <i class="fa fa-comment-o"></i>
+                                                            @if (item.Comment.Count == 1)
+                                                            {
+                                                                <span> @item.Comment.Count Kommentar</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span>@item.Comment.Count Kommentare</span>
+                                                            }
+                                                        </a>
+                                                    </p>
+
                                                 </div>
                                             </div>
-                                            
+
                                             <br>
                                             <div class="progress">
                                                 <div role="progressbar" id="progressbar @item.Id" style="width: @item.UserConcern.Count()%;" aria-valuenow=@item.UserConcern.Count() aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-primary"></div>
                                             </div>
                                             <p class="text-right">
-                                                
-                                                <a>
-                                                        @if (item.UserConcern.Count() == 1)
-                                                        {
-                                                            <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
-                                                        }
-                                                    </a>
 
-                                                    @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
+                                                <a>
+                                                    @if (item.UserConcern.Count() == 1)
                                                     {
-                                                        <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
+                                                        <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
                                                     }
                                                     else
                                                     {
-                                                        <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id">Vote <i class="fa fa-thumbs-up"></i></a>
+                                                        <span id="likesConcern @item.Id" class="badge badge-primary text-white">@item.UserConcern.Count()</span>
                                                     }
-                                                    <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
+                                                </a>
+
+                                                @if (SignInManager.IsSignedIn(User) && item.allowToVote(await SignInManager.UserManager.GetUserAsync(Context.User)))
+                                                {
+                                                    <a class="btn btn-primary text-white" id="likeConcern @item.Id" onclick="disableButton(this, @item.Id)">Vote <i class="fa fa-thumbs-up"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="btn btn-primary disabled text-white" id="likeConcern @item.Id">Vote <i class="fa fa-thumbs-up"></i></a>
+                                                }
+                                                <a class="btn btn-primary" id="readMoreConcern @item.Id" asp-action="ShowConcern" asp-controller="Home" asp-route-concernId="@item.Id">Anzeigen <i class="fa fa-angle-right"></i></a>
                                             </p>
                                         </div>
                                     </div>
@@ -159,8 +163,6 @@
                         </div>
                     </div>
                 </div>
-
-               
             }
 
             <!-- Pager new -->
@@ -176,8 +178,6 @@
         </div>
 
 
-     
-
     </div>
 
 </div>
@@ -190,15 +190,12 @@
         //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
         $.get("/Home/VoteForConcernAsync",
             { concernId: concernId },
-            function (data) {
+            function(data) {
                 console.log(data);
                 document.getElementById("likesConcern " + concernId).textContent =
                     (data.votes); // display id value which is returned from the action method
-                
-                
-                
-               
-                
+
+
             });
         $("#countcomments").write();
     }
@@ -207,10 +204,11 @@
     $(document).ready(function() {
         concernElements = document.getElementsByName("concern");
     });
+
     function selectCategory() {
         var selectedCategory = $('#selectCategory').val();
-        console.log('selectedCategory'+selectedCategory);
-        for(var i = 0;i<concernElements.length;i++) {
+        console.log('selectedCategory' + selectedCategory);
+        for (var i = 0; i < concernElements.length; i++) {
             var categoryid = concernElements[i].id.split(' ')[1];
             console.log('categoryid' + categoryid);
             console.log('concernElements' + concernElements[i]);
@@ -225,15 +223,15 @@
         }
     }
 
-   
+
     function showCategory() {
         var selectElement = document.getElementById("selectCategory");
         var index = selectElement.selectedIndex;
         var categoryId = selectElement.options[index].value;
         var categoryDescription = selectElement.options[index].text;
 
-        $("#categoryId").val(categoryId)
-        $("#categoryDescription").val(categoryDescription)
+        $("#categoryId").val(categoryId);
+        $("#categoryDescription").val(categoryDescription);
         $("#categoryHeader").html('<h3  class="h4">Kategorie anzeigen</h3>');
         $("#editCategory").show();
         $("#cancelEditCategory").hide();
@@ -257,12 +255,12 @@
                     document.getElementById("likesConcern " + concernId).textContent =
                         (data.votes); // display id value which is returned from the action method
                     var progressbar = document.getElementById("progressbar " + concernId);
-                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes+'%');
-                        
+                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes + '%');
+
                 });
         }
 
-       
+
     }
 
     $('#search').keyup(function() {

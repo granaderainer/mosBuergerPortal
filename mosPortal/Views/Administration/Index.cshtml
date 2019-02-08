@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
 }
@@ -16,53 +15,69 @@
             <!-- Item -->
             <div class="col-xl-3 col-sm-6">
                 <div class="item d-flex align-items-center">
-                    <div class="icon bg-violet"><i class="icon-user"></i></div>
+                    <div class="icon bg-violet">
+                        <i class="icon-user"></i>
+                    </div>
                     <div class="title">
                         <span>Anliegen über<br>100 Likes</span>
                         <div class="progress">
-                            <div role="progressbar" style="width: @ViewBag.ConcernStatusTwoCount%; height: 4px;" aria-valuenow="@ViewBag.ConcernStatusTwoCount" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-violet"></div>
+                            <div role="progressbar" style="height: 4px; width: @ViewBag.ConcernStatusTwoCount%;" aria-valuenow="@ViewBag.ConcernStatusTwoCount" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-violet"></div>
                         </div>
                     </div>
-                    <div class="number"><strong>@ViewData["ConcernStatusTwoCount"]</strong></div>
+                    <div class="number">
+                        <strong>@ViewData["ConcernStatusTwoCount"]</strong>
+                    </div>
                 </div>
             </div>
             <!-- Item -->
             <div class="col-xl-3 col-sm-6">
                 <div class="item d-flex align-items-center">
-                    <div class="icon bg-red"><i class="icon-padnote"></i></div>
+                    <div class="icon bg-red">
+                        <i class="icon-padnote"></i>
+                    </div>
                     <div class="title">
                         <span>Anliegen<br>in Bearbeitung</span>
                         <div class="progress">
-                            <div role="progressbar" style="width: @ViewData["ConcernStatusThreeCount"]%; height: 4px;" aria-valuenow=@ViewData["ConcernStatusThreeCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
+                            <div role="progressbar" style="height: 4px; width: @ViewData["ConcernStatusThreeCount"]%;" aria-valuenow=@ViewData["ConcernStatusThreeCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-red"></div>
                         </div>
                     </div>
-                    <div class="number"><strong>@ViewData["ConcernStatusThreeCount"]</strong></div>
+                    <div class="number">
+                        <strong>@ViewData["ConcernStatusThreeCount"]</strong>
+                    </div>
                 </div>
             </div>
             <!-- Item -->
             <div class="col-xl-3 col-sm-6">
                 <div class="item d-flex align-items-center">
-                    <div class="icon bg-green"><i class="icon-bill"></i></div>
+                    <div class="icon bg-green">
+                        <i class="icon-bill"></i>
+                    </div>
                     <div class="title">
                         <span>Anliegen<br>in Prüfung</span>
                         <div class="progress">
-                            <div role="progressbar" style="width: @ViewData["ConcernStatusOneCount"]%; height: 4px;" aria-valuenow=@ViewData["ConcernStatusOneCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-green"></div>
+                            <div role="progressbar" style="height: 4px; width: @ViewData["ConcernStatusOneCount"]%;" aria-valuenow=@ViewData["ConcernStatusOneCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-green"></div>
                         </div>
                     </div>
-                    <div class="number"><strong>@ViewData["ConcernStatusOneCount"]</strong></div>
+                    <div class="number">
+                        <strong>@ViewData["ConcernStatusOneCount"]</strong>
+                    </div>
                 </div>
             </div>
             <!-- Item -->
             <div class="col-xl-3 col-sm-6">
                 <div class="item d-flex align-items-center">
-                    <div class="icon bg-orange"><i class="icon-check"></i></div>
+                    <div class="icon bg-orange">
+                        <i class="icon-check"></i>
+                    </div>
                     <div class="title">
                         <span>Laufende<br>Umfragen</span>
                         <div class="progress">
-                            <div role="progressbar" style="width: @ViewData["PollCount"]%; height: 4px;" aria-valuenow=@ViewData["PollCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-orange"></div>
+                            <div role="progressbar" style="height: 4px; width: @ViewData["PollCount"]%;" aria-valuenow=@ViewData["PollCount"] aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-orange"></div>
                         </div>
                     </div>
-                    <div class="number"><strong>@ViewData["PollCount"]</strong></div>
+                    <div class="number">
+                        <strong>@ViewData["PollCount"]</strong>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,7 +91,6 @@
             @foreach (Poll poll in ViewBag.CurrentPolls)
             {
                 @await Html.PartialAsync("PollAdministrationPartialView", poll)
-
             }
         </div>
     </div>
@@ -86,7 +100,7 @@
 
 <script type="text/javascript">
     var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
-    $(document).ready(function () {
+    $(document).ready(function() {
         $("li#linkHome").addClass("active");
         var elems = document.getElementsByName("poll");
         for (var i = 0; i < elems.length; i++) {
@@ -95,21 +109,22 @@
 
             var chartId = "pollChart " + pollId;
             var noVotesId = "pollNoVotes " + pollId;
-            createChart(chartId, pollId, noVotesId)
+            createChart(chartId, pollId, noVotesId);
             //console.log(matches[i].id);
             //console.log(id[id.length - 1]);
-            
+
             /*$.get("/Administration/GetPollAnswers", { pollId: pollId }, function (data) {
 
             });*/
         }
     });
+
     function createChart(chartId, pollId, noVotesId) {
         $.ajax({
             async: false,
             type: 'GET',
             url: '/Administration/GetPollAnswers?pollId=' + pollId,
-            success: function (data) {
+            success: function(data) {
                 var count = data.length;
                 var chartColors = [];
                 var j = 0;
@@ -124,8 +139,7 @@
                 for (var i = 0; i < data.length; i++) {
                     if (data[i].value == 0) {
                         answerCountNotNull = false;
-                    }
-                    else {
+                    } else {
                         answerCountNotNull = true;
                         break;
                     }
@@ -138,8 +152,7 @@
                     });
                     document.getElementById(chartId).style.display = "block";
                     document.getElementById(noVotesId).style.display = "none";
-                }
-                else {
+                } else {
                     document.getElementById(chartId).style.display = "none";
                     document.getElementById(noVotesId).style.display = "block";
                 }

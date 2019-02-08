@@ -1,5 +1,3 @@
-using System;
-
 namespace mosPortal.Models
 {
     public class ErrorViewModel

@@ -1,11 +1,11 @@
-﻿@model ICollection<PollViewModel>
-@using System.Linq
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
+@model ICollection<PollViewModel>
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
-    ViewData["Title"] = "PollResultsView"; ;
+    ViewData["Title"] = "PollResultsView";
+    ;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var categories = ViewData["Categories"] as IEnumerable<Category>;
     var category = "default";
@@ -19,7 +19,9 @@
             </div>
             <div class="col-md-5">
                 <ul class="breadcrumb d-flex justify-content-end">
-                    <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Home">Home</a></li>
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index" asp-controller="Home">Home</a>
+                    </li>
                     <li class="breadcrumb-item active">Umfragen</li>
                 </ul>
             </div>
@@ -45,8 +47,6 @@
                                 @foreach (var varCategory in categories)
                                 {
                                     <option value="@varCategory.Id">@varCategory.Description</option>
-
-
                                 }
 
                             </select>
@@ -73,7 +73,6 @@
                         <div id="blog-listing-big" class="col-md-9">
                             @for (var j = 0; j < Model.Count; j++)
                             {
-
                                 var item = Model.ElementAt(j);
                                 <div id="@item.Id @item.Category.Id" name="poll">
                                     <div class="shadow">
@@ -110,31 +109,26 @@
                                                         foreach (var image in item.Image)
                                                         {
                                                             <div class="item">
-                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id" />
+                                                                <img class="img-fluid" src="/File/GetImage?id=@image.Id"/>
                                                             </div>
                                                         }
                                                     }
                                                     if (item.File != null)
                                                     {
-
                                                         foreach (var file in item.File)
                                                         {
                                                             <div class="">
                                                                 <a target="_blank" href="/File/GetFile?id=@file.Id">@file.Name .pdf</a>'
                                                             </div>
-
                                                         }
                                                     }
-
-                                                    else { }
-
                                                 }
                                             </div>
                                             <dl class="dl-horizontal">
-                                                
+
                                             </dl>
                                             <div name="pollChart" id="pollChart @item.Id" style="height: 250px;"></div>
-                                            <div class="text-center" name="pollNoVotes" id="pollNoVotes @item.Id" style="height: 250px; display:none;">
+                                            <div class="text-center" name="pollNoVotes" id="pollNoVotes @item.Id" style="display: none; height: 250px;">
                                                 <h3>Es hat noch niemand für diese Umfrage abgestimmt</h3>
                                             </div>
 
@@ -153,9 +147,10 @@
 </div>
 <script type="text/javascript">
     var concernElements = [];
-    $(document).ready(function () {
+    $(document).ready(function() {
         concernElements = document.getElementsByName("poll");
     });
+
     function selectCategory() {
         var selectedCategory = $('#selectCategory').val();
         console.log('selectedCategory' + selectedCategory);
@@ -174,69 +169,65 @@
         }
     }
 
-        var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
-    $(document).ready(function () {
-            $("li#linkHome").addClass("active");
+    var colors = ["#990066", "#66cc33", "#006699", "#ff6600", "#009999", "#cc3333", "#ffff00", "663399"];
+    $(document).ready(function() {
+        $("li#linkHome").addClass("active");
         var elems = document.getElementsByName("poll");
         for (var i = 0; i < elems.length; i++) {
             var ids = elems[i].id;
-        var pollId = ids.split(" ")[0];
+            var pollId = ids.split(" ")[0];
 
-        var chartId = "pollChart " + pollId;
-        var noVotesId = "pollNoVotes " + pollId;
-        createChart(chartId, pollId, noVotesId)
-        //console.log(matches[i].id);
-        //console.log(id[id.length - 1]);
+            var chartId = "pollChart " + pollId;
+            var noVotesId = "pollNoVotes " + pollId;
+            createChart(chartId, pollId, noVotesId);
+            //console.log(matches[i].id);
+            //console.log(id[id.length - 1]);
 
             /*$.get("/Administration/GetPollAnswers", {pollId: pollId }, function (data) {
 
         });*/
-    }
-});
+        }
+    });
+
     function createChart(chartId, pollId, noVotesId) {
-            $.ajax({
-                async: false,
-                type: 'GET',
-                url: '/Administration/GetPollAnswers?pollId=' + pollId,
-                success: function (data) {
-                    var count = data.length;
-                    var chartColors = [];
-                    var j = 0;
-                    for (var i = 0; i < count; i++) {
-                        if (j == (colors.length - 1)) {
-                            j = 0;
-                        }
-                        chartColors.push(colors[j]);
-                        j++;
+        $.ajax({
+            async: false,
+            type: 'GET',
+            url: '/Administration/GetPollAnswers?pollId=' + pollId,
+            success: function(data) {
+                var count = data.length;
+                var chartColors = [];
+                var j = 0;
+                for (var i = 0; i < count; i++) {
+                    if (j == (colors.length - 1)) {
+                        j = 0;
                     }
-                    var answerCountNotNull = false;
-                    for (var i = 0; i < data.length; i++) {
-                        if (data[i].value == 0) {
-                            answerCountNotNull = false;
-                        }
-                        else {
-                            answerCountNotNull = true;
-                            break;
-                        }
-                    }
-                    if (answerCountNotNull == true) {
-                        Morris.Donut({
-                            element: chartId,
-                            data: data,
-                            colors: chartColors
-                        });
-                        document.getElementById(chartId).style.display = "block";
-                        document.getElementById(noVotesId).style.display = "none";
-                    }
-                    else {
-                        document.getElementById(chartId).style.display = "none";
-                        document.getElementById(noVotesId).style.display = "block";
+                    chartColors.push(colors[j]);
+                    j++;
+                }
+                var answerCountNotNull = false;
+                for (var i = 0; i < data.length; i++) {
+                    if (data[i].value == 0) {
+                        answerCountNotNull = false;
+                    } else {
+                        answerCountNotNull = true;
+                        break;
                     }
                 }
-            });
-        }
+                if (answerCountNotNull == true) {
+                    Morris.Donut({
+                        element: chartId,
+                        data: data,
+                        colors: chartColors
+                    });
+                    document.getElementById(chartId).style.display = "block";
+                    document.getElementById(noVotesId).style.display = "none";
+                } else {
+                    document.getElementById(chartId).style.display = "none";
+                    document.getElementById(noVotesId).style.display = "block";
+                }
+            }
+        });
+    }
 
 </script>
-
-
-

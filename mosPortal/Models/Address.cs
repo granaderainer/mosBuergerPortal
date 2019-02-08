@@ -1,10 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace mosPortal.Models
 {
-    public partial class Address
+    public class Address
     {
         public Address()
         {
@@ -18,7 +17,6 @@ namespace mosPortal.Models
         public string Street { get; set; }
         public string Number { get; set; }
 
-        [JsonIgnore]
-        public ICollection<User> User { get; set; }
+        [JsonIgnore] public ICollection<User> User { get; set; }
     }
 }

@@ -1,10 +1,8 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace mosPortal.Models
 {
-    public partial class Role
+    public class Role
     {
         public Role()
         {

@@ -1,4 +1,4 @@
-﻿@model mosPortal.Models.Randomkey
+﻿@model Randomkey
 
 @{
     ViewData["Title"] = "Registrierungsschlüssel";
@@ -11,44 +11,44 @@
 </header>
 <div class="breadcrumb-holder container-fluid" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
     <ul class="breadcrumb" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
-        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-controller="Administration">Home</a>
+        </li>
         <li class="breadcrumb-item active">Registrierungskey</li>
     </ul>
 </div>
 
 <section class="forms">
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <div class="row">
-        <!-- Inline Form-->
-        
-        <div class="col-lg-12">
-            <div class="card">
-                <div class="card-header">Hier können Registrierungsschlüssel generiert werden.</div>
-                <div class="card-body">
-                    <form asp-controller="Administration" asp-action="GetRandomKey">
-                        <label title="Registrierungsschlüssel"/>
+        <div class="row">
+            <!-- Inline Form-->
 
-                        <i class="fa fa-lock mr-3"></i><input type="text" class="mr-3" maxlength="11" minlength="11" value="@Model.Key" readonly/>
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">Hier können Registrierungsschlüssel generiert werden.</div>
+                    <div class="card-body">
+                        <form asp-controller="Administration" asp-action="GetRandomKey">
+                            <label title="Registrierungsschlüssel"/>
 
-                        <input class="btn btn-danger m-2" type="submit" value="Generieren"/>
-                    </form>
-                </div>
-                <div class="card-footer">
-                    <form asp-controller="Administration" asp-action="GenerateWord" method="post" role="form">
-                        <input asp-for="@Model.Key" value="@Model.Key" type="hidden" />
+                            <i class="fa fa-lock mr-3"></i><input type="text" class="mr-3" maxlength="11" minlength="11" value="@Model.Key" readonly/>
+
+                            <input class="btn btn-danger m-2" type="submit" value="Generieren"/>
+                        </form>
+                    </div>
+                    <div class="card-footer">
+                        <form asp-controller="Administration" asp-action="GenerateWord" method="post" role="form">
+                            <input asp-for="@Model.Key" value="@Model.Key" type="hidden"/>
 
 
+                            <button type="submit" class="btn btn-primary w-100">Download</button>
+                        </form>
 
-                        <button type="submit" class="btn btn-primary w-100">Download</button>
-                    </form>
-                    
+                    </div>
                 </div>
             </div>
-            </div>
-
 
 
         </div>
-</div>
+    </div>
 </section>

@@ -1,4 +1,4 @@
-﻿@model mosPortal.Models.ViewModels.LoginViewModel
+﻿@model LoginViewModel
 
 <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="login-modalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -23,14 +23,10 @@
 
                             <input asp-for="RememberMe" type="checkbox" name="remember_me" id="remember_me" checked="checked" class="form-check-input">
                             <label class="form-check-label" for="remember_me">Angemeldet bleiben</label>
-                            @*<input asp-for="ForgotPassword" type="button" name="forgot_password" id="forgot_password" class="form-check-input btn btn-link pull-right">*@
-                            @*<button for="forgot_password "type="button" name="forgot_password" id="forgot_password" class="form-check-input btn btn-link pull-right"></button>*@
-                            @*<a href="" class="form-control btn btn-link pull-right">Passwort vergessen?</a>*@
+
 
                         </div>
-                        @*<p class="text-center">
-                            <button class="btn btn-template-outlined"><i class="fa fa-sign-in"></i> Log in</button>
-                        </p>*@
+
 
                         <hr class="colorgraph">
                         <div class="row">

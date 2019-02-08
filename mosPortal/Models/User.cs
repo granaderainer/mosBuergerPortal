@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace mosPortal.Models
 {
-    public partial class User
+    public class User
     {
         public User()
         {
@@ -14,9 +13,10 @@ namespace mosPortal.Models
             UserAnswerOptionsPoll = new HashSet<UserAnswerOptionsPoll>();
             UserConcern = new HashSet<UserConcern>();
         }
-        public User (int id)
+
+        public User(int id)
         {
-            this.Id = id;
+            Id = id;
         }
 
         public int Id { get; set; }
@@ -40,7 +40,7 @@ namespace mosPortal.Models
         public ICollection<Concern> ConcernLastUpdatedByUser { get; set; }
         public ICollection<Poll> PollLastUpdatedByUser { get; set; }
 
-        public Boolean allowToVote(int concernId)
+        public bool allowToVote(int concernId)
         {
             foreach (var uc in UserConcern)
             {
@@ -49,6 +49,7 @@ namespace mosPortal.Models
                     return false;
                 }
             }
+
             return true;
         }
     }

@@ -14,8 +14,8 @@
 <div class="top-bar">
     <div class="container">
 
-        <div class="row d-flex align-items-center">
-        @if ((bool)ViewData["admin"])
+       <div class="row d-flex align-items-center">
+      @if ((bool)ViewData["admin"])
         {
             <div class="col-1">
                 <ul class="list-inline contact-info d-md-block d-none">
@@ -31,50 +31,47 @@
             </div>
        
 
-              <div id="topBarLayoutchange" class="col-md-6">
+            <div id="topBarLayoutchange" class="col-md-6">
                   
-                            <div class="d-flex justify-content-md-end justify-content-between">
-                                <ul class="list-inline contact-info d-block d-md-none">
-                                    <li class="list-inline-item"><a id="toggle-btn" href="#" class="login-btn active"><i class="fa fa-arrows-h"></i></a></li>
-                                </ul>
-                                <ul class="list-inline contact-info d-block d-md-none">
-                                   
-                                    
-                                    <li class="list-inline-item"><a href="callto:@tel"><i class="fa fa-phone"></i></a></li>
-                                    <li class="list-inline-item"><a href="mailto:@mail"><i class="fa fa-envelope"></i></a></li>
-                                </ul>
+                <div class="d-flex justify-content-md-end justify-content-between">
+                    <ul class="list-inline contact-info d-block d-md-none">
+                        <li class="list-inline-item"><a id="toggle-btn" href="#" class="login-btn active"><i class="fa fa-arrows-h"></i></a></li>
+                    </ul>
+                    <ul class="list-inline contact-info d-block d-md-none">
+                       
+                        
+                        <li class="list-inline-item"><a href="callto:@tel"><i class="fa fa-phone"></i></a></li>
+                        <li class="list-inline-item"><a href="mailto:@mail"><i class="fa fa-envelope"></i></a></li>
+                    </ul>
+                    <ul class="list-inline d-block">
+                        @if ((bool)ViewData["admin"])
+                        {
+                            <li class=" list-inline-item mr-3"> <a asp-area="" asp-action="index" asp-controller="Home" class="login-btn list-inline-item "><i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
 
+                        }
+                    </ul>
+                    <ul class="list-inline d-block">
 
-
-                                <ul class="list-inline d-block">
-                                    @if ((bool)ViewData["admin"])
-                                    {
-                                        <li class=" list-inline-item mr-3"> <a asp-area="" asp-action="index" asp-controller="Home" class="login-btn list-inline-item "><i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
-
-                                    }
-                                </ul>
-                                <ul class="list-inline d-block">
-
-                                    @if (SignInManager.IsSignedIn(User))
-                                    {
-                                        <li>
-                                            <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
-                                                <a href="#" onclick="document.getElementById('logoutForm').submit();" class="login-btn list-inline-item"><i class="fa fa-power-off"></i><span class="d-md-inline-block">Logout</span></a>
-                                            </form>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li> <a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="login-btn list-inline-item"><i class="fa fa-sign-in"></i><span class="d-md-inline-block">Login</span></a></li>
-                                    }
-                                </ul>
-                                <ul class="social-custom list-inline">
-                                    <li class="list-inline-item"><a target="_blank" rel="noopener noreferrer" href="@github"><i class="fa fa-github"></i></a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li>
+                                <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm">
+                                    <a href="#" onclick="document.getElementById('logoutForm').submit();" class="login-btn list-inline-item"><i class="fa fa-power-off"></i><span class="d-md-inline-block">Logout</span></a>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li> <a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="login-btn list-inline-item"><i class="fa fa-sign-in"></i><span class="d-md-inline-block">Login</span></a></li>
+                        }
+                    </ul>
+                    <ul class="social-custom list-inline">
+                        <li class="list-inline-item"><a target="_blank" rel="noopener noreferrer" href="@github"><i class="fa fa-github"></i></a></li>
+                    </ul>
                 </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @if ((bool) ViewData["admin"])

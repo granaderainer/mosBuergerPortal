@@ -1,52 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using mosPortal.Models.ViewModels;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using mosPortal.Models;
 using mosPortal.Data;
-using Microsoft.AspNetCore.Mvc.Razor.Internal;
-using Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure;
+using mosPortal.Models;
+using mosPortal.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace mosPortal.Controllers
 {
     public class AccountController : Controller
     {
-        
-        private dbbuergerContext db = new dbbuergerContext();
-        private SignInManager<User> signInManager;
+        private readonly dbbuergerContext db = new dbbuergerContext();
+        private readonly SignInManager<User> signInManager;
         private UserManager<User> userManager;
 
 
         public AccountController(UserManager<User> userManager, SignInManager<User> signManager)
         {
             this.userManager = userManager;
-            this.signInManager = signManager;
+            signInManager = signManager;
         }
 
-        [HttpGet] 
+        [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            var model = new LoginViewModel { ReturnUrl = returnUrl };
-            return PartialView("_Modal", model: model);
+            var model = new LoginViewModel {ReturnUrl = returnUrl};
+            return PartialView("_Modal", model);
         }
+
         [HttpGet]
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
             var model = new RegisterViewModel();
-            return PartialView("RegisterView", model: model);
-
+            return PartialView("RegisterView", model);
         }
+
         [HttpPost]
-        public async Task<IActionResult> Register (RegisterViewModel model, string returnUrl = "")
+        public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = "")
         {
             //TODo: Beide PW gleich --> Check
             var userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
-            var addressCheck = db.Address.Where(a => a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode && a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
+            var addressCheck = db.Address.Where(a =>
+                a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode &&
+                a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
             try
             {
                 Randomkey key = db.Randomkey.Where(r => r.Key == model.Registerkey).First();
@@ -55,11 +52,12 @@ namespace mosPortal.Controllers
             }
             catch
             {
-                ModelState.AddModelError("Registererror", "Registerkey is not available, maybe this key is not valid anymore");
+                ModelState.AddModelError("Registererror",
+                    "Registerkey is not available, maybe this key is not valid anymore");
                 return View("RegisterView", model);
             }
 
-            
+
             if (addressCheck == null)
             {
                 Address newAddress = new Address
@@ -73,11 +71,13 @@ namespace mosPortal.Controllers
                 db.Add(newAddress);
                 db.SaveChanges();
             }
-            addressCheck = db.Address.Where(a => a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode && a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
-            
+
+            addressCheck = db.Address.Where(a =>
+                a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode &&
+                a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
+
             if (userCheck == null)
             {
-                
                 User newUser = new User
                 {
                     Firstname = model.Firstname,
@@ -86,16 +86,13 @@ namespace mosPortal.Controllers
                     Email = model.Email,
                     Birthday = model.Birthday,
                     Birthplace = model.Birthplace,
-                    AddressId = addressCheck.Id,
-                   
-                    
+                    AddressId = addressCheck.Id
                 };
-                
-                IdentityResult identityResult = await signInManager.UserManager.CreateAsync(newUser,model.Password);
-                
+
+                IdentityResult identityResult = await signInManager.UserManager.CreateAsync(newUser, model.Password);
+
                 if (identityResult.Succeeded)
                 {
-                    
                     bool register = false;
                     //await signInManager.UserManager.AddToRoleAsync(newUser, "User"); Es wird IsInRoleAsync aufgerufen
                     Role role = db.Role.SingleOrDefault(r => r.Name == "User");
@@ -106,35 +103,32 @@ namespace mosPortal.Controllers
                     };
                     db.Add(userRole);
                     db.SaveChanges();
-                  
+
                     if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
                     {
                         register = true;
                         return RedirectToAction("Index", "Home");
                         //return Redirect(returnUrl);
                     }
-                    else
-                    {
-                        register = false;
-                        return RedirectToAction("Index", "Home", new { register});
-                    }
+
+                    register = false;
+                    return RedirectToAction("Index", "Home", new {register});
                 }
             }
 
-            
-           
+
             ModelState.AddModelError("", "Invalid register attempt");
-            return View("RegisterView" ,model);
+            return View("RegisterView", model);
         }
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-
             bool login = false;
             if (ModelState.IsValid)
             {
                 var result = await signInManager.PasswordSignInAsync(model.Username,
-                   model.Password, model.RememberMe, false);
+                    model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
                 {
@@ -142,16 +136,16 @@ namespace mosPortal.Controllers
                     {
                         return Redirect(model.ReturnUrl);
                     }
-                    else
-                    {
-                        login = true;
-                        return RedirectToAction("Index", "Home", new { login});
-                    }
+
+                    login = true;
+                    return RedirectToAction("Index", "Home", new {login});
                 }
             }
+
             ModelState.AddModelError("", "Invalid login attempt");
-            return View("_Modal",model);
+            return View("_Modal", model);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

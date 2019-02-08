@@ -1,19 +1,18 @@
-﻿@using mosPortal.Models
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
-@{ 
-    String fullUserName = "";
-    String role = "";
-    User user = await UserManager.GetUserAsync(User);
+@{
+    var fullUserName = "";
+    var role = "";
+    var user = await UserManager.GetUserAsync(User);
     if (user != null)
     {
         fullUserName = user.Firstname + " " + user.Name;
-        IList<String> roles = await UserManager.GetRolesAsync(user);
+        var roles = await UserManager.GetRolesAsync(user);
         if (roles != null)
         {
-            switch(roles[0])
+            switch (roles[0])
             {
                 case "Admin":
                     role = "Administrator";
@@ -66,7 +65,7 @@
     <!-- Morris Charts CSS -->
     <link href="~/css/plugins/morris.css" rel="stylesheet">
 
-    <link href="~/vanilla/vanilla-notify.css" rel="stylesheet" />
+    <link href="~/vanilla/vanilla-notify.css" rel="stylesheet"/>
     <!-- Favicon-->
     <link rel="shortcut icon" href="~/admin_template/img/logogroup/favicon.ico">
     <!-- Tweaks for older IEs-->
@@ -88,91 +87,77 @@
     <!-- Main File-->
     <script src="~/admin_template/js/front.js"></script>
     <style type="text/css">
- .top-bar {
-     background: #555;
-     color: #fff;
-     font-size: 0.9rem;
-     padding: 10px 0;
- }
+        .top-bar {
+            background: #555;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 10px 0;
+        }
 
- .top-bar.top-bar-light {
-     background: #fff;
-     color: #555;
-     border-bottom: 1px solid #ddd;
- }
+        .top-bar.top-bar-light {
+            background: #fff;
+            border-bottom: 1px solid #ddd;
+            color: #555;
+        }
 
- .top-bar.top-bar-light a.login-btn, .top-bar.top-bar-light a.signup-btn {
-     color: #555 !important;
- }
+        .top-bar.top-bar-light a.login-btn, .top-bar.top-bar-light a.signup-btn { color: #555 !important; }
 
- .top-bar.top-bar-light a.login-btn span, .top-bar.top-bar-light a.signup-btn span {
-     display: inline-block;
- }
+        .top-bar.top-bar-light a.login-btn span, .top-bar.top-bar-light a.signup-btn span { display: inline-block; }
 
- .top-bar p {
-     margin-bottom: 0;
-     font-size: 0.75rem;
- }
+        .top-bar p {
+            font-size: 0.75rem;
+            margin-bottom: 0;
+        }
 
- .top-bar ul {
-     margin-bottom: 0;
- }
+        .top-bar ul { margin-bottom: 0; }
 
- .top-bar a.login-btn, .top-bar a.signup-btn {
-     color: #eee;
-     text-transform: uppercase;
-     letter-spacing: 0.1em;
-     text-decoration: none !important;
-     font-size: 0.75rem;
-     font-weight: 700;
-     margin-right: 10px;
- }
+        .top-bar a.login-btn, .top-bar a.signup-btn {
+            color: #eee;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin-right: 10px;
+            text-decoration: none !important;
+            text-transform: uppercase;
+        }
 
- .top-bar a.login-btn i, .top-bar a.signup-btn i {
-     margin-right: 10px;
- }
+        .top-bar a.login-btn i, .top-bar a.signup-btn i { margin-right: 10px; }
 
- .top-bar ul.social-custom {
-     margin-left: 20px;
- }
+        .top-bar ul.social-custom { margin-left: 20px; }
 
- .top-bar ul.social-custom li {
-     padding: 0;
-     margin: 0;
- }
+        .top-bar ul.social-custom li {
+            margin: 0;
+            padding: 0;
+        }
 
- .top-bar ul.social-custom a {
-     text-decoration: none !important;
-     font-size: 0.7rem;
-     width: 26px;
-     height: 26px;
-     line-height: 26px;
-     color: #999;
-     text-align: center;
-     border-radius: 50%;
-     margin: 0;
- }
+        .top-bar ul.social-custom a {
+            border-radius: 50%;
+            color: #999;
+            font-size: 0.7rem;
+            height: 26px;
+            line-height: 26px;
+            margin: 0;
+            text-align: center;
+            text-decoration: none !important;
+            width: 26px;
+        }
 
- .top-bar ul.social-custom a:hover {
-     background: #6699cc;
-     color: #fff;
- }
+        .top-bar ul.social-custom a:hover {
+            background: #6699cc;
+            color: #fff;
+        }
 
- .top-bar .contact-info {
-     margin-right: 20px;
- }
+        .top-bar .contact-info { margin-right: 20px; }
 
- .top-bar .contact-info a {
-     font-size: 0.8rem;
- }
- </style>
+        .top-bar .contact-info a { font-size: 0.8rem; }
+    </style>
 </head>
 <body>
 <div class="page">
     <!-- Main Navbar-->
     <header class="header" id="header">
 
-        
+
         @await Html.PartialAsync("_TopBarPartial", ViewData["admin"])
     </header>
     @*<header class="header">
@@ -284,7 +269,9 @@
         <nav class="side-navbar">
             <!-- Sidebar Header-->
             <div class="sidebar-header d-flex align-items-center">
-                <div class="avatar"><img src="/img/logoMosbachtranswithouttext.png" alt="..." class="img-fluid"></div>
+                <div class="avatar">
+                    <img src="/img/logoMosbachtranswithouttext.png" alt="..." class="img-fluid">
+                </div>
                 <div class="title">
                     <h1 class="h4">@fullUserName</h1>
                     <p>@role</p>
@@ -293,15 +280,27 @@
             <!-- Sidebar Navidation Menus-->
             <span class="heading">Navigation</span>
             <ul class="list-unstyled">
-                <li id="linkHome"><a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a></li>
-                <li id="linkConcerns"><a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a></li>
-                <li id="linkPolls"><a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a></li>    
+                <li id="linkHome">
+                    <a asp-action="Index" asp-controller="Administration"> <i class="icon-home"></i>Home </a>
+                </li>
+                <li id="linkConcerns">
+                    <a asp-action="ShowConcerns" asp-controller="Administration"> <i class="icon-interface-windows"></i>Anliegen </a>
+                </li>
+                <li id="linkPolls">
+                    <a asp-action="ShowPolls" asp-controller="Administration"> <i class="fa fa-bar-chart"></i>Umfragen </a>
+                </li>
                 <li>
                     <a id="linkAdministration" href="#exampledropdownDropdown" aria-expanded="false" data-toggle="collapse"> <i class="icon-user"></i>Administration </a>
                     <ul id="exampledropdownDropdown" class="collapse list-unstyled ">
-                        <li id="linkUsersCRUD"><a asp-action="ShowUsers" asp-controller="Administration">Benutzer verwalten</a></li>
-                        <li id="linkCategoriesCRUD"><a asp-controller="Administration" asp-action="ShowCategories">Kategorie verwalten</a></li>
-                        <li><a asp-controller="Administration" asp-action="ShowKey">Registrierungsschlüssel</a></li>
+                        <li id="linkUsersCRUD">
+                            <a asp-action="ShowUsers" asp-controller="Administration">Benutzer verwalten</a>
+                        </li>
+                        <li id="linkCategoriesCRUD">
+                            <a asp-controller="Administration" asp-action="ShowCategories">Kategorie verwalten</a>
+                        </li>
+                        <li>
+                            <a asp-controller="Administration" asp-action="ShowKey">Registrierungsschlüssel</a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -333,4 +332,3 @@
 
 </body>
 </html>
-

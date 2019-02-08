@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using mosPortal.Data;
+using mosPortal.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Extensions.Internal;
 
 namespace mosPortal.Identity
 {
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Data;
-    using Microsoft.AspNetCore.Identity;
-    using Microsoft.EntityFrameworkCore.Extensions.Internal;
-    using mosPortal.Models;
-
     public class RoleStore : IRoleStore<Role>
     {
         private dbbuergerContext db;
         private Role roles;
+
         public RoleStore(dbbuergerContext db)
         {
             this.db = db;
@@ -39,8 +37,7 @@ namespace mosPortal.Identity
         {
             db.Remove(role);
             int i = await db.SaveChangesAsync(cancellationToken);
-            return await Task.FromResult(i== 1? IdentityResult.Success : IdentityResult.Failed());
-
+            return await Task.FromResult(i == 1 ? IdentityResult.Success : IdentityResult.Failed());
         }
 
         public Task<string> GetRoleIdAsync(Role role, CancellationToken cancellationToken)
@@ -70,19 +67,20 @@ namespace mosPortal.Identity
 
         async Task<Role> IRoleStore<Role>.FindByIdAsync(string roleId, CancellationToken cancellationToken)
         {
-            if(int.TryParse(roleId, out int id))
+            if (int.TryParse(roleId, out int id))
             {
                 return await db.Role.FindAsync(id);
             }
-            else
-            {
-                return await Task.FromResult((Role)null);
-            }
+
+            return await Task.FromResult((Role) null);
         }
 
-        async Task<Role> IRoleStore<Role>.FindByNameAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        async Task<Role> IRoleStore<Role>.FindByNameAsync(string normalizedRoleName,
+            CancellationToken cancellationToken)
         {
-            return await db.Role.AsAsyncEnumerable().SingleOrDefault(r => r.Name.Equals(normalizedRoleName, StringComparison.OrdinalIgnoreCase), cancellationToken);
+            return await db.Role.AsAsyncEnumerable()
+                .SingleOrDefault(r => r.Name.Equals(normalizedRoleName, StringComparison.OrdinalIgnoreCase),
+                    cancellationToken);
             //throw new NotImplementedException();
         }
 

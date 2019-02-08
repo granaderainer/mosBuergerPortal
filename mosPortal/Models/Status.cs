@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace mosPortal.Models
 {
-    public partial class Status
+    public class Status
     {
         public Status()
         {
@@ -13,8 +12,8 @@ namespace mosPortal.Models
 
         public int Id { get; set; }
         public string Description { get; set; }
-        [JsonIgnore]
-        public ICollection<Concern> Concern { get; set; }
+
+        [JsonIgnore] public ICollection<Concern> Concern { get; set; }
 
         public ICollection<Poll> Poll { get; set; }
     }

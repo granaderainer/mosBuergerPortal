@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace mosPortal.Models
 {
-    public partial class AnswerOptions
+    public class AnswerOptions
     {
         public AnswerOptions()
         {

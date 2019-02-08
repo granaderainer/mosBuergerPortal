@@ -1,13 +1,11 @@
-﻿@model ICollection<PollViewModel>
-@using System.Linq
-@using Microsoft.AspNetCore.Authorization
+﻿@using Microsoft.AspNetCore.Authorization
+@model ICollection<PollViewModel>
 @inject IAuthorizationService AuthorizationService
 @inject SignInManager<User> SignInManager
 @inject UserManager<User> UserManager
 @{
     ViewData["Title"] = "_BlogPartial";
     var category = "default";
-    
 }
 
 <div class="container">
@@ -26,12 +24,12 @@
 
                         @if (item.Image.Count > 0)
                         {
-                            string currentImageId = item.Image.First().Id.ToString();
-                            <img class="img-fluid" src="/File/GetImage?id=@currentImageId" />
+                            var currentImageId = item.Image.First().Id.ToString();
+                            <img class="img-fluid" src="/File/GetImage?id=@currentImageId"/>
                         }
                         else
                         {
-                            <img class="img-fluid" src="/File/GetImage?id=39" /> //18 transparent
+                            <img class="img-fluid" src="/File/GetImage?id=39"/> //18 transparent
                         }
 
                     </div>
@@ -59,7 +57,7 @@
                 <p class="intro">@item.Text</p>
 
                 <form asp-action="submitPollAnswer" asp-controller="Home" method="post" role="form">
-                    <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden" />
+                    <input asp-for="@Model.ElementAt(j).Id" value="@item.Id" type="hidden"/>
                     <fieldset class="form-group">
                         @{
 
@@ -68,7 +66,7 @@
                                 var answer = item.AnswerOptionsPoll.ElementAt(i);
 
                                 @Html.RadioButtonFor(Model => Model.ElementAt(j).RadioId, answer.AnswerOptions.Id)<span> </span>
-                                @Html.Label(answer.AnswerOptions.Description)<br />
+                                @Html.Label(answer.AnswerOptions.Description)<br/>
                             }
                         }
                         <button class="btn btn-success" type="submit">
@@ -78,10 +76,7 @@
                 </form>
 
 
-
             </div>
-
-
         }
 
 
@@ -90,4 +85,3 @@
     </div>
 
 </div>
-

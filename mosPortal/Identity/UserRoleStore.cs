@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using mosPortal.Data;
+using mosPortal.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace mosPortal.Identity
 {
-    using System.Threading;
-    using System.Threading.Tasks;
-    using Data;
-    using Microsoft.AspNetCore.Identity;
-    using mosPortal.Models;
     public class UserRoleStore : IUserRoleStore<User>
     {
         private readonly dbbuergerContext db;
+
         public UserRoleStore(dbbuergerContext db)
         {
             this.db = db;
@@ -28,7 +28,6 @@ namespace mosPortal.Identity
             };
             db.Add(userRole);
             await db.SaveChangesAsync(cancellationToken);
-            return;
             //return Task.FromResult((object)null);
             //throw new NotImplementedException();
         }
@@ -44,7 +43,8 @@ namespace mosPortal.Identity
         }
 
         public void Dispose()
-        { }
+        {
+        }
 
         public Task<User> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
@@ -70,6 +70,7 @@ namespace mosPortal.Identity
                 Role role = db.Role.Where(r => r.Id == userRole.Id).SingleOrDefault();
                 roleNames.Add(role.Name);
             }
+
             return await Task.FromResult(roleNames);
 
             //throw new NotImplementedException();
@@ -103,14 +104,12 @@ namespace mosPortal.Identity
             Role role = db.Role.Where(r => r.Name == roleName).SingleOrDefault();
             UserRole userRole = null;
             userRole = db.UserRole.Where(ur => ur.UserId == user.Id && ur.RoleId == role.Id).Single();
-            if(userRole !=null)
+            if (userRole != null)
             {
                 return Task.FromResult(true);
             }
-            else
-            {
-                return Task.FromResult(false);
-            }
+
+            return Task.FromResult(false);
         }
 
         public async Task RemoveFromRoleAsync(User user, string roleName, CancellationToken cancellationToken)
@@ -122,11 +121,6 @@ namespace mosPortal.Identity
             {
                 db.Remove(userRole);
                 int i = await db.SaveChangesAsync(cancellationToken);
-                return;
-            }
-            else
-            {
-                return;
             }
         }
 

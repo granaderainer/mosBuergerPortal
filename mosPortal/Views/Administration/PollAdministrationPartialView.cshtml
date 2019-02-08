@@ -1,14 +1,18 @@
-﻿@model mosPortal.Models.Poll
+﻿@model Poll
 
 @{
     var pollId = Model.Id;
 }
-<div name ="poll" id="@pollId @Model.StatusId @Model.CategoryId"class="col-lg-3">
+<div name="poll" id="@pollId @Model.StatusId @Model.CategoryId"class="col-lg-3">
     <div class="card">
         <div class="card-close">
             <div class="dropdown">
-                <button type="button" id="closeCard7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                <div aria-labelledby="closeCard7" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                <button type="button" id="closeCard7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                    <i class="fa fa-ellipsis-v"></i>
+                </button>
+                <div aria-labelledby="closeCard7" class="dropdown-menu dropdown-menu-right has-shadow">
+                    <a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
+                </div>
             </div>
         </div>
         <div class="card-header d-flex align-items-center">
@@ -24,7 +28,7 @@
                 </dd>
             </dl>
             <div name="pollChart" id="pollChart @Model.Id" style="height: 250px;"></div>
-            <div class="text-center" name="pollNoVotes" id="pollNoVotes @Model.Id" style="height: 250px; display:none;">
+            <div class="text-center" name="pollNoVotes" id="pollNoVotes @Model.Id" style="display: none; height: 250px;">
                 <h3>Es hat noch niemand für diese Umfrage abgestimmt</h3>
             </div>
             <div class="text-right">
@@ -33,5 +37,3 @@
         </div>
     </div>
 </div>
-
-

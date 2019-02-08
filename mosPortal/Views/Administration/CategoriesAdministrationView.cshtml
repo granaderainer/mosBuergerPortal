@@ -1,4 +1,4 @@
-﻿@model IEnumerable<mosPortal.Models.Category>
+﻿@model IEnumerable<Category>
 @{
     ViewData["Title"] = "CategoriesAdministrationView";
     Layout = "~/Views/Shared/_AdministrationLayout.cshtml";
@@ -11,8 +11,10 @@
 </header>
 <div class="breadcrumb-holder container-fluid" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
     <ul class="breadcrumb" style="background: url(/user_template/img/texture-bw.png) center center repeat;">
-        <li class="breadcrumb-item"><a asp-action="Index" asp-controller="Administration">Home</a></li>
-        <li class="breadcrumb-item active">Kategorie verwalten           </li>
+        <li class="breadcrumb-item">
+            <a asp-action="Index" asp-controller="Administration">Home</a>
+        </li>
+        <li class="breadcrumb-item active">Kategorie verwalten </li>
     </ul>
 </div>
 <section class="forms">
@@ -28,7 +30,7 @@
                         <div class="form-group">
                             <label class="form-control-label">Durch klicken Kategorie auswählen</label>
                             <select id="selectCategory"multiple="" class="form-control" onchange="showCategory()">
-                                @foreach (Category category in Model)
+                                @foreach (var category in Model)
                                 {
                                     <option value="@category.Id">@category.Description</option>
                                 }
@@ -46,33 +48,37 @@
                 <div class="card">
                     <div class="card-close">
                         <div class="dropdown">
-                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle"><i class="fa fa-ellipsis-v"></i></button>
-                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow"><a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a></div>
+                            <button type="button" id="closeCard1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">
+                                <i class="fa fa-ellipsis-v"></i>
+                            </button>
+                            <div aria-labelledby="closeCard1" class="dropdown-menu dropdown-menu-right has-shadow">
+                                <a href="#" class="dropdown-item remove"> <i class="fa fa-times"></i>Close</a><a href="#" class="dropdown-item edit"> <i class="fa fa-gear"></i>Edit</a>
+                            </div>
                         </div>
                     </div>
                     <div id="categoryHeader"class="card-header d-flex align-items-center">
-                        <h3  class="h4">Kategorie anzeigen</h3>
+                        <h3 class="h4">Kategorie anzeigen</h3>
                     </div>
                     <div class="card-body">
-                            <div class="form-group">
-                                <label class="form-control-label">ID</label>
-                                <input id="categoryId"type="text" placeholder="ID" class="form-control" disabled>
+                        <div class="form-group">
+                            <label class="form-control-label">ID</label>
+                            <input id="categoryId"type="text" placeholder="ID" class="form-control" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-control-label">Name</label>
+                            <input id="categoryDescription"type="text" placeholder="Name" class="form-control" disabled>
+                        </div>
+                        <div class="line"></div>
+                        <div class="form-group row">
+                            <div class="col-sm-12">
+                                <button style="display: none;"id="editCategory" class="btn btn-primary">Bearbeiten</button>
+                                <button id="newCategory"class="btn btn-primary">Neue Kategorie</button>
+                                <button style="display: none;" id="cancelEditCategory"class="btn btn-secondary">Abbrechen</button>
+                                <button style="display: none;" id="saveCategory"class="btn btn-primary">Speichern</button>
+
                             </div>
-                            <div class="form-group">
-                                <label class="form-control-label">Name</label>
-                                <input id="categoryDescription"type="text" placeholder="Name" class="form-control" disabled>
-                            </div>
-                            <div class="line"></div>
-                            <div class="form-group row">
-                                <div class="col-sm-12">
-                                    <button  style="display: none;"id="editCategory" class="btn btn-primary">Bearbeiten</button>
-                                    <button id="newCategory"class="btn btn-primary">Neue Kategorie</button>
-                                    <button style="display: none;" id="cancelEditCategory"class="btn btn-secondary" >Abbrechen</button>
-                                    <button style="display: none;" id="saveCategory"class="btn btn-primary">Speichern</button>
-                                    
-                                </div>
-                            </div>
-                       
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -81,7 +87,7 @@
 </section>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
         $('li#linkCategoriesCRUD').addClass('active');
         $('#linkAdministration').attr({
             'aria-expanded': true,
@@ -90,15 +96,14 @@
         $('#exampledropdownDropdown').addClass("show");
     });
 
-    function showCategory()
-    {
+    function showCategory() {
         var selectElement = document.getElementById("selectCategory");
         var index = selectElement.selectedIndex;
         var categoryId = selectElement.options[index].value;
         var categoryDescription = selectElement.options[index].text;
 
-        $("#categoryId").val(categoryId)
-        $("#categoryDescription").val(categoryDescription)
+        $("#categoryId").val(categoryId);
+        $("#categoryDescription").val(categoryDescription);
         $("#categoryHeader").html('<h3  class="h4">Kategorie anzeigen</h3>');
         $("#editCategory").show();
         $("#cancelEditCategory").hide();
@@ -110,20 +115,20 @@
         console.log(index);
 
     }
-    $("#editCategory").click(function () {
+
+    $("#editCategory").click(function() {
         $("#editCategory").hide();
         $("#cancelEditCategory").show();
         $("#saveCategory").show();
         $("#newCategory").hide();
         $("#categoryDescription").removeAttr('disabled');
     });
-    $("#cancelEditCategory").click(function () {
+    $("#cancelEditCategory").click(function() {
         $("#cancelEditCategory").hide();
         $("#saveCategory").hide();
         if ($("#selectCategory")[0].selectedIndex < 0) {
             $("#editCategory").hide();
-        }
-        else {
+        } else {
             $("#editCategory").show();
         }
         $("#newCategory").show();
@@ -131,7 +136,7 @@
 
         $("#categoryDescription").attr('disabled', 'disabled');
     });
-    $("#saveCategory").click(function () {
+    $("#saveCategory").click(function() {
         var categoryId = $("#categoryId").val();
         var operation = "update";
         if (categoryId == "") {
@@ -147,7 +152,7 @@
 
 
     });
-    $("#newCategory").click(function () {
+    $("#newCategory").click(function() {
         $("#newCategory").hide();
         $("#editCategory").hide();
         $("#categoryHeader").html('<h3  class="h4">neue Kategorie</h3>');
@@ -159,7 +164,7 @@
         $("#selectCategory")[0].selectedIndex = -1;
         $("#deleteCategory").hide();
     });
-    $("#deleteCategory").click(function () {
+    $("#deleteCategory").click(function() {
         var operation = "delete";
         var selectElement = document.getElementById("selectCategory");
         var index = selectElement.selectedIndex;
@@ -168,37 +173,37 @@
 
 
         crudCategory(categoryId, categoryDescription, operation);
-    })
+    });
 
     function crudCategory(categoryId, description, operation) {
-        $.post("/Administration/crudCategory", { categoryId: categoryId, description: description, operation: operation }, function (data) {
+        $.post("/Administration/crudCategory",
+            { categoryId: categoryId, description: description, operation: operation },
+            function(data) {
 
-            if ((data.result) == 1 || (data.result) == 2) {
-                $("#cancelEditCategory").hide();
-                $("#saveCategory").hide();
-                $("#editCategory").show();
-                $("#newCategory").show();
-                $("#categoryDescription").attr('disabled', 'disabled');
+                if ((data.result) == 1 || (data.result) == 2) {
+                    $("#cancelEditCategory").hide();
+                    $("#saveCategory").hide();
+                    $("#editCategory").show();
+                    $("#newCategory").show();
+                    $("#categoryDescription").attr('disabled', 'disabled');
 
-                var select = document.getElementById("selectCategory");
-                console.log(data);
-                if ((data.result) == 2) {
-                    var index = select.selectedIndex;
-                    select.options[index].text = (data.description);
+                    var select = document.getElementById("selectCategory");
+                    console.log(data);
+                    if ((data.result) == 2) {
+                        var index = select.selectedIndex;
+                        select.options[index].text = (data.description);
+                    } else {
+                        var option = document.createElement("option");
+                        option.text = (data.description);
+                        option.value = (data.categoryId);
+                        select.add(option);
+                        $("#categoryId").val(data.categoryId);
+                    }
+                    vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
+                } else {
+                    vNotify.error({ title: (data.title), text: (data.text), position: positionOption.topRight });
                 }
-                else {
-                    var option = document.createElement("option");
-                    option.text = (data.description);
-                    option.value = (data.categoryId);
-                    select.add(option);
-                    $("#categoryId").val(data.categoryId);
-                }
-                vNotify.success({ title: (data.title), text: (data.text), position: positionOption.topRight });
-            }
-            else {
-                vNotify.error({ title: (data.title), text: (data.text), position: positionOption.topRight });
-            }
 
-        });
+            });
     }
 </script>
