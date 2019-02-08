@@ -5,11 +5,12 @@
 @{
     var fullUserName = "";
     var role = "";
+    IList<string> roles = null;
     var user = await UserManager.GetUserAsync(User);
     if (user != null)
     {
         fullUserName = user.Firstname + " " + user.Name;
-        var roles = await UserManager.GetRolesAsync(user);
+        roles = await UserManager.GetRolesAsync(user);
         if (roles != null)
         {
             switch (roles[0])

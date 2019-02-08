@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using File = mosPortal.Models.File;
+using Microsoft.AspNetCore.Authorization;
 
 namespace mosPortal.Controllers
 {
@@ -96,10 +97,10 @@ namespace mosPortal.Controllers
             foreach (Status stat in status)
             {
                 statusList.Add(new SelectListItem {Value = stat.Id.ToString(), Text = stat.Description});
-                if (stat.Id == 3)
+                /*if (stat.Id == 3)
                 {
                     statusList.Add(new SelectListItem {Value = "31", Text = stat.Description + " von mir"});
-                }
+                }*/
             }
 
             List<SelectListItem> categoriesList = new List<SelectListItem>();
@@ -313,19 +314,6 @@ namespace mosPortal.Controllers
             });
         }
 
-        /*[HttpPost]
-        public async Task<IActionResult> ChangeConcernStatus(string concernModalStatus, string concernModalId)
-        {
-            int concernId = Convert.ToInt32(concernModalId);
-            int statusId = Convert.ToInt32(concernModalStatus);
-            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
-            int oldStatus = concern.StatusId;
-            concern.StatusId = statusId;
-            db.Concern.Update(concern);
-            db.SaveChanges();
-            return await this.ShowConcerns(oldStatus);
-
-        }*/
         [HttpPost]
         public async Task<IActionResult> ChangeConcernStatus(string status, string concern, string comment)
         {
@@ -346,7 +334,6 @@ namespace mosPortal.Controllers
             int result = db.SaveChanges();
             return Json(new {result});
         }
-
         public async Task<IActionResult> ShowPolls()
         {
             //benötigte Veriablen und Listen
@@ -429,14 +416,6 @@ namespace mosPortal.Controllers
             return Json(new {title = poll.Title, text = poll.Text, end = poll.End, votes});
         }
 
-        /*public IActionResult ShowPoll()
-        {
-            int id = 2;
-            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
-            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
-            poll.AnswerOptionsPoll = answerOptionsPolls;
-            return View("PollAdministrationView", poll);
-        }*/
         public IActionResult GetPollAnswers(int pollId)
         {
             int id = pollId;
@@ -508,6 +487,7 @@ namespace mosPortal.Controllers
             return Json(new {result, title, text, description, categoryId = categoryIdInt});
         }
 
+
         public IActionResult ShowUsers()
         {
             List<User> users = db.User.Include("UserRole").ToList();
@@ -540,14 +520,15 @@ namespace mosPortal.Controllers
             return View("UsersAdministrationView", users);
         }
 
+
         [HttpGet]
         public IActionResult GetUser(int userId)
         {
-            //int userIdInt = Convert.ToInt32(userId);
             User user = db.User.Where(u => u.Id == userId).Include("Address").Include("UserRole").SingleOrDefault();
             user.Password = "";
             return Json(user);
         }
+
 
         [HttpPost]
         public IActionResult crudUser(User user, int roleId, string operation)
@@ -653,32 +634,5 @@ namespace mosPortal.Controllers
             key.Key = "XXXXXXXXXXX";
             return View("RandomKeyView", key);
         }
-
-        /*[HttpGet]
-        public IActionResult CreatePoll()
-        {
-            Poll poll = new Poll();
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<SelectListItem> answerOptionList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
-            }
-            foreach(AnswerOptions anserOption in answerOptions)
-            {
-                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
-            }
-            ViewData["CategoriesList"] = categoriesList;
-            ViewData["AnswerOptionsList"] = answerOptionList;
-            return View("CreatePollAdministrationView", poll);
-        }*/
-
-        /*public IActionResult ShowConcernsLocalCouncil()
-{
-    List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
-    return View("ConcernsAdministrationView", concerns);
-}*/
     }
 }
