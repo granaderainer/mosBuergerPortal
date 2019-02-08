@@ -7,15 +7,11 @@ namespace mosPortal.Data
 {
     public partial class dbbuergerContext : DbContext
     {
-        public dbbuergerContext()
+        //Konstruktor
+        public dbbuergerContext(DbContextOptions<dbbuergerContext> options) : base(options)
         {
         }
-
-        public dbbuergerContext(DbContextOptions<dbbuergerContext> options)
-            : base(options)
-        {
-        }
-
+        //Attribute
         public virtual DbSet<Address> Address { get; set; }
         public virtual DbSet<AnswerOptions> AnswerOptions { get; set; }
         public virtual DbSet<AnswerOptionsPoll> AnswerOptionsPoll { get; set; }
@@ -33,15 +29,7 @@ namespace mosPortal.Data
         public virtual DbSet<UserConcern> UserConcern { get; set; }
         public virtual DbSet<UserRole> UserRole { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;");
-            }
-        }
-
+        //Verknüpfung der einzelnen Models mit den Tabellen der Datenbank
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Address>(entity =>

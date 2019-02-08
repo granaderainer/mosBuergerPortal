@@ -10,8 +10,11 @@ namespace mosPortal.Controllers
 {
     public class FileController : Controller
     {
-        private readonly dbbuergerContext db = new dbbuergerContext();
-
+        private readonly dbbuergerContext db;
+        public FileController(dbbuergerContext db)
+        {
+            this.db = db;
+        }
         public FileStreamResult GetImage(int id)
         {
             Image image = db.Image.Where(i => i.Id == id).SingleOrDefault();

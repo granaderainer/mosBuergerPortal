@@ -19,13 +19,15 @@ namespace mosPortal.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly dbbuergerContext db = new dbbuergerContext();
+        //private readonly dbbuergerContext db = new dbbuergerContext();
+        private readonly dbbuergerContext db;
         private SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
-        public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
+        public HomeController(UserManager<User> userManager, SignInManager<User> signManager, dbbuergerContext db)
         {
             this.userManager = userManager;
+            this.db = db;
             signInManager = signManager;
         }
 

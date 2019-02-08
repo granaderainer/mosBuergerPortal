@@ -52,22 +52,7 @@ namespace mosPortal.Models
 
         public ICollection<File> File { get; set; }
 
-        /*public List<Answer> getAnswers()
-        {
-            List<Answer> answers = new List<Answer>();
-            foreach (AnswerOptionsPoll aop in AnswerOptionsPoll)
-            {
-                Answer answer = new Answer
-                {
-                    Votes = aop.UserAnswerOptionsPoll.Count,
-                    AnswerDescription = aop.AnswerOptions.Description
-
-                };
-                answers.Add(answer);
-
-            }
-            return answers;
-        }*/
+        //Gibt die Antworten und die Anzahl der Abstimmungen der Umfrage als JSON String zurück
         public JsonResult getAnswers()
         {
             List<Answer> answers = new List<Answer>();

@@ -19,27 +19,30 @@ using File = mosPortal.Models.File;
 
 namespace mosPortal.Controllers
 {
+    //Zugriff auf den gesamten Controller nur mit Administrativen Rollen: Admin, Verwaltung, Gemeinderat, Bürgermeister
     [Authorize(Policy = "AllAdministrationRoles")]
     public class AdministrationController : Controller
     {
-        private readonly IHostingEnvironment _hostingEnvironment;
-
         //Attribute der Klasse AdministrationController
-        private readonly dbbuergerContext db = new dbbuergerContext();
+        private readonly dbbuergerContext db;
         private SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         //Konstruktor
         public AdministrationController(UserManager<User> userManager, SignInManager<User> signManager,
-            IHostingEnvironment hostingEnvironment)
+            IHostingEnvironment hostingEnvironment, dbbuergerContext db)
         {
             this.userManager = userManager;
             signInManager = signManager;
             _hostingEnvironment = hostingEnvironment;
+            this.db = db;
         }
 
+        //Index
         public IActionResult Index()
         {
+            //ViewData Vaariablen mit den nötigen Informationen befüllen
             ViewData["ConcernStatusOneCount"] = db.Concern.Where(c => c.StatusId == 1).Count();
             ViewData["ConcernStatusTwoCount"] = db.Concern.Where(c => c.StatusId == 2).Include("UserConcern")
                 .Where(c => c.UserConcern.Count >= 1).Count();
@@ -53,8 +56,10 @@ namespace mosPortal.Controllers
             return View("Index");
         }
 
+        //Alle Anliegen Anzeigen
         public async Task<IActionResult> ShowConcerns(int statusId = 0)
         {
+            //Variablen
             bool allowToCreatePoll = false;
             List<SelectListItem> statusList = new List<SelectListItem>();
             var user = await userManager.GetUserAsync(HttpContext.User);
@@ -62,6 +67,8 @@ namespace mosPortal.Controllers
             List<Concern> concerns = new List<Concern>();
             List<Status> status = new List<Status>();
             statusList.Add(new SelectListItem {Value = "0", Text = "Alle Anliegen"});
+
+            //Selektieren der Anliegen und der Status je nach Rolle des Benutzers
             if (roles[0] == "Verw")
             {
                 concerns = db.Concern.Where(c => c.StatusId != 4 && !(c.StatusId >= 6)).Include("LastUpdatedByUser")
@@ -83,6 +90,7 @@ namespace mosPortal.Controllers
                 status = db.Status.ToList();
             }
 
+            //kürzen der Texte für die Kompaktansicht
             foreach (Concern concern in concerns)
             {
                 int length = 100;
@@ -96,7 +104,7 @@ namespace mosPortal.Controllers
                 concern.Comment = db.Comment.Where(c => c.ConcernId == concern.Id).ToList();
                 concern.UserConcern = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
             }
-
+            
             foreach (Status stat in status)
             {
                 statusList.Add(new SelectListItem {Value = stat.Id.ToString(), Text = stat.Description});
@@ -105,7 +113,6 @@ namespace mosPortal.Controllers
                     statusList.Add(new SelectListItem {Value = "31", Text = stat.Description + " von mir"});
                 }*/
             }
-
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             categoriesList.Add(new SelectListItem {Value = "0", Text = "Alle Kategorien"});
@@ -120,22 +127,14 @@ namespace mosPortal.Controllers
             ViewData["CategoriesList"] = categoriesList;
             return View("ConcernsAdministrationView", concerns);
         }
-
+        //Erstellen einer Umfrage, Methode gibt JSON String zurück
         [HttpPost]
         public async Task<IActionResult> CreatePollAsync([FromBody] CreatePollModel createPoll)
         {
             if (ModelState.IsValid)
             {
+                //Variablen
                 int concernStatusId = 0;
-                //Nur, wenn Umfrage aus Anliegen erstellt wird, wird das Anliegen auf Status "abgeschlossen" gesetzt.
-                if (createPoll.ConcernId != 0)
-                {
-                    Concern concern = db.Concern.Where(c => c.Id == createPoll.ConcernId).SingleOrDefault();
-                    concernStatusId = 6; //concern.StatusId;
-                    concern.StatusId = concernStatusId;
-                    db.Update(concern);
-                }
-
                 int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
                 List<int> answerOptionId = new List<int>();
                 Poll poll = new Poll
@@ -150,9 +149,20 @@ namespace mosPortal.Controllers
                     StatusId = 2,
                     CategoryId = createPoll.CategoryId
                 };
+                //Nur, wenn Umfrage aus Anliegen erstellt wird, wird das Anliegen auf Status "abgeschlossen" gesetzt.
+                if (createPoll.ConcernId != 0)
+                {
+                    Concern concern = db.Concern.Where(c => c.Id == createPoll.ConcernId).SingleOrDefault();
+                    concernStatusId = 6; //concern.StatusId;
+                    concern.StatusId = concernStatusId;
+                    db.Update(concern);
+                }
+
+                //Antworten aus Objekt auslesen und in Datenbank speichern
                 foreach (string answer in createPoll.Answers)
                 {
                     AnswerOptions answerOption = null;
+                    //Prüfung, ob Antwort schon einmal verwendet wurde
                     answerOption = db.AnswerOptions.Where(ao => ao.Description.Equals(answer)).SingleOrDefault();
                     if (answerOption != null)
                     {
@@ -174,13 +184,16 @@ namespace mosPortal.Controllers
                 {
                     poll.Approved = false;
                 }
-
+                //Umfrage Speichern
                 db.Add(poll);
+
+                //Antworten Speichern 
                 foreach (int aoId in answerOptionId)
                 {
                     db.Add(new AnswerOptionsPoll {PollId = poll.Id, AnswerOptionsId = aoId});
                 }
 
+                //Dokumente aus dem Anliegen in die Umfrage übernehmen
                 if (createPoll.FileIds != null)
                 {
                     foreach (int fileId in createPoll.FileIds)
@@ -190,8 +203,8 @@ namespace mosPortal.Controllers
                         db.Update(file);
                     }
                 }
-
-                if (createPoll.FileIds != null)
+                //Bilder aus dem Anliegen in die Umfrage übernehmen
+                if (createPoll.ImageIds != null)
                 {
                     foreach (int imageId in createPoll.ImageIds)
                     {
@@ -200,14 +213,14 @@ namespace mosPortal.Controllers
                         db.Update(image);
                     }
                 }
-
+                //Commit
                 int result = db.SaveChanges();
                 return Json(new {result, concernStatusId, concernId = createPoll.ConcernId});
             }
 
             return Json(new {result = 0});
         }
-
+        //Gibt alle Daten eines Anliegen als JSON String zurück
         [HttpGet]
         public async Task<IActionResult> GetConcernJson(int concernId)
         {
@@ -272,16 +285,19 @@ namespace mosPortal.Controllers
                 date = concern.Date.ToString(), statuses, imageIds, fileIds, comment
             });
         }
-
+        //Status eines Anliegen ändern und speichern
         [HttpPost]
         public async Task<IActionResult> ChangeConcernStatus(string status, string concern, string comment)
         {
+            //Variablen
             int userId = (await userManager.GetUserAsync(HttpContext.User)).Id;
             int concernId = Convert.ToInt32(concern);
             int statusId = Convert.ToInt32(status);
+            //Anliegen aus DB lesen
             Concern con = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
             int oldStatus = con.StatusId;
             con.StatusId = statusId;
+            //Falls neuer Status 3, Id des Users hinzufügen
             if (statusId == 3)
             {
                 con.LastUpdatedBy = userId;
@@ -293,7 +309,7 @@ namespace mosPortal.Controllers
             int result = db.SaveChanges();
             return Json(new {result});
         }
-
+        //Zeigt alle Umfragen an
         public async Task<IActionResult> ShowPolls()
         {
             //benötigte Veriablen und Listen
@@ -310,7 +326,7 @@ namespace mosPortal.Controllers
             statusList.Add(new SelectListItem {Value = "2", Text = "laufende Umfragen"});
             statusList.Add(new SelectListItem {Value = "3", Text = "beendete Umfragen"});
             categoriesList.Add(new SelectListItem {Value = "0", Text = "Alle Kategorien"});
-            //Rollenspezifische Variablen füllen
+            //Rollenspezifische Variablen füllen, Umfragen je nach Rolle selektieren
             if (roles[0] == "Verw")
             {
                 allowToCreatePoll = true;
@@ -359,14 +375,16 @@ namespace mosPortal.Controllers
             db.SaveChanges();
             return View("PollsAdministrationView", polls);
         }
-
+        //Gibt Daten einer Umfrage als JSON String zurück
         [HttpGet]
         public IActionResult GetPollJson(int pollId)
         {
             int votes = 0;
+            // Umfrage und Antworten der Umfrage selektieren
             Poll poll = db.Poll.Where(p => p.Id == pollId).SingleOrDefault();
             List<AnswerOptionsPoll> answerOptionsPolls =
                 db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId).ToList();
+            //Anzahl der Einwohner die Abgestimmt haben berechnen
             foreach (AnswerOptionsPoll answerOptionsPoll in answerOptionsPolls)
             {
                 votes += db.UserAnswerOptionsPoll.Where(uaop => uaop.AnswerOptionsPollId == answerOptionsPoll.Id)
@@ -375,10 +393,11 @@ namespace mosPortal.Controllers
 
             return Json(new {title = poll.Title, text = poll.Text, end = poll.End, votes});
         }
-
+        //Gibt Antworten und die Anzahl der Stimmen der jeweiligen Antwort einer Umfrage als JSON String zurück
         public IActionResult GetPollAnswers(int pollId)
         {
             int id = pollId;
+            // Umfrage und Antworten selektieren
             Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
             List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
                 .Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
@@ -393,17 +412,19 @@ namespace mosPortal.Controllers
 
             return poll.getAnswers();
         }
+        //Zeigt die Ansicht Kategorien verwalten an
         [Authorize(Roles = "Admin")]
         public IActionResult ShowCategories()
         {
             List<Category> categories = db.Category.ToList();
             return View("CategoriesAdministrationView", categories);
         }
-
+        //Verwaltung einer Kategorie
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult crudCategory(string categoryId, string description, string operation)
         {
+            //Variablen
             Category category = new Category();
             string title = "";
             string text = "";
@@ -411,6 +432,7 @@ namespace mosPortal.Controllers
             int categoryIdInt = Convert.ToInt32(categoryId);
             try
             {
+                //Update bzw. Änderung der Beschreibung
                 if (Equals(operation, "update"))
                 {
                     title = "Update erfolgreich";
@@ -421,7 +443,7 @@ namespace mosPortal.Controllers
                     db.Update(category);
                     db.SaveChanges();
                 }
-
+                //neue Kategorie erstellen
                 if (Equals(operation, "create"))
                 {
                     title = "Erstellung erfolgreich";
@@ -432,7 +454,7 @@ namespace mosPortal.Controllers
                     db.SaveChanges();
                     categoryIdInt = category.Id;
                 }
-
+                //Kategorie löschen
                 if (Equals(operation, "delete"))
                 {
                     result = 3;
@@ -447,23 +469,29 @@ namespace mosPortal.Controllers
 
             return Json(new {result, title, text, description, categoryId = categoryIdInt});
         }
+
+        //Zeigt die Ansicht User Verwalten an
         [Authorize(Roles = "Admin")]
         public IActionResult ShowUsers()
         {
+            //Variablen
             List<User> users = db.User.Include("UserRole").ToList();
             List<SelectListItem> rolesList = new List<SelectListItem>();
             List<Role> roles = db.Role.ToList();
+            //Anzeige der Rolle je nach sperren oder anpassen
             foreach (Role role in roles)
             {
                 bool disabled = false;
                 string description = "";
                 switch (role.Name)
                 {
+                    //Zählen der GR Mitglieder
                     case "GR":
                         int count = db.UserRole.Where(ur => ur.RoleId == role.Id).Count();
                         if (count >= 35) disabled = true;
                         description = role.Description + "(" + count + "/35)";
                         break;
+                    //Nur eine Person darf die Rolle Bürgermeister haben
                     case "BM":
                         if (db.UserRole.Where(ur => ur.RoleId == role.Id).Count() >= 1) disabled = true;
                         description = role.Description;
@@ -479,7 +507,7 @@ namespace mosPortal.Controllers
             ViewData["Roles"] = rolesList;
             return View("UsersAdministrationView", users);
         }
-
+        //Gibt alle Daten eines Users als JSON String zurück
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public IActionResult GetUser(int userId)
@@ -489,11 +517,12 @@ namespace mosPortal.Controllers
             user.Password = "";
             return Json(user);
         }
-
+        //User verwalten
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult crudUser(User user, int roleId, string operation)
         {
+            //Variablen
             string title = "";
             string text = "";
             string localCouncilDescription = "";
@@ -502,14 +531,15 @@ namespace mosPortal.Controllers
             int localCouncilId = 4;
             int mayorId = 3;
             int result = 0;
+            //User aus DB selektieren und updaten
             User dbUser = db.User.Where(u => u.Id == user.Id).SingleOrDefault();
             dbUser.Firstname = user.Firstname;
             dbUser.Name = user.Name;
             dbUser.Birthplace = user.Birthplace;
             dbUser.Birthday = user.Birthday;
-            //dbUser.UserName = user.UserName;
             dbUser.Email = user.Email;
             db.Update(dbUser);
+            //Neue Rolle zuweisen, falls diese geändert wurde
             try
             {
                 UserRole userRole = db.UserRole.Where(ur => ur.UserId == user.Id).SingleOrDefault();
@@ -532,7 +562,7 @@ namespace mosPortal.Controllers
             if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
             return Json(new {result, user, roleId, title, text, localCouncilDescription, localCouncilFull, mayorFull});
         }
-
+        //Gibt die Ansicht zur Erstellung der Registierungsschlüssel mit einem neuen Registrierungsschlüssels zurück
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public IActionResult GetRandomKey()
@@ -549,7 +579,7 @@ namespace mosPortal.Controllers
             GetRandomKey();
             throw new Exception("Key wird bereits verwendet ");
         }
-
+        //Erstellung eines Registierungsschlüssels nach dem Zufallsprinizp aus vorgegeben Zeichen
         private Randomkey GenerateRandomkey()
         {
             Random random = new Random();
@@ -565,7 +595,7 @@ namespace mosPortal.Controllers
             key.Key = strresult;
             return key;
         }
-
+        //Erstellung einer Worddatei mit Anschreiben und einem Registrierungsschlüssel für die Einwohner
         public IActionResult GenerateWord(string key)
         {
             string webRootPath = _hostingEnvironment.WebRootPath;
@@ -588,6 +618,7 @@ namespace mosPortal.Controllers
             //range.Text = key;
             //doc.Bookmarks.Add(bookmark, range);
         }
+        //Zeigt die Ansicht zur Erstellung der Registierungsschlüssel an
         [Authorize(Roles = "Admin")]
         public IActionResult ShowKey()
         {

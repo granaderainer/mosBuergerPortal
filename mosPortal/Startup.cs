@@ -41,10 +41,9 @@ namespace mosPortal
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             //Configure DB Service (MySQL)
-            // Funktioniert noch nicht!
             services.AddEntityFrameworkMySql();
             services.AddDbContext<dbbuergerContext>(
-                options => options.UseMySql("Server=v22018127362578408.supersrv.de;Database=dbbuerger;User=jonas;Password=Jonas#1995;",
+                options => options.UseMySql(Configuration.GetConnectionString("DBConnection"),
                 mySqlOptions =>
                 {
                     mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql);
