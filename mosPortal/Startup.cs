@@ -72,7 +72,9 @@ namespace mosPortal
             {
                 string[] allRoles = { "Admin", "User", "GR", "Verw", "BM" };
                 string[] allAdministrativeRoles = { "Admin", "GR", "Verw", "BM" };
+                string[] admin = {"Admin"};
 
+                options.AddPolicy("admin", policy => policy.RequireRole(admin));
                 options.AddPolicy("AllAdministrationRoles", policy => policy.RequireRole(allAdministrativeRoles));
                 options.AddPolicy("AllRoles", policy => policy.RequireRole(allRoles));
             });
