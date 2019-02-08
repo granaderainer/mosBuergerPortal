@@ -12,41 +12,40 @@
     string github = "https://github.com/granaderainer/mosBuergerPortal";
 }
 <div class="top-bar">
-    <div class="container">
+    <div class="container-fluid d-flex">
+        <div class="col-1 d-flex align-items-center">
+            @if ((bool)ViewData["admin"])
+            {
+                <button type="button" id="toggle-btn" class="btn btn-primary d-flex "><i class="fa fa-arrows-h"></i></button>
+            }
+        </div>
+        <div class="col-11 d-flex">
 
-       <div class="row d-flex align-items-center">
-      @if ((bool)ViewData["admin"])
-        {
-            <div class="col-1">
-                <ul class="list-inline contact-info d-md-block d-none">
-                    <li class="list-inline-item"><a id="toggle-btn" href="#" class="login-btn active"><i class="fa fa-arrows-h"></i></a></li>
+            <div class="col-md-6 d-md-block d-none">
+                <ul>
+                    <li class="list-inline-item">
+                        <p>Kontaktiere uns <a href="callto:@tel" style="text-decoration: none; color: unset"><span><i class="fa fa-phone mx-2 "></i>@tel</span><span class="ml-2">oder</span><span class="ml-2"></span></a><a href="mailto:@mail" style="text-decoration: none; color: unset"><span class="list-inline-item"><i class="fa fa-envelope mr-2"></i>@mail.</span></a></p>
+                    </li>
                 </ul>
             </div>
-        }
-            <div class="col-md-6 d-md-block d-none">
 
-                <li class="list-inline-item">
-                    <p>Kontaktiere uns <a href="callto:@tel" style="text-decoration: none; color: unset"><span><i class="fa fa-phone mx-2 "></i>@tel</span><span class="ml-2">oder</span><span class="ml-2"></span></a><a href="mailto:@mail" style="text-decoration: none; color: unset"><span class="list-inline-item"><i class="fa fa-envelope mr-2"></i>@mail.</span></a></p>
-                </li>
-            </div>
-       
 
-            <div id="topBarLayoutchange" class="col-md-6">
-                  
+            <div id="topBarLayoutchange" class="col-md-4">
+
                 <div class="d-flex justify-content-md-end justify-content-between">
-                    <ul class="list-inline contact-info d-block d-md-none">
+                    @*<ul class="list-inline contact-info d-block d-md-none">
                         <li class="list-inline-item"><a id="toggle-btn" href="#" class="login-btn active"><i class="fa fa-arrows-h"></i></a></li>
-                    </ul>
-                    <ul class="list-inline contact-info d-block d-md-none">
-                       
-                        
-                        <li class="list-inline-item"><a href="callto:@tel"><i class="fa fa-phone"></i></a></li>
-                        <li class="list-inline-item"><a href="mailto:@mail"><i class="fa fa-envelope"></i></a></li>
+                    </ul>*@
+                    <ul class="list-inline contact-info d-block d-md-none ml-3">
+
+
+                        <li class="list-inline-item white"><a href="callto:@tel" style="text-decoration: none; color: unset"><i class="fa fa-phone"></i></a></li>
+                        <li class="list-inline-item white"><a href="mailto:@mail" style="text-decoration: none; color: unset"><i class="fa fa-envelope"></i></a></li>
                     </ul>
                     <ul class="list-inline d-block">
-                        @if ((bool)ViewData["admin"])
+                        @if ((bool) ViewData["admin"])
                         {
-                            <li class=" list-inline-item mr-3"> <a asp-area="" asp-action="index" asp-controller="Home" class="login-btn list-inline-item "><i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
+                            <li class=" list-inline-item mr-3"> <a  asp-action="index" asp-controller="Home" class="login-btn list-inline-item "><i class="fa fa-home"></i><span class="d-none d-sm-inline"> Home</span></a></li>
 
                         }
                     </ul>
@@ -62,8 +61,9 @@
                         }
                         else
                         {
-                            <li> <a asp-area="" asp-action="Login" asp-controller="Account" asp-route-returnUrl="@ViewData["ReturnUrl"]" data-toggle="modal" data-target="#modal" class="login-btn list-inline-item"><i class="fa fa-sign-in"></i><span class="d-md-inline-block">Login</span></a></li>
+                            <li> <a asp-action="Login" asp-controller="Account" data-toggle="modal" data-target="#modal" class="login-btn list-inline-item"><i class="fa fa-sign-in"></i><span class="d-md-inline-block">Login</span></a></li>
                         }
+
                     </ul>
                     <ul class="social-custom list-inline">
                         <li class="list-inline-item"><a target="_blank" rel="noopener noreferrer" href="@github"><i class="fa fa-github"></i></a></li>
@@ -74,11 +74,4 @@
     </div>
 </div>
 
-@if ((bool) ViewData["admin"])
-{
-    <script type="text/javascript">
-        $('#topBarLayoutchange').removeClass("col-md-6");
-        $('#topBarLayoutchange').addClass("col-md-5");
 
-    </script>
-}

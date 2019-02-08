@@ -5,6 +5,7 @@ using mosPortal.Models;
 using mosPortal.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SignInResult = Microsoft.AspNetCore.Identity.SignInResult;
 
 namespace mosPortal.Controllers
 {
@@ -24,7 +25,7 @@ namespace mosPortal.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            var model = new LoginViewModel {ReturnUrl = returnUrl};
+            LoginViewModel model = new LoginViewModel {ReturnUrl = returnUrl};
             return PartialView("_Modal", model);
         }
 
@@ -32,7 +33,7 @@ namespace mosPortal.Controllers
         public IActionResult Register(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            var model = new RegisterViewModel();
+            RegisterViewModel model = new RegisterViewModel();
             return PartialView("RegisterView", model);
         }
 
@@ -40,8 +41,8 @@ namespace mosPortal.Controllers
         public async Task<IActionResult> Register(RegisterViewModel model, string returnUrl = "")
         {
             //TODo: Beide PW gleich --> Check
-            var userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
-            var addressCheck = db.Address.Where(a =>
+            User userCheck = db.User.Where(u => u.UserName == model.Username).SingleOrDefault();
+            Address addressCheck = db.Address.Where(a =>
                 a.Country == model.Country && a.City == model.City && a.ZipCode == model.ZipCode &&
                 a.Street == model.Street && a.Number == model.Number).SingleOrDefault();
             try
@@ -127,7 +128,7 @@ namespace mosPortal.Controllers
             bool login = false;
             if (ModelState.IsValid)
             {
-                var result = await signInManager.PasswordSignInAsync(model.Username,
+                SignInResult result = await signInManager.PasswordSignInAsync(model.Username,
                     model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
