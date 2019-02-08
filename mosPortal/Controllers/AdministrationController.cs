@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using mosPortal.Data;
 using mosPortal.Models;
 using mosPortal.Models.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +44,9 @@ namespace mosPortal.Controllers
                 .Where(c => c.UserConcern.Count >= 1).Count();
             ViewData["ConcernStatusThreeCount"] = db.Concern.Where(c => c.StatusId == 3).Count();
             //Ablauf Datum!!!
-            ViewData["PollCount"] = db.Poll.Count();
+            //ViewData["PollCount"] = db.Poll.Count();
+            ViewData["PollCount"] = db.Poll.Where(p => p.End > DateTime.UtcNow).Where(p => p.NeedsLocalCouncil == false)
+                .Where(p => p.Approved).Count();
             ViewData["CurrentPolls"] =
                 db.Poll.Where(p => p.End >= DateTime.UtcNow).OrderBy(p => p.End).Take(4).ToList();
             return View("Index");
@@ -115,49 +118,6 @@ namespace mosPortal.Controllers
             ViewData["statusList"] = statusList;
             ViewData["CategoriesList"] = categoriesList;
             return View("ConcernsAdministrationView", concerns);
-            /*if (statusId == 0)
-            {
-                concerns = db.Concern.ToList();
-                foreach (Concern concern in concerns)
-                {
-                    concern.Comment = db.Comment.Where(c => c.ConcernId == concern.Id).ToList();
-                    concern.UserConcern = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
-                }
-                return View("ConcernsAdministrationView", concerns);
-            }
-            
-            //ViewData["Status"] = db.Status.Where(s => s.Id == statusId).SingleOrDefault().Description;
-            if (statusId != 2)
-            {
-                concerns = db.Concern
-                    .Where(c => c.StatusId == statusId)
-                    .Include("Category")
-                    .Where(c => c.CategoryId == c.Category.Id)
-                    .Include("Status")
-                    .Where(c => c.StatusId == c.Status.Id)
-                    .Select(x => new Concern
-                    {
-                        Id = x.Id,
-                        Text = x.Text,
-                        Title = x.Title,
-                        Date = x.Date,
-                        StatusId = x.StatusId,
-                        Category = x.Category,
-                        UserId = x.UserId,
-                        Status = x.Status
-                    }).ToList();
-                foreach (Concern concern in concerns)
-                {
-                    List<UserConcern> userConcerns = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
-                    concern.UserConcern = userConcerns;
-                }
-                return View("ConcernsAdministrationView", concerns);
-            }
-            else
-            {
-                concerns = db.Concern.Where(c => c.StatusId == statusId).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
-                return View("ConcernsAdministrationView", concerns);
-            }*/
         }
 
         [HttpPost]
@@ -454,7 +414,7 @@ namespace mosPortal.Controllers
 
             return poll.getAnswers();
         }
-
+        [Authorize(Policy = "admin")]
         public IActionResult ShowCategories()
         {
             List<Category> categories = db.Category.ToList();
@@ -462,6 +422,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "admin")]
         public IActionResult crudCategory(string categoryId, string description, string operation)
         {
             Category category = new Category();
@@ -507,7 +468,7 @@ namespace mosPortal.Controllers
 
             return Json(new {result, title, text, description, categoryId = categoryIdInt});
         }
-
+        [Authorize(Policy = "admin")]
         public IActionResult ShowUsers()
         {
             List<User> users = db.User.Include("UserRole").ToList();
@@ -550,6 +511,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "admin")]
         public IActionResult crudUser(User user, int roleId, string operation)
         {
             string title = "";
@@ -592,6 +554,7 @@ namespace mosPortal.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "admin")]
         public IActionResult GetRandomKey()
         {
             Randomkey key = GenerateRandomkey();
@@ -653,32 +616,5 @@ namespace mosPortal.Controllers
             key.Key = "XXXXXXXXXXX";
             return View("RandomKeyView", key);
         }
-
-        /*[HttpGet]
-        public IActionResult CreatePoll()
-        {
-            Poll poll = new Poll();
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<SelectListItem> answerOptionList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
-            }
-            foreach(AnswerOptions anserOption in answerOptions)
-            {
-                answerOptionList.Add(new SelectListItem { Value = anserOption.Id.ToString(), Text = anserOption.Description });
-            }
-            ViewData["CategoriesList"] = categoriesList;
-            ViewData["AnswerOptionsList"] = answerOptionList;
-            return View("CreatePollAdministrationView", poll);
-        }*/
-
-        /*public IActionResult ShowConcernsLocalCouncil()
-{
-    List<Concern> concerns = db.Concern.Where(c => c.StatusId >= 2 && c.StatusId <= 3).Include("UserConcern").Where(c => c.UserConcern.Count >= 1).ToList();
-    return View("ConcernsAdministrationView", concerns);
-}*/
     }
 }
