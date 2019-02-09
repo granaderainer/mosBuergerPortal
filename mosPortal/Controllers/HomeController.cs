@@ -64,6 +64,7 @@ namespace mosPortal.Controllers
                 .Where(c => c.StatusId == 2 || c.StatusId == 3)
                 .Include("Category")
                 .Include("Comment")
+                .OrderBy(c => c.Date)
                 .ToList();
             List<Concern> concernsRemoveList = new List<Concern>();
             foreach (Concern concern in concerns)
@@ -219,7 +220,7 @@ namespace mosPortal.Controllers
         {
             DateTime time = DateTime.UtcNow;
             List<Poll> polls = db.Poll.Where(p => p.End > time).Where(p => p.NeedsLocalCouncil == false)
-                .Where(p => p.Approved).Include("Category").ToList();
+                .Where(p => p.Approved).Include("Category").OrderBy(p => p.End).ToList();
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             var user = await userManager.GetUserAsync(HttpContext.User);
