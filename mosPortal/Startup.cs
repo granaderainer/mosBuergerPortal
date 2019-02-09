@@ -47,7 +47,7 @@ namespace mosPortal
                 mySqlOptions =>
                 {
                     mySqlOptions.ServerVersion(new Version(5, 7, 24), ServerType.MySql);
-                    }
+                }
                 ));
             //Add Authentication and Authorization
 

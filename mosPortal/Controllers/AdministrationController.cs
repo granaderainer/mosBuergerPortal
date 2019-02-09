@@ -66,7 +66,7 @@ namespace mosPortal.Controllers
             IList<string> roles = await userManager.GetRolesAsync(user);
             List<Concern> concerns = new List<Concern>();
             List<Status> status = new List<Status>();
-            statusList.Add(new SelectListItem {Value = "0", Text = "Alle Anliegen"});
+            statusList.Add(new SelectListItem { Value = "0", Text = "Alle Anliegen" });
 
             //Selektieren der Anliegen und der Status je nach Rolle des Benutzers
             if (roles[0] == "Verw")
@@ -104,10 +104,10 @@ namespace mosPortal.Controllers
                 concern.Comment = db.Comment.Where(c => c.ConcernId == concern.Id).ToList();
                 concern.UserConcern = db.UserConcern.Where(uc => uc.ConcernId == concern.Id).ToList();
             }
-            
+
             foreach (Status stat in status)
             {
-                statusList.Add(new SelectListItem {Value = stat.Id.ToString(), Text = stat.Description});
+                statusList.Add(new SelectListItem { Value = stat.Id.ToString(), Text = stat.Description });
                 /*if (stat.Id == 3)
                 {
                     statusList.Add(new SelectListItem {Value = "31", Text = stat.Description + " von mir"});
@@ -115,10 +115,10 @@ namespace mosPortal.Controllers
             }
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
-            categoriesList.Add(new SelectListItem {Value = "0", Text = "Alle Kategorien"});
+            categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
             foreach (Category category in categories)
             {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
 
             //ViewData Variablen
@@ -170,7 +170,7 @@ namespace mosPortal.Controllers
                     }
                     else
                     {
-                        answerOption = new AnswerOptions {Description = answer};
+                        answerOption = new AnswerOptions { Description = answer };
                         db.Add(answerOption);
                         answerOptionId.Add(answerOption.Id);
                     }
@@ -190,7 +190,7 @@ namespace mosPortal.Controllers
                 //Antworten Speichern 
                 foreach (int aoId in answerOptionId)
                 {
-                    db.Add(new AnswerOptionsPoll {PollId = poll.Id, AnswerOptionsId = aoId});
+                    db.Add(new AnswerOptionsPoll { PollId = poll.Id, AnswerOptionsId = aoId });
                 }
 
                 //Dokumente aus dem Anliegen in die Umfrage übernehmen
@@ -215,10 +215,10 @@ namespace mosPortal.Controllers
                 }
                 //Commit
                 int result = db.SaveChanges();
-                return Json(new {result, concernStatusId, concernId = createPoll.ConcernId});
+                return Json(new { result, concernStatusId, concernId = createPoll.ConcernId });
             }
 
-            return Json(new {result = 0});
+            return Json(new { result = 0 });
         }
         //Gibt alle Daten eines Anliegen als JSON String zurück
         [HttpGet]
@@ -281,8 +281,16 @@ namespace mosPortal.Controllers
 
             return Json(new
             {
-                concernId, title = concern.Title, text = concern.Text, categoryId, statusId = concern.StatusId,
-                date = concern.Date.ToString(), statuses, imageIds, fileIds, comment
+                concernId,
+                title = concern.Title,
+                text = concern.Text,
+                categoryId,
+                statusId = concern.StatusId,
+                date = concern.Date.ToString(),
+                statuses,
+                imageIds,
+                fileIds,
+                comment
             });
         }
         //Status eines Anliegen ändern und speichern
@@ -307,7 +315,7 @@ namespace mosPortal.Controllers
             con.AdminComment = comment;
             db.Concern.Update(con);
             int result = db.SaveChanges();
-            return Json(new {result});
+            return Json(new { result });
         }
         //Zeigt alle Umfragen an
         public async Task<IActionResult> ShowPolls()
@@ -322,10 +330,10 @@ namespace mosPortal.Controllers
             List<Category> categories = db.Category.ToList();
             List<AnswerOptions> answerOptions = db.AnswerOptions.ToList();
             //Status Liste für Filter füllen
-            statusList.Add(new SelectListItem {Value = "0", Text = "Alle Umfragen"});
-            statusList.Add(new SelectListItem {Value = "2", Text = "laufende Umfragen"});
-            statusList.Add(new SelectListItem {Value = "3", Text = "beendete Umfragen"});
-            categoriesList.Add(new SelectListItem {Value = "0", Text = "Alle Kategorien"});
+            statusList.Add(new SelectListItem { Value = "0", Text = "Alle Umfragen" });
+            statusList.Add(new SelectListItem { Value = "2", Text = "laufende Umfragen" });
+            statusList.Add(new SelectListItem { Value = "3", Text = "beendete Umfragen" });
+            categoriesList.Add(new SelectListItem { Value = "0", Text = "Alle Kategorien" });
             //Rollenspezifische Variablen füllen, Umfragen je nach Rolle selektieren
             if (roles[0] == "Verw")
             {
@@ -343,12 +351,12 @@ namespace mosPortal.Controllers
             if (roles[0] == "Admin")
             {
                 polls = db.Poll.OrderByDescending(p => p.End).ToList();
-                statusList.Add(new SelectListItem {Value = "6", Text = "abgeschlossene Umfragen"});
+                statusList.Add(new SelectListItem { Value = "6", Text = "abgeschlossene Umfragen" });
             }
 
             foreach (Category category in categories)
             {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
 
             //Status der Umfragen ändern, falls nötig
@@ -391,7 +399,7 @@ namespace mosPortal.Controllers
                     .Count();
             }
 
-            return Json(new {title = poll.Title, text = poll.Text, end = poll.End, votes});
+            return Json(new { title = poll.Title, text = poll.Text, end = poll.End, votes });
         }
         //Gibt Antworten und die Anzahl der Stimmen der jeweiligen Antwort einer Umfrage als JSON String zurück
         public IActionResult GetPollAnswers(int pollId)
@@ -467,7 +475,7 @@ namespace mosPortal.Controllers
                 result = 0;
             }
 
-            return Json(new {result, title, text, description, categoryId = categoryIdInt});
+            return Json(new { result, title, text, description, categoryId = categoryIdInt });
         }
 
         //Zeigt die Ansicht User Verwalten an
@@ -501,7 +509,7 @@ namespace mosPortal.Controllers
                         break;
                 }
 
-                rolesList.Add(new SelectListItem {Value = role.Id.ToString(), Text = description, Disabled = disabled});
+                rolesList.Add(new SelectListItem { Value = role.Id.ToString(), Text = description, Disabled = disabled });
             }
 
             ViewData["Roles"] = rolesList;
@@ -548,7 +556,7 @@ namespace mosPortal.Controllers
             }
             catch
             {
-                UserRole userRole = new UserRole {UserId = user.Id, RoleId = roleId};
+                UserRole userRole = new UserRole { UserId = user.Id, RoleId = roleId };
                 db.Add(userRole);
             }
 
@@ -560,7 +568,7 @@ namespace mosPortal.Controllers
             if (count >= 35) localCouncilFull = true;
             //BM zählen
             if (db.UserRole.Where(ur => ur.RoleId == mayorId).Count() >= 1) mayorFull = true;
-            return Json(new {result, user, roleId, title, text, localCouncilDescription, localCouncilFull, mayorFull});
+            return Json(new { result, user, roleId, title, text, localCouncilDescription, localCouncilFull, mayorFull });
         }
         //Gibt die Ansicht zur Erstellung der Registierungsschlüssel mit einem neuen Registrierungsschlüssels zurück
         [HttpPost]

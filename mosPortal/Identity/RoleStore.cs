@@ -72,7 +72,7 @@ namespace mosPortal.Identity
                 return await db.Role.FindAsync(id);
             }
 
-            return await Task.FromResult((Role) null);
+            return await Task.FromResult((Role)null);
         }
 
         async Task<Role> IRoleStore<Role>.FindByNameAsync(string normalizedRoleName,

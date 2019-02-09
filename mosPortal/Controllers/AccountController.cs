@@ -27,7 +27,7 @@ namespace mosPortal.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
-            LoginViewModel model = new LoginViewModel {ReturnUrl = returnUrl};
+            LoginViewModel model = new LoginViewModel { ReturnUrl = returnUrl };
             return PartialView("_Modal", model);
         }
         //Registrierungsseite
@@ -119,7 +119,7 @@ namespace mosPortal.Controllers
                     }
 
                     register = false;
-                    return RedirectToAction("Index", "Home", new {register});
+                    return RedirectToAction("Index", "Home", new { register });
                 }
             }
 
@@ -146,7 +146,7 @@ namespace mosPortal.Controllers
                     }
 
                     login = true;
-                    return RedirectToAction("Index", "Home", new {login});
+                    return RedirectToAction("Index", "Home", new { login });
                 }
             }
 

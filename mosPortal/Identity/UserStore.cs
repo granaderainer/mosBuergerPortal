@@ -23,7 +23,7 @@ namespace mosPortal.Identity
         {
             user.Password = passwordHash;
 
-            return Task.FromResult((object) null);
+            return Task.FromResult((object)null);
         }
 
         public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
@@ -151,7 +151,7 @@ namespace mosPortal.Identity
 
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
         {
-            return Task.FromResult((object) null);
+            return Task.FromResult((object)null);
         }
 
         public async Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
@@ -184,7 +184,7 @@ namespace mosPortal.Identity
                 return await db.User.FindAsync(id);
             }
 
-            return await Task.FromResult((User) null);
+            return await Task.FromResult((User)null);
         }
 
         public async Task<User> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken)
