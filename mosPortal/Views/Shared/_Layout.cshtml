@@ -68,15 +68,13 @@
     <!-- Top bar-->
     @await Html.PartialAsync("_TopBarPartial", ViewData["admin"])
     <!-- Top bar end-->
-    <!-- Login modal end-->
     <!-- Navbar Start-->
     @await Html.PartialAsync("_NavBarView")
     <!-- Navbar End-->
     @RenderBody()
-    <!-- Alles ab hier ist eig im RenderBody index hab ich nichts geändert -->
-    <!--Hier hört Render Body auf-->
     <!-- FOOTER -->
     @await Html.PartialAsync("_FooterView")
+
     @await Html.PartialAsync("_Modal", new LoginViewModel())
 </div>
 

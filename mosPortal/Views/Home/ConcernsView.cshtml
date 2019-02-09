@@ -31,20 +31,14 @@
         </div>
     </div>
 </div>
-<!-- Page Content -->
 <div class="container">
-    <!-- Page Heading/Breadcrumbs -->
-
-    <!-- /.row -->
+  
     <div class="row">
-        <!-- Blog Sidebar Widgets Column NEW -->
         <div class="col-md-3 bar">
-            <!-- PAGES MENU -->
             <div class="panel panel-default sidebar-menu">
                 <!-- "Neues Anliegen" Button Sidebar-->
 
                 <hr>
-                <!-- Blog Search Well -->
 
                 <h4>Nach Anliegen suchen:</h4>
                 <div class="input-group">
@@ -55,10 +49,8 @@
                         </button>
                     </span>
                 </div>
-                <!-- /.input-group -->
-
+             
                 <hr>
-                <!-- Blog Categories Well -->
                 <div class="panel-body">
                     <h4>Alle Kategorien</h4>
                     <div class="input-group mb-3">
@@ -74,21 +66,18 @@
 
                         </select>
                     </div>
-                    @*<ul class="nav nav-pills flex-column text-sm">
-                        @foreach (var varCategory in categories)
-                        { 
-                            <li class="nav-item">
-                                <a onclick="" class="nav-link">@varCategory.Description</a>
-                            </li>
-                        }
-                    </ul>*@
+                   
                 </div>
             </div>
         </div>
-        <!-- Blog Entries Column -->
         <div class="col-md-9">
             @foreach (var item in Model)
             {
+                var percent = @item.UserConcern.Count * 10; //*10 nur für die Präsentation
+                if (percent >100)
+                {
+                    percent = 100;
+                }
                 <div id="@item.Id @item.Category.Id" name="concern">
                     <div class="container">
                         <div class="row box Pollbox shadow">
@@ -131,7 +120,7 @@
 
                                             <br>
                                             <div class="progress">
-                                                <div role="progressbar" id="progressbar @item.Id" style="width: @item.UserConcern.Count()%;" aria-valuenow=@item.UserConcern.Count() aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-primary"></div>
+                                                <div role="progressbar" id="progressbar @item.Id" style="width: @percent%;" aria-valuenow=@item.UserConcern.Count() aria-valuemin="0" aria-valuemax="10" class="progress-bar bg-primary"></div> @*aria-valuemax = "100"*@
                                             </div>
                                             <p class="text-right">
 
@@ -165,14 +154,9 @@
                 </div>
             }
 
-            <!-- Pager new -->
+     
             <ul class="pager d-flex align-items-center justify-content-between list-unstyled">
-                @*<li class="previous">
-                    <a href="#" class="btn btn-template-outlined">← Older</a>
-                </li>
-                <li class="next disabled">
-                    <a href="#" class="btn btn-template-outlined">Newer →</a>
-                </li>*@
+              
             </ul>
 
         </div>
@@ -181,13 +165,12 @@
     </div>
 
 </div>
-<!-- /.container -->
+
 @await Html.PartialAsync("CreateConcernModalView", new Concern(), new ViewDataDictionary(ViewData))
 
 <script type="text/javascript">
 
     function getComments(itemid) {
-        //$("#countcomments").load("/Home/GetCommentsCount", { id: itemid });
         $.get("/Home/VoteForConcernAsync",
             { concernId: concernId },
             function(data) {
@@ -255,8 +238,8 @@
                     document.getElementById("likesConcern " + concernId).textContent =
                         (data.votes); // display id value which is returned from the action method
                     var progressbar = document.getElementById("progressbar " + concernId);
-                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes + '%');
-
+                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes*10 + '%');
+                    //* 10 bei Progressbar rausnehmen, da nur für die Präsentation gedacht.
                 });
         }
 

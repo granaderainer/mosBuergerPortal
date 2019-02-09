@@ -17,13 +17,15 @@ using File = mosPortal.Models.File;
 
 namespace mosPortal.Controllers
 {
+    //Jeder hat Zugriff auf den Kontroller (außer die Methoden sind abgesichert)
+    //Kontroller für die Einwohneransicht
     public class HomeController : Controller
     {
-        //private readonly dbbuergerContext db = new dbbuergerContext();
         private readonly dbbuergerContext db;
         private SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
+        //Konstrukor
         public HomeController(UserManager<User> userManager, SignInManager<User> signManager, dbbuergerContext db)
         {
             this.userManager = userManager;
@@ -31,6 +33,7 @@ namespace mosPortal.Controllers
             signInManager = signManager;
         }
 
+        //Startseite Index
         [AllowAnonymous]
         public async Task<IActionResult> Index(bool register = false, bool login = false) //Startup Page
         {
@@ -41,8 +44,9 @@ namespace mosPortal.Controllers
             ViewData["PollViewModels"] = await ShowPollsIndex();
             return View("Index"); //Call View "Index"
         }
-
-        [AllowAnonymous] //Rolesystem
+        //Rolesystem
+        [AllowAnonymous] 
+        //Alle Anliegen anzeigen
         public IActionResult ShowConcerns()
         {
             DateTime time6 = DateTime.UtcNow.AddMonths(-6);
@@ -84,6 +88,7 @@ namespace mosPortal.Controllers
         }
 
         [Authorize(Policy = "AllRoles")] //Rolesystem, you have to be logged in, but the Role is not important
+        //Ein Anliegen 
         public IActionResult ShowConcern(int concernId) //Only one concern, called by his id
         {
             Concern concern = db.Concern.SingleOrDefault(c => c.Id == concernId);
@@ -114,6 +119,7 @@ namespace mosPortal.Controllers
             return View("ConcernView", concern);
         }
         
+        //Anliegen Voten
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
             User user = await userManager.GetUserAsync(HttpContext.User);
@@ -127,6 +133,7 @@ namespace mosPortal.Controllers
             return Json(new {votes});
         }
         
+        //Neues Anliegen erstellen
         [Authorize(Policy = "AllRoles")]
         [HttpPost]
         public async Task<IActionResult> CreateConcernAsync(Concern concern, List<IFormFile> files)
@@ -183,7 +190,7 @@ namespace mosPortal.Controllers
 
             return View("CreateConcernView");
         }
-
+        //Kommentar bei einem Anliegen speichern
         [HttpPost]
         public async Task<IActionResult> PostCommentAsync(int concernId, string commentText) //post a comment async with javascript
         {
@@ -207,7 +214,7 @@ namespace mosPortal.Controllers
             return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
         }
 
-
+        //Alle Einwohner Umfragen ausgeben
         public async Task<IActionResult> ShowPolls() //show all Polls
         {
             DateTime time = DateTime.UtcNow;
@@ -249,7 +256,6 @@ namespace mosPortal.Controllers
                 poll.Image = images;
                 poll.File = files;
             }
-
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)
             {
@@ -303,6 +309,7 @@ namespace mosPortal.Controllers
             return View("PollsView", pollViewModels);
         }
 
+        //Umfrage abstimmen   
         [Authorize(Policy = "AllRoles")]
         [HttpPost]
         public async Task<IActionResult> submitPollAnswer(PollViewModel poll) //submit Poll answer on the index page, and poll page
@@ -353,6 +360,7 @@ namespace mosPortal.Controllers
             return View("_Datenschutzerklaerung");
         }
 
+        //Umfragen auf der Startseite anzeigen
         public async Task<ICollection<PollViewModel>> ShowPollsIndex()
         {
             DateTime time = DateTime.UtcNow;
@@ -440,6 +448,7 @@ namespace mosPortal.Controllers
             return pollViewModels;
         }
 
+        //Umfrageergebnisse für den Einwohner anzeigen
         public IActionResult ShowPollResults() //Results of ended polls
         {
             DateTime time = DateTime.UtcNow;
