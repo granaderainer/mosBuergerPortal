@@ -3033,7 +3033,7 @@ a {
 }
 
 a:focus, a:hover {
-  color: #348e7b;
+  color: #336faa; /*#348e7b;*/
   text-decoration: underline;
 }
 
