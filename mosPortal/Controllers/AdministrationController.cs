@@ -580,7 +580,7 @@ namespace mosPortal.Controllers
             if (dbCheck.Count == 0)
             {
                 db.Randomkey.Add(key);
-                db.SaveChangesAsync();
+                db.SaveChanges();
                 return View("RandomKeyView", key);
             }
 
