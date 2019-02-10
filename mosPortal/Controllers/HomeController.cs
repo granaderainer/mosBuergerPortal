@@ -535,5 +535,23 @@ namespace mosPortal.Controllers
 
             return View("PollResultsView", pollViewModels);
         }
+        public IActionResult GetPollAnswers(int pollId)
+        {
+            int id = pollId;
+            // Umfrage und Antworten selektieren
+            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                .Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
+            foreach (AnswerOptionsPoll answerOptionsPoll in answerOptionsPolls)
+            {
+                List<UserAnswerOptionsPoll> userAnswerOptionsPolls = db.UserAnswerOptionsPoll
+                    .Where(uaop => uaop.AnswerOptionsPollId == answerOptionsPoll.Id).ToList();
+                answerOptionsPoll.UserAnswerOptionsPoll = userAnswerOptionsPolls;
+            }
+
+            poll.AnswerOptionsPoll = answerOptionsPolls;
+
+            return poll.getAnswers();
+        }
     }
 }
