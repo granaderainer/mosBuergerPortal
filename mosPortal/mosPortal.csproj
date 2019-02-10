@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <None Include="wwwroot\AnschreibenEinwohner.docx" />
-    <None Include="wwwroot\user_template\index.html" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,15 +10,18 @@ namespace mosPortal.Controllers
 {
     public class FileController : Controller
     {
-        private readonly dbbuergerContext db = new dbbuergerContext();
-
+        private readonly dbbuergerContext db;
+        public FileController(dbbuergerContext db)
+        {
+            this.db = db;
+        }
         public FileStreamResult GetImage(int id)
         {
             Image image = db.Image.Where(i => i.Id == id).SingleOrDefault();
-//            if (image == null)
-//            {
-//                image = db.Image.Where(i => i.Id == 18).SingleOrDefault();
-//            }
+            //            if (image == null)
+            //            {
+            //                image = db.Image.Where(i => i.Id == 18).SingleOrDefault();
+            //            }
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
         }

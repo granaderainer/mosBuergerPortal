@@ -51,6 +51,7 @@ namespace mosPortal.Models
 
         [Display(Name = "Status")] public Status Status { get; set; }
 
+        //Erstellt einen Vote für einen User und gibt die Anzahl der Votes zurück
         public int vote(int userID)
         {
             UserConcern.Add(new UserConcern
@@ -61,7 +62,7 @@ namespace mosPortal.Models
             int votes = UserConcern.Count;
             return votes;
         }
-
+        //Prüft ob ein User berechtigt ist zu voten oder bereits gevotet hat
         public bool allowToVote(User user)
         {
             foreach (var uc in UserConcern)

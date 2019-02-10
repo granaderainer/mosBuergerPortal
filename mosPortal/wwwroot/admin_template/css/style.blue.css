@@ -1531,12 +1531,12 @@ section.dashboard-counts div[class*='col-']:last-of-type .item {
 * ==========================================================
 */
 footer.main-footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  background: #2f333e;
-  color: #fff;
-  padding: 20px 10px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #555;
+    color: #fff;
+    padding: 20px 10px;
 }
 
 footer.main-footer a {

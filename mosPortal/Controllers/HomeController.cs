@@ -17,42 +17,46 @@ using File = mosPortal.Models.File;
 
 namespace mosPortal.Controllers
 {
+    //Jeder hat Zugriff auf den Kontroller (außer die Methoden sind abgesichert)
+    //Kontroller für die Einwohneransicht
     public class HomeController : Controller
     {
-        private readonly dbbuergerContext db = new dbbuergerContext();
+        private readonly dbbuergerContext db;
         private SignInManager<User> signInManager;
         private readonly UserManager<User> userManager;
 
-        public HomeController(UserManager<User> userManager, SignInManager<User> signManager)
+        //Konstrukor
+        public HomeController(UserManager<User> userManager, SignInManager<User> signManager, dbbuergerContext db)
         {
             this.userManager = userManager;
+            this.db = db;
             signInManager = signManager;
         }
 
+        //Startseite Index
         [AllowAnonymous]
-        public IActionResult Index(bool register = false, bool login = false)
+        public async Task<IActionResult> Index(bool register = false, bool login = false) //Startup Page
         {
             ViewData["register"] = register;
             ViewData["login"] = login;
             ViewData["VotesCount"] = db.UserConcern.Count();
             ViewData["VotedUserCount"] = db.UserConcern.GroupBy(uc => uc.UserId).Count();
-            ViewData["PollViewModels"] = ShowPollsIndex();
-            return View("Index");
+            ViewData["PollViewModels"] = await ShowPollsIndex();
+            return View("Index"); //Call View "Index"
         }
-
-        //bei Schow Concern Prüfen ob man nicht den einen Concern übergeben kann => keine Weitere DB Abfrage nötig
+        //Rolesystem
         [AllowAnonymous]
+        //Alle Anliegen anzeigen
         public IActionResult ShowConcerns()
         {
             DateTime time6 = DateTime.UtcNow.AddMonths(-6);
-
             List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
+            List<Category> categories = db.Category.ToList(); //Database Query with Entity Framework
 
             ViewData["Categories"] = categories;
             foreach (Category category in categories)
             {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
 
             ViewData["CategoriesList"] = categoriesList;
@@ -60,6 +64,7 @@ namespace mosPortal.Controllers
                 .Where(c => c.StatusId == 2 || c.StatusId == 3)
                 .Include("Category")
                 .Include("Comment")
+                .OrderBy(c => c.Date)
                 .ToList();
             List<Concern> concernsRemoveList = new List<Concern>();
             foreach (Concern concern in concerns)
@@ -80,11 +85,12 @@ namespace mosPortal.Controllers
                 concerns.Remove(c);
             }
 
-            return View("ConcernsView", concerns);
+            return View("ConcernsView", concerns); //return View ConcernsView with an list of concerns
         }
 
-        [Authorize(Policy = "AllRoles")]
-        public IActionResult ShowConcern(int concernId)
+        [Authorize(Policy = "AllRoles")] //Rolesystem, you have to be logged in, but the Role is not important
+        //Ein Anliegen 
+        public IActionResult ShowConcern(int concernId) //Only one concern, called by his id
         {
             Concern concern = db.Concern.SingleOrDefault(c => c.Id == concernId);
             Category category = db.Category.SingleOrDefault(c => c.Id == concern.CategoryId);
@@ -106,7 +112,7 @@ namespace mosPortal.Controllers
             ViewData["Categories"] = categories;
             foreach (Category c in categories)
             {
-                categoriesList.Add(new SelectListItem {Value = c.Id.ToString(), Text = c.Description});
+                categoriesList.Add(new SelectListItem { Value = c.Id.ToString(), Text = c.Description });
             }
 
             ViewData["CategoriesList"] = categoriesList;
@@ -114,37 +120,7 @@ namespace mosPortal.Controllers
             return View("ConcernView", concern);
         }
 
-        public JsonResult GetConcernJson(int concernId)
-        {
-            Concern concern = db.Concern.Where(c => c.Id == concernId).SingleOrDefault();
-            List<File> files = db.File.Where(f => f.ConcernId == concernId).ToList();
-            List<Image> images = db.Image.Where(i => i.ConcernId == concernId).ToList();
-
-            int[] imageIds = new int[images.Count()];
-            int[] fileIds = new int[files.Count()];
-            int k = 0;
-            int j = 0;
-            foreach (File file in files)
-            {
-                fileIds[k] = file.Id;
-                k++;
-            }
-
-            foreach (Image image in images)
-            {
-                imageIds[j] = image.Id;
-                j++;
-            }
-
-            int categoryId = concern.CategoryId;
-            return Json(new
-            {
-                concernId, title = concern.Title, text = concern.Text, categoryId, date = concern.Date.ToString(),
-                imageIds, fileIds
-            });
-        }
-
-
+        //Anliegen Voten
         public async Task<JsonResult> VoteForConcernAsync(int concernId)
         {
             User user = await userManager.GetUserAsync(HttpContext.User);
@@ -155,30 +131,10 @@ namespace mosPortal.Controllers
             });
             await db.SaveChangesAsync();
             int votes = db.UserConcern.Where(uc => uc.ConcernId == concernId).Count();
-            return Json(new {votes});
+            return Json(new { votes });
         }
 
-        public async Task<JsonResult> GetCommentsCount(int concernId)
-        {
-            int count = db.Comment.Where(c => c.ConcernId == concernId).Count();
-            return Json(new {comments = count});
-        }
-
-        [Authorize(Policy = "AllRoles")]
-        [HttpGet]
-        public IActionResult CreateConcern()
-        {
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
-            }
-
-            ViewData["CategoriesList"] = categoriesList;
-            return View("CreateConcernView");
-        }
-
+        //Neues Anliegen erstellen
         [Authorize(Policy = "AllRoles")]
         [HttpPost]
         public async Task<IActionResult> CreateConcernAsync(Concern concern, List<IFormFile> files)
@@ -230,16 +186,15 @@ namespace mosPortal.Controllers
                 concern.StatusId = 1;
                 db.Add(concern);
                 await db.SaveChangesAsync();
-                return RedirectToAction("ShowConcern", "Home", new {concernId = concern.Id});
+                return RedirectToAction("ShowConcern", "Home", new { concernId = concern.Id });
             }
 
             return View("CreateConcernView");
         }
-
+        //Kommentar bei einem Anliegen speichern
         [HttpPost]
-        public async Task<IActionResult> PostCommentAsync(int concernId, string commentText)
+        public async Task<IActionResult> PostCommentAsync(int concernId, string commentText) //post a comment async with javascript
         {
-            //string commentText = model.Text;
             DateTime time = DateTime.UtcNow;
             var user = await userManager.GetUserAsync(HttpContext.User);
             Comment comment = new Comment
@@ -257,23 +212,22 @@ namespace mosPortal.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-
-        public async Task<IActionResult> ShowPolls()
+        //Alle Einwohner Umfragen ausgeben
+        public async Task<IActionResult> ShowPolls() //show all Polls
         {
             DateTime time = DateTime.UtcNow;
-            DateTime time6month = DateTime.UtcNow.AddMonths(6);
             List<Poll> polls = db.Poll.Where(p => p.End > time).Where(p => p.NeedsLocalCouncil == false)
-                .Where(p => p.Approved).Include("Category").ToList();
+                .Where(p => p.Approved).Include("Category").OrderBy(p => p.End).ToList();
             List<SelectListItem> categoriesList = new List<SelectListItem>();
             List<Category> categories = db.Category.ToList();
             var user = await userManager.GetUserAsync(HttpContext.User);
             ViewData["Categories"] = categories;
             foreach (Category category in categories)
             {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
             }
 
             ViewData["CategoriesList"] = categoriesList;
@@ -282,12 +236,12 @@ namespace mosPortal.Controllers
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
                     .Include("AnswerOptions")
                     .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
-                        {
-                            Id = aop.Id,
-                            AnswerOptionsId = aop.AnswerOptionsId,
-                            PollId = aop.PollId,
-                            AnswerOptions = aop.AnswerOptions
-                        }
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
                     ).ToList();
                 List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
                 {
@@ -303,7 +257,6 @@ namespace mosPortal.Controllers
                 poll.Image = images;
                 poll.File = files;
             }
-
             ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
             foreach (Poll poll in polls)
             {
@@ -317,7 +270,7 @@ namespace mosPortal.Controllers
                 }
                 else
                 {
-                    pollViewModel.End = (DateTime) poll.End;
+                    pollViewModel.End = (DateTime)poll.End;
                 }
 
                 pollViewModel.UserId = poll.UserId;
@@ -334,7 +287,6 @@ namespace mosPortal.Controllers
                 if (user != null)
                 {
                     UserAnswerOptionsPoll userAnswerOptionsPoll = null;
-                    //List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id).ToList();
                     foreach (AnswerOptionsPoll aop in poll.AnswerOptionsPoll)
                     {
                         userAnswerOptionsPoll = db.UserAnswerOptionsPoll
@@ -358,37 +310,33 @@ namespace mosPortal.Controllers
             return View("PollsView", pollViewModels);
         }
 
+        //Umfrage abstimmen   
         [Authorize(Policy = "AllRoles")]
         [HttpPost]
-        public async Task<IActionResult> submitPollAnswer(PollViewModel poll)
+        public async Task<IActionResult> submitPollAnswer(PollViewModel poll) //submit Poll answer on the index page, and poll page
         {
             if (ModelState.IsValid)
             {
-                var selectedRadio = poll.RadioId;
-                var pollId = poll.Id;
-                var user = await userManager.GetUserAsync(HttpContext.User);
+                int selectedRadio = poll.RadioId;
+                int pollId = poll.Id;
+                User user = await userManager.GetUserAsync(HttpContext.User);
 
-                var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.Id == selectedRadio);
-                //var matchEntry = db.AnswerOptionsPoll.Where(aop => aop.PollId == pollId)
-                //.Where(aop => aop.AnswerOptionsId == selectedRadio);
+                IQueryable<AnswerOptionsPoll> matchEntry = db.AnswerOptionsPoll.Where(aop => aop.Id == selectedRadio);
 
-                var selectedAnswerOptionsPollId = -1;
+                int selectedAnswerOptionsPollId = -1;
                 selectedAnswerOptionsPollId = matchEntry.First().Id;
-                //Neues aktuelles Abstimmungsobjekt
-                var userAnswerOptionsPoll = new UserAnswerOptionsPoll();
+
+                UserAnswerOptionsPoll userAnswerOptionsPoll = new UserAnswerOptionsPoll();
                 userAnswerOptionsPoll.AnswerOptionsPollId = selectedAnswerOptionsPollId;
                 userAnswerOptionsPoll.UserId = user.Id;
 
-                //den User in der AnsweroptionsPoll suchen
-                var anyAnswers = db.AnswerOptionsPoll.FromSql(
+                List<AnswerOptionsPoll> anyAnswers = db.AnswerOptionsPoll.FromSql(
                     "select * from User_AnswerOptions_Poll as uaop  LEFT JOIN AnswerOptions_Poll AS aop on uaop.answerOptions_poll_ID = aop.ID where aop.poll_ID = {0} and uaop.User_ID={1};",
                     pollId, user.Id).ToList();
 
-                //Gibt es schon eine Abstimmung des Users (ja count != 0)
                 if (anyAnswers.Count != 0)
                 {
-                    //db entry wird gelöscht und ein neuer angelegt, mit der neuen ID
-                    var userAnswerOptionsPolltmp = new UserAnswerOptionsPoll();
+                    UserAnswerOptionsPoll userAnswerOptionsPolltmp = new UserAnswerOptionsPoll();
                     userAnswerOptionsPolltmp.AnswerOptionsPollId = anyAnswers.First().Id;
                     userAnswerOptionsPolltmp.UserId = user.Id;
                     db.UserAnswerOptionsPoll.Remove(userAnswerOptionsPolltmp);
@@ -403,7 +351,7 @@ namespace mosPortal.Controllers
         }
 
 
-        public IActionResult ShowImpressum()
+        public IActionResult ShowImpressum() //call Impressum view
         {
             return View("_Impressum");
         }
@@ -413,112 +361,25 @@ namespace mosPortal.Controllers
             return View("_Datenschutzerklaerung");
         }
 
-        public ICollection<PollViewModel> ShowPollsIndex()
+        //Umfragen auf der Startseite anzeigen
+        public async Task<ICollection<PollViewModel>> ShowPollsIndex()
         {
             DateTime time = DateTime.UtcNow;
-            //7 Tage dazu addieren
             List<Poll> polls = db.Poll.Where(p => p.StatusId == 2).Where(p => p.End > time).Include("Category")
                 .OrderBy(p => p.End).Take(4).ToList(); //.OrderBy(p => p.End)
+            var user = await userManager.GetUserAsync(HttpContext.User);
 
             foreach (Poll poll in polls)
             {
                 List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
                     .Include("AnswerOptions")
                     .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
-                        {
-                            Id = aop.Id,
-                            AnswerOptionsId = aop.AnswerOptionsId,
-                            PollId = aop.PollId,
-                            AnswerOptions = aop.AnswerOptions
-                        }
-                    ).ToList();
-                List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
-                {
-                    Id = ii.Id
-                }).ToList();
-                List<File> files = db.File.Where(f => f.PollId == poll.Id).Select(ff => new File
-                {
-                    Id = ff.Id,
-                    Name = ff.Name,
-                    Ending = ff.Ending
-                }).ToList();
-                poll.AnswerOptionsPoll = answers;
-                poll.Image = images;
-            }
-
-            ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
-            foreach (Poll poll in polls)
-            {
-                PollViewModel pollViewModel = new PollViewModel();
-
-                pollViewModel.Id = poll.Id;
-                pollViewModel.Text = poll.Text;
-                if (pollViewModel.End == null)
-                {
-                    pollViewModel.End = DateTime.UtcNow;
-                }
-                else
-                {
-                    pollViewModel.End = (DateTime) poll.End;
-                }
-
-                pollViewModel.UserId = poll.UserId;
-                pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
-                pollViewModel.Approved = poll.Approved;
-                pollViewModel.CategoryId = poll.CategoryId;
-                pollViewModel.Title = poll.Title;
-                pollViewModel.Category = poll.Category;
-                pollViewModel.User = poll.User;
-                pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
-                pollViewModel.RadioId = 0;
-                pollViewModel.Image = poll.Image;
-
-                pollViewModels.Add(pollViewModel);
-            }
-
-            return pollViewModels;
-        }
-
-        public IActionResult ShowPollResults()
-        {
-            DateTime time = DateTime.UtcNow;
-            //DateTime time3 = DateTime.UtcNow.AddMonths(3);
-            //DateTime time6month = DateTime.UtcNow.AddMonths(6);
-            List<Poll> polls = db.Poll.Where(p => p.End < time).Where(p => p.NeedsLocalCouncil == false)
-                .Where(p => p.Approved).Include("Category").ToList();
-            //List<Poll> polls = db.Poll.Where(p => p.End < time && DbFunctions.TruncateTime(p.ResignLastDate) >= DbFunctions.TruncateTime(time3)).Where(p => p.NeedsLocalCouncil == false).Where(p => p.Approved == true).Include("Category").ToList();
-
-            List<SelectListItem> categoriesList = new List<SelectListItem>();
-            List<Category> categories = db.Category.ToList();
-            //Ugly Bridge because of timecheck 3 Month
-            for (int i = 0; i < polls.Count; i++)
-            {
-                DateTime time3 = (DateTime) polls[i].End;
-                time3 = time3.AddMonths(3);
-                if (time > time3)
-                {
-                    polls.Remove(polls[i]);
-                }
-            }
-
-            ViewData["Categories"] = categories;
-            foreach (Category category in categories)
-            {
-                categoriesList.Add(new SelectListItem {Value = category.Id.ToString(), Text = category.Description});
-            }
-
-            ViewData["CategoriesList"] = categoriesList;
-            foreach (Poll poll in polls)
-            {
-                List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
-                    .Include("AnswerOptions")
-                    .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
-                        {
-                            Id = aop.Id,
-                            AnswerOptionsId = aop.AnswerOptionsId,
-                            PollId = aop.PollId,
-                            AnswerOptions = aop.AnswerOptions
-                        }
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
                     ).ToList();
                 List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
                 {
@@ -548,7 +409,114 @@ namespace mosPortal.Controllers
                 }
                 else
                 {
-                    pollViewModel.End = (DateTime) poll.End;
+                    pollViewModel.End = (DateTime)poll.End;
+                }
+
+                pollViewModel.UserId = poll.UserId;
+                pollViewModel.NeedsLocalCouncil = poll.NeedsLocalCouncil;
+                pollViewModel.Approved = poll.Approved;
+                pollViewModel.CategoryId = poll.CategoryId;
+                pollViewModel.Title = poll.Title;
+                pollViewModel.Category = poll.Category;
+                pollViewModel.User = poll.User;
+                pollViewModel.AnswerOptionsPoll = poll.AnswerOptionsPoll;
+                pollViewModel.RadioId = 0;
+                pollViewModel.Image = poll.Image;
+                pollViewModel.userAnswerOptionsPollId = 0;
+                if (user != null)
+                {
+                    UserAnswerOptionsPoll userAnswerOptionsPoll = null;
+                    foreach (AnswerOptionsPoll aop in poll.AnswerOptionsPoll)
+                    {
+                        userAnswerOptionsPoll = db.UserAnswerOptionsPoll
+                            .Where(uaop => uaop.UserId == user.Id && uaop.AnswerOptionsPollId == aop.Id)
+                            .SingleOrDefault();
+                        if (userAnswerOptionsPoll != null)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (userAnswerOptionsPoll != null)
+                    {
+                        pollViewModel.userAnswerOptionsPollId = userAnswerOptionsPoll.AnswerOptionsPollId;
+                    }
+                }
+
+                pollViewModels.Add(pollViewModel);
+            }
+
+            return pollViewModels;
+        }
+
+        //Umfrageergebnisse für den Einwohner anzeigen
+        public IActionResult ShowPollResults() //Results of ended polls
+        {
+            DateTime time = DateTime.UtcNow;
+            List<Poll> polls = db.Poll.Where(p => p.End < time).Where(p => p.NeedsLocalCouncil == false)
+                .Where(p => p.Approved).Include("Category").ToList();
+
+            List<SelectListItem> categoriesList = new List<SelectListItem>();
+            List<Category> categories = db.Category.ToList();
+
+            for (int i = 0; i < polls.Count; i++)
+            {
+                DateTime time3 = (DateTime)polls[i].End;
+                time3 = time3.AddMonths(3);
+                if (time > time3)
+                {
+                    polls.Remove(polls[i]);
+                }
+            }
+
+            ViewData["Categories"] = categories;
+            foreach (Category category in categories)
+            {
+                categoriesList.Add(new SelectListItem { Value = category.Id.ToString(), Text = category.Description });
+            }
+
+            ViewData["CategoriesList"] = categoriesList;
+            foreach (Poll poll in polls)
+            {
+                List<AnswerOptionsPoll> answers = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                    .Include("AnswerOptions")
+                    .Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).Select(aop => new AnswerOptionsPoll
+                    {
+                        Id = aop.Id,
+                        AnswerOptionsId = aop.AnswerOptionsId,
+                        PollId = aop.PollId,
+                        AnswerOptions = aop.AnswerOptions
+                    }
+                    ).ToList();
+                List<Image> images = db.Image.Where(i => i.PollId == poll.Id).Select(ii => new Image
+                {
+                    Id = ii.Id
+                }).ToList();
+                List<File> files = db.File.Where(f => f.PollId == poll.Id).Select(ff => new File
+                {
+                    Id = ff.Id,
+                    Name = ff.Name,
+                    Ending = ff.Ending
+                }).ToList();
+                poll.AnswerOptionsPoll = answers;
+                poll.Image = images;
+                poll.File = files;
+            }
+
+            ICollection<PollViewModel> pollViewModels = new List<PollViewModel>();
+            foreach (Poll poll in polls)
+            {
+                PollViewModel pollViewModel = new PollViewModel();
+
+                pollViewModel.Id = poll.Id;
+                pollViewModel.Text = poll.Text;
+                if (pollViewModel.End == null)
+                {
+                    pollViewModel.End = DateTime.UtcNow;
+                }
+                else
+                {
+                    pollViewModel.End = (DateTime)poll.End;
                 }
 
                 pollViewModel.UserId = poll.UserId;
@@ -566,6 +534,24 @@ namespace mosPortal.Controllers
             }
 
             return View("PollResultsView", pollViewModels);
+        }
+        public IActionResult GetPollAnswers(int pollId)
+        {
+            int id = pollId;
+            // Umfrage und Antworten selektieren
+            Poll poll = db.Poll.Where(p => p.Id == id).SingleOrDefault();
+            List<AnswerOptionsPoll> answerOptionsPolls = db.AnswerOptionsPoll.Where(aop => aop.PollId == poll.Id)
+                .Include("AnswerOptions").Where(aop => aop.AnswerOptionsId == aop.AnswerOptions.Id).ToList();
+            foreach (AnswerOptionsPoll answerOptionsPoll in answerOptionsPolls)
+            {
+                List<UserAnswerOptionsPoll> userAnswerOptionsPolls = db.UserAnswerOptionsPoll
+                    .Where(uaop => uaop.AnswerOptionsPollId == answerOptionsPoll.Id).ToList();
+                answerOptionsPoll.UserAnswerOptionsPoll = userAnswerOptionsPolls;
+            }
+
+            poll.AnswerOptionsPoll = answerOptionsPolls;
+
+            return poll.getAnswers();
         }
     }
 }

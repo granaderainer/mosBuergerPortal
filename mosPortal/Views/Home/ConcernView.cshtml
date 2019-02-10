@@ -10,7 +10,14 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewData["ConcernId"] = Model.Id;
     var categories = ViewData["Categories"] as IEnumerable<Category>;
+
+    var percent = @Model.UserConcern.Count * 10;
+    if (percent >100)
+    {
+        percent = 100;
+    }
 }
+
 
 <div id="heading-breadcrumbs">
     <div class="container">
@@ -32,35 +39,13 @@
         </div>
     </div>
 </div>
-<!-- Page Content -->
+
 <div class="container">
-    <!-- Page Heading/Breadcrumbs -->
-    @*<div class="row"> <!-- evtl bar raus-->
-        <div class="col-lg-12 background-pentagon">
-            <h1 class="page-header">
-                Anliegen
-            </h1>
-            <ol class="breadcrumb">
-                <li>
-                    <ul class="breadcrumb d-flex justify-content-end">
-                        <li class="breadcrumb-item">
-                            <a href="index.html">Home</a>
-                        </li>
-                        <!--Richtigen Link einfügen-->
-                        <li class="breadcrumb-item">
-                            <a href="#">Alle Anliegen</a>
-                        </li>
-                        <li class="breadcrumb-item active">Anliegen</li>
-                    </ul>
-                </li>
-            </ol>
-        </div>
-    </div>*@
-    <!-- /.row -->
+   
     <div class="row bar">
 
         <div class="col-md-3">
-            <!-- PAGES MENU -->
+            
             <div class="panel sidebar-menu">
                 <!-- "Neues Anliegen" Button Sidebar-->
                 @if (SignInManager.IsSignedIn(User))
@@ -70,7 +55,7 @@
                     </span>
                 }
                 <hr>
-                <!-- Blog Search Well -->
+               
 
                 <div class="input-group">
                     <span class="input-group-btn">
@@ -81,10 +66,10 @@
                     <input type="text" class="form-control">
 
                 </div>
-                <!-- /.input-group -->
+                
 
                 <hr>
-                <!-- Blog Categories Well -->
+                
                 <div class="panel panel-default sidebar-menu">
                     <div class="panel-heading">
                         <h3 class="h4 panel-title">Anliegen</h3>
@@ -145,7 +130,7 @@
                 <!-- Post Content -->
                 <p>@Model.Text</p>
                 <div class="progress mb-2">
-                    <div role="progressbar" id="progressbar @Model.Id" style="width: @Model.UserConcern.Count()%;" aria-valuenow="@Model.UserConcern.Count()" aria-valuemin="0" aria-valuemax="100" class="progress-bar bg-primary"></div>
+                    <div role="progressbar" id="progressbar @Model.Id" style="width: @percent%;" aria-valuenow="@Model.UserConcern.Count()" aria-valuemin="0" aria-valuemax="10" class="progress-bar bg-primary"></div> @*aria-valuemax = "100"*@
                 </div>
                 <div class="row">
                     <span class="col-6 text-left">
@@ -254,7 +239,7 @@
                     document.getElementById("likesConcern " + concernId).textContent =
                         (data.votes); // display id value which is returned from the action method
                     var progressbar = document.getElementById("progressbar " + concernId);
-                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes + '%');
+                    $(progressbar).attr('aria-valuenow', data.votes).css('width', data.votes*10 + '%');
                 });
         }
 
