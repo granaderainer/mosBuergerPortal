@@ -10,11 +10,14 @@ namespace mosPortal.Controllers
 {
     public class FileController : Controller
     {
+        //Attribute
         private readonly dbbuergerContext db;
+        //Konstruktor
         public FileController(dbbuergerContext db)
         {
             this.db = db;
         }
+        //Bild aus DB ins Memory laden um es anzuzeigen
         public FileStreamResult GetImage(int id)
         {
             Image image = db.Image.Where(i => i.Id == id).SingleOrDefault();
@@ -25,7 +28,7 @@ namespace mosPortal.Controllers
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
         }
-
+        //Erstes Bild für Concern aus DB ins Memory laden um es als Titelbild anzuzeigen
         public FileStreamResult GetConcernTitleImage(int concernId)
         {
             Image image = null;
@@ -41,7 +44,7 @@ namespace mosPortal.Controllers
             Stream imageStream = new MemoryStream(image.Img);
             return new FileStreamResult(imageStream, image.Ending);
         }
-
+        //Datei aus DB ins Memory laden um es anzuzeigen
         public FileStreamResult GetFile(int id)
         {
             File file = db.File.Where(f => f.Id == id).SingleOrDefault();
